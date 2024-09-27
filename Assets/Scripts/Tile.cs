@@ -45,6 +45,7 @@ public class Tile : MonoBehaviour
              7 - Fishing Boats
     */
     
+    
     private int _biome; // The base layer of a Tile (Plains: 1, Grassland: 2, Tundra: 3, Desert: 4, Snow: 5, Coast: 6, Ocean: 7)
     private int _terrain; // The topography of a Tile (Flat: 0, Hill: 1, Mountain: 2)
     private int _feature; // The natural feature of a Tile (None: 0, Woods: 1, Floodplains: 2, Marsh: 3, Rainforest: 4, Oasis: 5)

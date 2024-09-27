@@ -75,25 +75,25 @@ public class Tile : MonoBehaviour
         _feature = feature;
         _resource = resource;
         _improvement = Zero;
-        _mc = CalculateMovementCost();
-        _riverAdj = CalculateRiverAdjacency();
         _unit = null;
         _settlement = null;
+        _mc = CalculateMovementCost();
+        _riverAdj = CalculateRiverAdjacency();
         _yields = CalculateYields();
     }
     
     /* Full Tile Constructor (Good for testing) */
-    public Tile(int biome, int terrain, int feature,  int resource, int tileImprovement, int mc, bool riverAdjacency, Unit unit, Settlement settlement)
+    public Tile(int biome, int terrain, int feature,  int resource, int tileImprovement, Unit unit, Settlement settlement)
     {
         _biome = biome;
         _terrain = terrain;
         _feature = feature;
         _resource = resource;
         _improvement = tileImprovement;
-        _riverAdj = riverAdjacency;
-        _mc = mc;
         _unit = unit;
         _settlement = settlement;
+        _riverAdj = CalculateRiverAdjacency();
+        _mc = CalculateMovementCost();
         _yields = CalculateYields();
     }
     

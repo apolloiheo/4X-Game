@@ -30,10 +30,10 @@ public class World : MonoBehaviour
         {
             for (int y = 0; y < _height; y++)
             {
-                // Instantiate default tile to fill world with
+                // Instantiate default/background tile to fill world with
                 Tile tile = new Tile(DefaultBiomeFill, 0, 0, 0);
                 
-                // Record its position within its instance properties
+                // Record its X & Y position within its instance attributes
                 tile.SetXPos(x);
                 tile.SetYPos(y);
                 

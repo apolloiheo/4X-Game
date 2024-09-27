@@ -385,6 +385,11 @@ public class Tile : MonoBehaviour
         return _improvement;
     }
 
+    public int GetMovementCost()
+    {
+        return _mc;
+    }
+
     public Unit GetUnit()
     {
         return _unit;

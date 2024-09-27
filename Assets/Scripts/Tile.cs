@@ -13,6 +13,8 @@ public class Tile : MonoBehaviour
             3. Tundra
             4. Desert
             5. Snow
+            6. Coast
+            7. Ocean
             
         Terrain ID:
             0. Flat
@@ -44,7 +46,9 @@ public class Tile : MonoBehaviour
              6 - Plantation
              7 - Fishing Boats
     */
-    
+    // Class Properties
+    private int _xPos; // The Tile's X Position on a 2D Array
+    private int _yPos; // The Tile's Y Position on a 2D Array
     private int _biome; // The base layer of a Tile (Plains: 1, Grassland: 2, Tundra: 3, Desert: 4, Snow: 5, Coast: 6, Ocean: 7)
     private int _terrain; // The topography of a Tile (Flat: 0, Hill: 1, Mountain: 2)
     private int _feature; // The natural feature of a Tile (None: 0, Woods: 1, Floodplains: 2, Marsh: 3, Rainforest: 4, Oasis: 5)
@@ -55,6 +59,11 @@ public class Tile : MonoBehaviour
     private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile).
     private Settlement _settlement; // The Settlement on this Tile. May be null (no Settlement on Tile).
     private int[] _yields; // An int array of a Tile's Yields. [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4]
+    //Constants
+    private const int TotalYields = 5;
+    private const int Zero = 0;
+    
+    // Class Methods
     
     /* Natural Tile Constructor - Only Biome, Terrain, Feature, and Resource. (Good for world gen) */
     public Tile(int biome, int terrain, int feature, int resource)
@@ -63,15 +72,15 @@ public class Tile : MonoBehaviour
         _terrain = terrain;
         _feature = feature;
         _resource = resource;
-        _improvement = 0;
-        _mc = GetMovementCost();
-        _riverAdj = GetRiverAdjacency();
+        _improvement = Zero;
+        _mc = CalculateMovementCost();
+        _riverAdj = CalculateRiverAdjacency();
         _unit = null;
         _settlement = null;
-        _yields = GetYields();
+        _yields = CalculateYields();
     }
     
-    /* Full Tile Constructor (Good for testing)*/
+    /* Full Tile Constructor (Good for testing) */
     public Tile(int biome, int terrain, int feature,  int resource, int tileImprovement, int mc, Unit unit, Settlement settlement, bool riverAdj)
     {
         _biome = biome;
@@ -83,13 +92,13 @@ public class Tile : MonoBehaviour
         _mc = mc;
         _unit = unit;
         _settlement = settlement;
-        _yields = GetYields();
+        _yields = CalculateYields();
     }
     
-    /* Calculate the Yields of a Tile by going through its properties.*/
-    private int[] GetYields()
+    /* Calculate the Yields of a Tile by going through its properties. */
+    private int[] CalculateYields()
     {
-        int[] yields = new int[_yields.Length];
+        int[] yields = new int[TotalYields];
         
         // Set base Biome yields.
         switch (_biome)
@@ -263,13 +272,13 @@ public class Tile : MonoBehaviour
         return yields;
     }
     
-    private bool GetRiverAdjacency()
+    private bool CalculateRiverAdjacency()
     {
         // To be implemented
         return false;
     }
     
-    private int GetMovementCost()
+    private int CalculateMovementCost()
     {
         // If Hills
         if (_terrain == 1)
@@ -287,4 +296,101 @@ public class Tile : MonoBehaviour
         return 1;
     }
     
+    // Setter Methods
+    public void SetXPos(int xPos)
+    {
+        _xPos = xPos;
+    }
+
+    public void SetYPos(int yPos)
+    {
+        _yPos = yPos;
+    }
+    
+    public void SetBiome(int biome)
+    {
+        _biome = biome;
+    }
+
+    public void SetTerrain(int terrain)
+    {
+        _terrain = terrain;
+    }
+
+    public void SetFeature(int feature)
+    {
+        _feature = feature;
+    }
+
+    public void SetResource(int resource)
+    {
+        _resource = resource;
+    }
+
+    public void SetImprovement(int improvement)
+    {
+        _improvement = improvement;
+    }
+
+    public void SetUnit(Unit unit)
+    {
+        
+    }
+
+    public void SetSettlement(Settlement settlement)
+    {
+        _settlement = settlement;
+    }
+    
+    // Getter Methods
+    public int GetXPos()
+    {
+        return _xPos;
+    }
+
+    public int GetYPos()
+    {
+        return _yPos;
+    }
+    
+    public int GetBiome()
+    {
+        return _biome;
+    }
+
+    public int GetTerrain()
+    {
+        return _terrain;
+    }
+
+    public int GetFeature()
+    {
+        return _feature;
+    }
+
+    public int GetResource()
+    {
+        return _resource;
+    }
+
+    public int GetImprovement()
+    {
+        return _improvement;
+    }
+
+    public Unit GetUnit()
+    {
+        return _unit;
+    }
+
+    public Settlement GetSettlement()
+    {
+        return _settlement;
+    }
+
+    public int[] GetYields()
+    {
+        return _yields;
+    }
+
 }

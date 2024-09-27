@@ -7,12 +7,13 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        TestWorldGeneration();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void TestWorldGeneration()
     {
-        
+        World gameWorld = new World(100,50);
+        gameWorld.FillEmptyWorld(7);
+        gameWorld.PrintWorld();
     }
 }

@@ -80,7 +80,7 @@ public class Tile : MonoBehaviour
         _resource = resource;
         _improvement = tileImprovement;
         _riverAdj = riverAdj;
-        _mc = GetMovementCost();
+        _mc = mc;
         _unit = unit;
         _settlement = settlement;
         _yields = GetYields();

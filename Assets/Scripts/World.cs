@@ -32,7 +32,7 @@ public class World : MonoBehaviour
                 // Instantiate default tile to fill world with
                 Tile tile = new Tile(DefaultBiomeFill, 0, 0, 0);
                 
-                // Record its position within it's instance properties
+                // Record its position within its instance properties
                 tile.SetXPos(x);
                 tile.SetYPos(y);
                 
@@ -42,7 +42,7 @@ public class World : MonoBehaviour
         }
     }
 
-    /* Print the world to console. (Way to test for now) */
+    /* Print the world to console. (Bad way to test but will do for now) */
     public void PrintWorld()
     {
         string worldString = "";

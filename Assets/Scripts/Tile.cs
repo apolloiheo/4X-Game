@@ -27,14 +27,14 @@ public class Tile : MonoBehaviour
             4. Rainforest
             5. Oasis
             
-        Resources ID Index:
+        Resources ID:
              0. (No resource)
              1.Wheat 2.Rice 3.Maize 4.Stone 5.Coal 6.Deer 7.Cattle 8.Sheep 9.Bananas 10. Fish
              11.Crabs 12.Horses 13.Copper 14.Iron 15.Silk 16.Spices 17.Incense 18.Wine 19.Cotton 20.Citrus
              21.Dyes 22.Cacao 23.Pomegranate 24.Furs 25.Ivory 26.Pearls 27.Whales 28.Marble 29.Salt 30.Amber
              31.Jade 32.Silver 33.Gold
          
-         Tile Improvement Index:
+         Tile Improvement ID:
              0 - No Feature
              1 - Farm
              2 - Mine
@@ -49,7 +49,7 @@ public class Tile : MonoBehaviour
     private int _terrain; // The topography of a Tile (Flat: 0, Hill: 1, Mountain: 2)
     private int _feature; // The natural feature of a Tile (None: 0, Woods: 1, Floodplains: 2, Marsh: 3, Rainforest: 4, Oasis: 5)
     private int _resource; // The resource on this Tile. Could be a specific Bonus, Luxury, Strategic Resource, or no Resource. CHECK ID INDEX ABOVE^
-    private int _improvement; // The Tile Improvement on this Tile. May be null (no Tile Improvement on Tile). CHECK ID INDEX ABOVE^
+    private int _improvement; // The Tile Improvement on this Tile. CHECK ID INDEX ABOVE^
     private int _mc; // Movement cost - the amount of Movement Points a Unit must spend to move unto that Tile.
     private bool _riverAdj; // is the Tile Adjacent to a river? T/F
     private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile).
@@ -262,6 +262,7 @@ public class Tile : MonoBehaviour
 
         return yields;
     }
+    
     private bool GetRiverAdjacency()
     {
         // To be implemented

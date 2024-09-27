@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    /*ID INDEX
+    /*ID INDEX  
         Biomes ID:
             1. Plains
             2. Grassland
@@ -46,20 +46,22 @@ public class Tile : MonoBehaviour
              6 - Plantation
              7 - Fishing Boats
     */
-    // Class Properties
+    
+    // Instance Attributes
     private int _xPos; // The Tile's X Position on a 2D Array
     private int _yPos; // The Tile's Y Position on a 2D Array
     private int _biome; // The base layer of a Tile (Plains: 1, Grassland: 2, Tundra: 3, Desert: 4, Snow: 5, Coast: 6, Ocean: 7)
     private int _terrain; // The topography of a Tile (Flat: 0, Hill: 1, Mountain: 2)
     private int _feature; // The natural feature of a Tile (None: 0, Woods: 1, Floodplains: 2, Marsh: 3, Rainforest: 4, Oasis: 5)
     private int _resource; // The resource on this Tile. Could be a specific Bonus, Luxury, Strategic Resource, or no Resource. CHECK ID INDEX ABOVE^
-    private int _improvement; // The Tile Improvement on this Tile. CHECK ID INDEX ABOVE^
+    private int _improvement; // The Tile Improvement on this Tile or 0 for No Improvement. CHECK ID INDEX ABOVE^
     private int _mc; // Movement cost - the amount of Movement Points a Unit must spend to move unto that Tile.
-    private bool _riverAdj; // is the Tile Adjacent to a river? T/F
-    private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile).
+    private bool _riverAdj; // is the Tile Adjacent to a river? -> T/F
+    private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile). 
     private Settlement _settlement; // The Settlement on this Tile. May be null (no Settlement on Tile).
     private int[] _yields; // An int array of a Tile's Yields. [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4]
-    //Constants
+    
+    // Constants
     private const int TotalYields = 5;
     private const int Zero = 0;
     
@@ -81,21 +83,21 @@ public class Tile : MonoBehaviour
     }
     
     /* Full Tile Constructor (Good for testing) */
-    public Tile(int biome, int terrain, int feature,  int resource, int tileImprovement, int mc, Unit unit, Settlement settlement, bool riverAdj)
+    public Tile(int biome, int terrain, int feature,  int resource, int tileImprovement, int mc, bool riverAdjacency, Unit unit, Settlement settlement)
     {
         _biome = biome;
         _terrain = terrain;
         _feature = feature;
         _resource = resource;
         _improvement = tileImprovement;
-        _riverAdj = riverAdj;
+        _riverAdj = riverAdjacency;
         _mc = mc;
         _unit = unit;
         _settlement = settlement;
         _yields = CalculateYields();
     }
     
-    /* Calculate the Yields of a Tile by going through its properties. */
+    /* Calculate/Update the Yields of a Tile by going through its properties. */
     private int[] CalculateYields()
     {
         int[] yields = new int[TotalYields];
@@ -310,26 +312,31 @@ public class Tile : MonoBehaviour
     public void SetBiome(int biome)
     {
         _biome = biome;
+        _yields = CalculateYields();
     }
 
     public void SetTerrain(int terrain)
     {
         _terrain = terrain;
+        _yields = CalculateYields();
     }
 
     public void SetFeature(int feature)
     {
         _feature = feature;
+        _yields = CalculateYields();
     }
 
     public void SetResource(int resource)
     {
         _resource = resource;
+        _yields = CalculateYields();
     }
 
     public void SetImprovement(int improvement)
     {
         _improvement = improvement;
+        _yields = CalculateYields();
     }
 
     public void SetUnit(Unit unit)

@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class World : MonoBehaviour
 {
-    // Class Properties
+    // Instance Attributes
     private int _length;
     private int _height;
     private Tile[,] _world; // 2D Array of Tiles
+    
     // Constants
     private const int DefaultBiomeFill = 7; // 1.Plains, 2.Grassland, 3.Tundra, 4.Desert, 5.Snow, 6.Coast, 7.Ocean
     

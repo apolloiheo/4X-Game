@@ -31,14 +31,14 @@ public class Tile : MonoBehaviour
              0. (No resource)
              1.Wheat 2.Rice 3.Maize 4.Stone 5.Coal 6.Deer 7.Cattle 8.Sheep 9.Bananas 10. Fish
              11.Crabs 12.Horses 13.Copper 14.Iron 15.Silk 16.Spices 17.Incense 18.Wine 19.Cotton 20.Citrus
-             21.Dyes 22.Cacao 23. Pomegranate 24.Furs 25.Ivory 26.Pearls 27.Whales 28.Marble 29.Salt 30.Amber
+             21.Dyes 22.Cacao 23.Pomegranate 24.Furs 25.Ivory 26.Pearls 27.Whales 28.Marble 29.Salt 30.Amber
              31.Jade 32.Silver 33.Gold
          
          Tile Improvement Index:
-            0 - No Feature
-            1 - Farm
-            2 - Mine
-            3 - Lumber Camp
+             0 - No Feature
+             1 - Farm
+             2 - Mine
+             3 - Lumber Camp
              4 - Pasture
              5 - Camp
              6 - Plantation
@@ -56,7 +56,7 @@ public class Tile : MonoBehaviour
     private Settlement _settlement; // The Settlement on this Tile. May be null (no Settlement on Tile).
     private int[] _yields; // An int array of a Tile's Yields. [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4]
     
-    //Natural Tile - Only Biome, Terrain, Feature, and Resource (Good for world gen)
+    /* Natural Tile Constructor - Only Biome, Terrain, Feature, and Resource. (Good for world gen) */
     public Tile(int biome, int terrain, int feature, int resource)
     {
         _biome = biome;
@@ -115,7 +115,7 @@ public class Tile : MonoBehaviour
                 yields[0] = 1; // +1 Food
                 yields[3] = 1; // +1 Gold
                 break;
-            case 7:
+            case 7: // Ocean
                 yields[0] = 1; // +1 Food
                 break;
         }

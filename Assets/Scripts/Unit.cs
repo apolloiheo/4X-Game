@@ -42,29 +42,21 @@ public class Unit : MonoBehaviour
         _promotions = new bool[TotalPromotions]; // No Promotions (booleans are initialized to False)
     }
 
-    /* Move a Unit across adjacent Tiles by spending Movement Points */
+    /* Move a Unit across Tiles */
     public void Move()
     {
         // To be implemented
     }
     
-    /* Attack another Unit or Settlement */
+    /* Attack another Unit */
     public void Attack(Unit target)
     {
         // To be implemented
     }
 
+    /* Attack another Settlement */
     public void Attack(Settlement settlement)
     {
         // To be implemented
     }
-
-    private int CalculateCombatStrengths(Unit target)
-    {
-        // To be implemented
-        
-        return _combatStrength;
-    }
-    
-    
 }

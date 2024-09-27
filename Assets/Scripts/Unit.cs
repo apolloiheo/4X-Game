@@ -56,7 +56,7 @@ public class Unit : MonoBehaviour
     }
 
     /* Attack another Settlement */
-    public void Attack(Settlement settlement)
+    public void Attack(Settlement target)
     {
         // To be implemented
     }

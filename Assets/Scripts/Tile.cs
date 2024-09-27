@@ -56,7 +56,7 @@ public class Tile : MonoBehaviour
     private int _resource; // The resource on this Tile. Could be a specific Bonus, Luxury, Strategic Resource, or no Resource. CHECK ID INDEX ABOVE^
     private int _improvement; // The Tile Improvement on this Tile or 0 for No Improvement. CHECK ID INDEX ABOVE^
     private int _mc; // Movement cost - the amount of Movement Points a Unit must spend to move unto that Tile.
-    private bool[] _riverAdj; // is the Tile Adjacent to a river? -> [0,1,2,3,4,5] 
+    private bool[] _riverAdj; // Are the Tile edges Adjacent to a river? -> [0,1,2,3,4,5] Represent edges on a hexagon starting from the Top moving clockwise.
     private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile). 
     private Settlement _settlement; // The Settlement on this Tile. May be null (no Settlement on Tile).
     private int[] _yields; // An int array of a Tile's Yields. [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4]
@@ -64,7 +64,7 @@ public class Tile : MonoBehaviour
     // Constants
     private const int TotalYields = 5;
     private const int Zero = 0;
-    private const int Edges = 6;
+    private const int TileEdges = 6;
     
     // Class Methods
     
@@ -277,7 +277,7 @@ public class Tile : MonoBehaviour
     
     private bool[] CalculateRiverAdjacency()
     {
-        bool[] riverAdj = new bool[Edges];
+        bool[] riverAdj = new bool[TileEdges];
         // To be implemented
         return riverAdj;
     }

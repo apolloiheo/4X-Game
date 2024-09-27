@@ -43,6 +43,11 @@ public class World : MonoBehaviour
         }
     }
 
+    public void SetTileAdjacency()
+    {
+        // Assign adjacent Tiles for every single Tile's edge.
+    }
+
     /* Print the world to console. (Bad way to test but will do for now) */
     public void PrintWorld()
     {

@@ -43,9 +43,52 @@ public class World : MonoBehaviour
         }
     }
 
+    /* Sets Tile Adjacency (neighbors) based on a Flat Top/Bottom hexagon  with an even-q orientation. */
     public void SetTileAdjacency()
     {
-        // Assign adjacent Tiles for every single Tile's edge.
+        for (int x = 0; x < _length - 1; x++)
+        {
+            for (int y = 0; y < _height - 1; y++)
+            {
+                // Top and Bottom of all Flat edges
+                _world[x, y].SetNeighbor(0, _world[x, y + 1]);
+                _world[x, y + 1].SetNeighbor(3, _world[x, y]);
+
+                // Check that X index is not out of bounds
+                if (x > 0 && x < _length && y > 0 && y < _height)
+                {
+                    // If X is Odd
+                   if (x % 2 != 0)
+                   {
+                       // Bottom Left of Odd X / Top Right of Even X
+                       _world[x, y].SetNeighbor(4, _world[x - 1, y]);
+                       _world[x - 1, y].SetNeighbor(1, _world[x, y]);
+                       
+                       // Bottom Right of Odd X / Top Left of Even X
+                       _world[x , y].SetNeighbor(2, _world[x + 1, y]);
+                       _world[x + 1, y].SetNeighbor(5, _world[x, y]);
+                   }
+                   else // If X is Even
+                   {
+                       // Top Left of Even X / Bottom Right of Odd X
+                       _world[x,y].SetNeighbor(5, _world[x - 1, y]);
+                       _world[x - 1, y].SetNeighbor(2, _world[x, y]);
+                       
+                       // Top Right of Even X / Bottom Left of Odd X
+                       _world[x,y].SetNeighbor(1, _world[x + 1, y]);
+                       _world[x + 1, y].SetNeighbor(4, _world[x, y]);
+                       
+                       // Bottom Right of Even // Top Left of Odd
+                       _world[x, y].SetNeighbor(2, _world[x + 1, y - 1]);
+                       _world[x + 1, y - 1].SetNeighbor(5, _world[x, y]);
+                       
+                       // Bottom Left of Even // Top Right of Odd
+                       _world[x,y].SetNeighbor(4, _world[x - 1, y - 1]);
+                       _world[x - 1, y - 1].SetNeighbor(1, _world[x, y]);
+                   }
+                }
+            }
+        }
     }
 
     /* Print the world to console. (Bad way to test but will do for now) */
@@ -61,5 +104,23 @@ public class World : MonoBehaviour
             worldString += "\n";
         }
         Debug.Log(worldString);
+    }
+
+    public void TestTileAdjacency(int xPos, int yPos)
+    {
+        string output = "Tile ("+xPos+","+yPos+") is adjacent to: " + "\n";
+
+        for (int x = 0; x < _world[xPos, yPos].GetNeighbors().Length; x++)
+        {
+            if (_world[xPos, yPos].GetNeighbors()[x] is not null)
+            {
+                output += "(" + _world[xPos, yPos].GetNeighbors()[x].GetXPos() + 
+                          "," + _world[xPos, yPos].GetNeighbors()[x].GetYPos() + ")";
+                
+                output += "\n";
+            }
+        }
+        
+        Debug.Log(output);
     }
 }

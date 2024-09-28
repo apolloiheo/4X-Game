@@ -25,8 +25,6 @@ public class Unit : MonoBehaviour
     private const int UnitMaxHealth = 100;
     private const int HillAttackDebuf = 10;
     private const int RiverAttackDebuf = 10;
-    
-    
 
     /* Custom Unit Constructor (For testing) */
     public Unit(string name, int movementPoints, int combatStrength, int supplies, int attackRange)

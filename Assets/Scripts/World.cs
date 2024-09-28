@@ -46,14 +46,6 @@ public class World : MonoBehaviour
     /* Sets Tile Adjacency (neighbors) based on a Flat Top/Bottom hexagon  with an even-q orientation. */
     public void SetTileAdjacency()
     {
-        // Set the first Tile's neighbor's
-        _world[0,0].SetNeighbor(0, _world[0,1]);
-        _world[0,1].SetNeighbor(3, _world[0,0]);
-        
-        _world[0,0].SetNeighbor(1, _world[1,0]);
-        _world[1,0].SetNeighbor(4, _world[0,0]);
-        
-        
         for (int x = 0; x < _length; x++)
         {
             for (int y = 0; y < _height; y++)

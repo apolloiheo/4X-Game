@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
         gameWorld.FillEmptyWorld(7);
         //gameWorld.PrintWorld();
         gameWorld.SetTileAdjacency();
-        gameWorld.TestTileAdjacency(2,0);
+        gameWorld.TestTileAdjacency(0,0);
+        gameWorld.TestTileAdjacency(1,0);
     }
 }

@@ -56,8 +56,8 @@ public class Tile : MonoBehaviour
     private int _resource; // The resource on this Tile. Could be a specific Bonus, Luxury, Strategic Resource, or no Resource. CHECK ID INDEX ABOVE^
     private int _improvement; // The Tile Improvement on this Tile or 0 for No Improvement. CHECK ID INDEX ABOVE^
     private int _mc; // Movement cost - the amount of Movement Points a Unit must spend to move unto that Tile.
-    private Tile[] _neighbors; // Adjacent Tiles to these tiles. Index corresponds to Edge assuming flat top/bottom hexagons. Flat Top is 0, Flat Bottom is 3, Right sides are 1,2, Left Sides are 3,4.
-    private bool[] _riverAdj; // Are the Tile edges Adjacent to a river? -> [0,1,2,3,4,5] Represent edges on a hexagon starting from the Top moving clockwise.
+    private Tile[] _neighbors; // Adjacent Tiles to these tiles. Index corresponds to Edge assuming flat top/bottom hexagons. Top is 0, Bottom is 3
+    private bool[] _riverAdj; // Are the Tile edges Adjacent to a river? -> [0,1,2,3,4,5] Represent edges on a hexagon starting from the Top moving clockwise. Top is 0, Bottom is 3
     private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile). 
     private Settlement _settlement; // The Settlement on this Tile. May be null (no Settlement on Tile).
     private int[] _yields; // An int array of a Tile's Yields. [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4]

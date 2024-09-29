@@ -25,8 +25,6 @@ public class Unit : MonoBehaviour
     private const int UnitMaxHealth = 100;
     private const int HillAttackDebuf = 10;
     private const int RiverAttackDebuf = 10;
-    
-    
 
     /* Custom Unit Constructor (For testing) */
     public Unit(string name, int movementPoints, int combatStrength, int supplies, int attackRange)
@@ -54,6 +52,19 @@ public class Unit : MonoBehaviour
         // To be implemented
         
     }
+    
+    /* Move a Unit to one of it's adjacent tiles */
+    public void MoveOneTile(Tile nextTile)
+    {
+        if (nextTile.GetMovementCost() <= GetMovementPoints() && IsExhausted()) // Check if the Unit has enough MP and isn't exhausted
+        {
+            SetTile(nextTile);
+            SetMovementPoints(GetMovementPoints() - _tile.GetMovementCost()); // Reduce Unit's MP by tile's MC
+        }
+        
+        
+    }
+
     
     /* Attack another Unit */
     public void Attack(Unit target)

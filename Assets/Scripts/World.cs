@@ -43,9 +43,60 @@ public class World : MonoBehaviour
         }
     }
 
+    /* Sets Tile Adjacency (neighbors) based on a Flat Top/Bottom hexagon grid with an even-q orientation (0,0 must be at bottom left of grid). */
     public void SetTileAdjacency()
     {
-        // Assign adjacent Tiles for every single Tile's edge.
+        for (int x = 0; x < _length; x++)
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                // Edge 0
+                if (y < _height - 1)
+                {
+                    _world[x, y].SetNeighbor(0, _world[x, y + 1]);
+                    _world[x, y + 1].SetNeighbor(3, _world[x, y]);
+                }
+                
+                // Edge 3
+                if (y > 0)
+                {
+                    _world[x,y].SetNeighbor(3, _world[x , y - 1]);
+                    _world[x, y - 1].SetNeighbor(0, _world[x, y]);
+                }
+                
+                // Every Odd X Tile
+                if (x % 2 != 0)
+                {
+                    // Edge 1 
+                    if (x < _length - 1 && y < _height - 1)
+                    {
+                        _world[x, y].SetNeighbor(1, _world[x + 1, y + 1]);
+                        _world[x + 1, y + 1].SetNeighbor(4, _world[x, y]);
+                    }
+
+                    // Edge 2 
+                    if (x < _length - 1)
+                    {
+                        _world[x, y].SetNeighbor(2, _world[x + 1, y]);
+                        _world[x + 1, y].SetNeighbor(5, _world[x, y]);
+                    }
+
+                    // Edge 4
+                    if (x > 0)
+                    {
+                        _world[x,  y].SetNeighbor(4, _world[x - 1, y]);
+                        _world[x - 1, y].SetNeighbor(1, _world[x, y]);
+                    }
+
+                    // Edge 5
+                    if (x > 0 && y < _height - 1)
+                    {
+                        _world[x, y].SetNeighbor(5, _world[x - 1, y + 1]);
+                        _world[x - 1, y + 1].SetNeighbor(2, _world[x, y]);
+                    }
+                } 
+            }
+        }
     }
 
     /* Print the world to console. (Bad way to test but will do for now) */
@@ -61,5 +112,24 @@ public class World : MonoBehaviour
             worldString += "\n";
         }
         Debug.Log(worldString);
+    }
+
+    /* Takes a Tile's X & Y Position on a 2D grid and prints a list of its neighbors' X & Y.  */
+    public void TestTileAdjacency(int xPos, int yPos)
+    {
+        string output = "Tile ("+xPos+","+yPos+") is adjacent to: " + "\n";
+
+        for (int x = 0; x < _world[xPos, yPos].GetNeighbors().Length; x++)
+        {
+            if (_world[xPos, yPos].GetNeighbors()[x] is not null)
+            {
+                output += "Edge: " + x + " " + "(" + _world[xPos, yPos].GetNeighbors()[x].GetXPos() + 
+                          "," + _world[xPos, yPos].GetNeighbors()[x].GetYPos() + ")";
+                
+                output += "\n";
+            }
+        }
+        
+        Debug.Log(output);
     }
 }

@@ -12,8 +12,7 @@ public class GameManager : MonoBehaviour
 
     private void TestWorldGeneration()
     {
-        World gameWorld = new World(100,50, 2);
-        gameWorld.FillEmptyWorld(7);
+        World gameWorld = new WorldGenerator().GenerateWorld(100, 50,2);
         gameWorld.PrintWorld();
         gameWorld.SetTileAdjacency();
         gameWorld.TestTileAdjacency(2,0);

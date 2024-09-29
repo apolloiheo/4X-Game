@@ -6,12 +6,18 @@ using Random = Unity.Mathematics.Random;
 public class WorldGenerator : MonoBehaviour
 {
     private Random _random; // Random determintic factor
+
+    public WorldGenerator()
+    {
+        _random = new Random();
+    }
     
     /* Returns a fully generated game world. */
     public World GenerateWorld(int length, int height, int continents)
     {
         World world = new World(length, height, continents);
-        
+        world.FillEmptyWorld(7);
+        world.SetTileAdjacency();
         DetermineContinents(world);
         DetermineLand(world);
         DetermineBiomes(world);
@@ -36,7 +42,7 @@ public class WorldGenerator : MonoBehaviour
         } else if (world.GetContinents() == 2)
         {
             world.SetContinentPoint1(new Point(worldLength / 4, worldHeight / 2));
-            world.SetContinentPoint2(new Point((worldHeight / 4) * 3 , worldHeight / 2));
+            world.SetContinentPoint2(new Point((worldLength / 4) * 3 , worldHeight / 2));
         }
     }
 
@@ -47,10 +53,6 @@ public class WorldGenerator : MonoBehaviour
      */
     private void DetermineLand(World world)
     {
-        int totalWorldSize = world.GetLength() * world.GetHeight();
-        int desiredWorldCoverage = totalWorldSize / 3; // WIP - How much relative space our continent should take relative to world size.
-        int currentWorldCoverage = 1; // How much relative space our continent is taking relative to world size.
-
         Point continentStart1 = world.GetContinentPoint1();
         Point continentStart2 = world.GetContinentPoint2();
         Point continentStart3 = world.GetContinentPoint3();
@@ -61,21 +63,40 @@ public class WorldGenerator : MonoBehaviour
                 break;
             case 2: // Two Continents
                 
+                int totalWorldSize = world.GetLength() * world.GetHeight();
+                int desiredWorldCoverage = (totalWorldSize / 3) * 2; // WIP - How much relative space our continent should take relative to world size.
+                int currentWorldCoverage = 1; // How much relative space our continent is taking relative to world size.
                 
                 world.ModifyTileBiome(continentStart1, 1);
                 world.ModifyTileBiome(continentStart2, 1);
                 
+                Queue<Point> queue = new Queue<Point>();
+                queue.Enqueue(continentStart1);
+                queue.Enqueue(continentStart2);
+
+                int biomeCount = 0;
+                //Tile[] currentNeighbors = world.GetTile(queue.Dequeue()).GetNeighbors();
+                
+                
                 while (currentWorldCoverage < desiredWorldCoverage)
                 {
+                    Tile currentTile = world.GetTile(queue.Dequeue());
+                    
                     // Initial Convert neighbor's to Plains.
-                    foreach (Tile t in world.GetTile(continentStart1).GetNeighbors())
+                    foreach (Tile t in currentTile.GetNeighbors())
                     {
-                        Point neighborLocation = new Point(t.GetXPos(), t.GetYPos());
-                        world.ModifyTileBiome(neighborLocation, 1);
-                        currentWorldCoverage++;
+                        if (t is not null)
+                        {
+                            Point neighborLocation = new Point(t.GetXPos(), t.GetYPos());
+
+                            if (world.GetTile(neighborLocation).GetBiome() == 7)
+                            {
+                                queue.Enqueue(neighborLocation);
+                                world.ModifyTileBiome(neighborLocation, 0);
+                                currentWorldCoverage++;
+                            }
+                        }
                     }
-                    
-                    
                 }
                 
                 break;

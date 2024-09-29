@@ -43,7 +43,7 @@ public class World : MonoBehaviour
         }
     }
 
-    /* Sets Tile Adjacency (neighbors) based on a Flat Top/Bottom hexagon  with an even-q orientation. */
+    /* Sets Tile Adjacency (neighbors) based on a Flat Top/Bottom hexagon grid with an even-q orientation (0,0 must be at bottom left of grid). */
     public void SetTileAdjacency()
     {
         for (int x = 0; x < _length; x++)
@@ -114,6 +114,7 @@ public class World : MonoBehaviour
         Debug.Log(worldString);
     }
 
+    /* Takes a Tile's X & Y Position on a 2D grid and prints a list of its neighbors' X & Y.  */
     public void TestTileAdjacency(int xPos, int yPos)
     {
         string output = "Tile ("+xPos+","+yPos+") is adjacent to: " + "\n";

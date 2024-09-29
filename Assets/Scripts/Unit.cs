@@ -53,6 +53,19 @@ public class Unit : MonoBehaviour
         
     }
     
+    /* Move a Unit to one of it's adjacent tiles */
+    public void MoveOneTile(Tile nextTile)
+    {
+        if (nextTile.GetMovementCost() <= GetMovementPoints() && IsExhausted()) // Check if the Unit has enough MP and isn't exhausted
+        {
+            SetTile(nextTile);
+            SetMovementPoints(GetMovementPoints() - _tile.GetMovementCost()); // Reduce Unit's MP by tile's MC
+        }
+        
+        
+    }
+
+    
     /* Attack another Unit */
     public void Attack(Unit target)
     {

@@ -9,6 +9,7 @@ public class World : MonoBehaviour
     private int _length;
     private int _height;
     private Tile[,] _world; // 2D Array of Tiles
+    private int _continents; // # of Continents in our world. Could be 1, 2 or 3.
     
     // Constants
     private const int DefaultBiomeFill = 7; // 1.Plains, 2.Grassland, 3.Tundra, 4.Desert, 5.Snow, 6.Coast, 7.Ocean
@@ -16,10 +17,11 @@ public class World : MonoBehaviour
     // Class Methods
     
     /* World Constructor */
-    public World(int length, int height)
+    public World(int length, int height, int continents)
     {
         _length = length;  
         _height = height;
+        _continents = continents;
         _world = new Tile[length, height];
     }
     

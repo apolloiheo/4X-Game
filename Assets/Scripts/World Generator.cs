@@ -15,17 +15,19 @@ public class WorldGenerator : MonoBehaviour
     /* Returns a fully generated game world. */
     public World GenerateWorld(int length, int height, int continents)
     {
+        _random = new Random();
+        _random.InitState();
         World world = new World(length, height, continents);
         world.FillEmptyWorld(7);
         world.SetTileAdjacency();
         DetermineContinents(world);
-        DetermineLand(world);
+        DetermineLand(world,_random);
         DetermineBiomes(world);
         DetermineTerrain(world);
         DetermineRivers(world);
         DetermineFeatures(world);
         DetermineResources(world);
-        
+
         return world;
     }
     
@@ -51,8 +53,9 @@ public class WorldGenerator : MonoBehaviour
         - Randomly expand tiles around it to form continent. 
         - Stop when it reaches a % of world coverage.
      */
-    private void DetermineLand(World world)
+    private void DetermineLand(World world, Random random)
     {
+        // Continents are given a single starting Tile from which they expand.
         Point continentStart1 = world.GetContinentPoint1();
         Point continentStart2 = world.GetContinentPoint2();
         Point continentStart3 = world.GetContinentPoint3();
@@ -63,9 +66,12 @@ public class WorldGenerator : MonoBehaviour
                 break;
             case 2: // Two Continents
                 
-                int totalWorldSize = world.GetLength() * world.GetHeight();
-                int desiredWorldCoverage = (totalWorldSize / 3) * 2; // WIP - How much relative space our continent should take relative to world size.
+                int totalWorldSize = world.GetLength() * world.GetHeight(); 
+                int desiredWorldCoverage = (totalWorldSize / 3); // WIP - How much relative space our continent should take relative to world size.
                 int currentWorldCoverage = 1; // How much relative space our continent is taking relative to world size.
+                double percentageOfWorldCoverage = currentWorldCoverage / totalWorldSize;
+                int probabilityThreshold = 100; // The number that a random int needs to be lower than in order to place a tile.
+                int consecutiveTilesPlaced = 0;
                 
                 world.ModifyTileBiome(continentStart1, 1);
                 world.ModifyTileBiome(continentStart2, 1);
@@ -73,10 +79,6 @@ public class WorldGenerator : MonoBehaviour
                 Queue<Point> queue = new Queue<Point>();
                 queue.Enqueue(continentStart1);
                 queue.Enqueue(continentStart2);
-
-                int biomeCount = 0;
-                //Tile[] currentNeighbors = world.GetTile(queue.Dequeue()).GetNeighbors();
-                
                 
                 while (currentWorldCoverage < desiredWorldCoverage)
                 {
@@ -91,21 +93,33 @@ public class WorldGenerator : MonoBehaviour
 
                             if (world.GetTile(neighborLocation).GetBiome() == 7)
                             {
-                                queue.Enqueue(neighborLocation);
-                                world.ModifyTileBiome(neighborLocation, 0);
-                                currentWorldCoverage++;
+                                int randomInteger = random.NextInt(0, 100);
+                                
+                                // Random chance the Tile won't be changed
+                                if (randomInteger < probabilityThreshold - (percentageOfWorldCoverage * 100) - (consecutiveTilesPlaced * 10))
+                                {
+                                    // Random chance the neighbor won't be added to the queue. 
+                                    if (randomInteger < probabilityThreshold - (percentageOfWorldCoverage * 100) -
+                                        (consecutiveTilesPlaced * 10))
+                                    {
+                                        queue.Enqueue(neighborLocation);
+                                    }
+                                    world.ModifyTileBiome(neighborLocation, 0);
+                                    currentWorldCoverage++;
+                                    consecutiveTilesPlaced++;
+                                }
+                                else
+                                {
+                                    consecutiveTilesPlaced = 0;
+                                }
                             }
                         }
                     }
                 }
-                
                 break;
             case 3: // Three Continents
                 break;
         }
-        
-        
-        
     }
 
     /* Determine Biomes on landmasses and on Coasts */

@@ -70,7 +70,7 @@ public class WorldGenerator : MonoBehaviour
                 int desiredWorldCoverage = (totalWorldSize / 3); // WIP - How much relative space our continent should take relative to world size.
                 int currentWorldCoverage = 1; // How much relative space our continent is taking relative to world size.
                 double percentageOfWorldCoverage = currentWorldCoverage / totalWorldSize;
-                int probabilityThreshold = 100; // The number that a random int needs to be lower than in order to place a tile.
+                int probabilityThreshold = 50; // The number that a random int needs to be lower than in order to place a tile.
                 int consecutiveTilesPlaced = 0;
                 
                 world.ModifyTileBiome(continentStart1, 1);
@@ -96,10 +96,10 @@ public class WorldGenerator : MonoBehaviour
                                 int randomInteger = random.NextInt(0, 100);
                                 
                                 // Random chance the Tile won't be changed
-                                if (randomInteger < probabilityThreshold - (percentageOfWorldCoverage * 100) - (consecutiveTilesPlaced * 10))
+                                if (randomInteger < probabilityThreshold - (percentageOfWorldCoverage * 50) - (consecutiveTilesPlaced * 10))
                                 {
                                     // Random chance the neighbor won't be added to the queue. 
-                                    if (randomInteger < probabilityThreshold - (percentageOfWorldCoverage * 100) -
+                                    if (randomInteger < probabilityThreshold - (percentageOfWorldCoverage * 50) -
                                         (consecutiveTilesPlaced * 10))
                                     {
                                         queue.Enqueue(neighborLocation);

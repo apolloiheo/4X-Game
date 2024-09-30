@@ -67,7 +67,7 @@ public class WorldGenerator : MonoBehaviour
             case 2: // Two Continents
                 
                 int totalWorldSize = world.GetLength() * world.GetHeight(); 
-                int desiredWorldCoverage = (totalWorldSize / 3); // WIP - How much relative space our continent should take relative to world size.
+                int desiredWorldCoverage = (totalWorldSize / 4) * 2; // WIP - How much relative space our continent should take relative to world size.
                 int currentWorldCoverage = 1; // How much relative space our continent is taking relative to world size.
                 double percentageOfWorldCoverage = currentWorldCoverage / totalWorldSize;
                 int probabilityThreshold = 50; // The number that a random int needs to be lower than in order to place a tile.

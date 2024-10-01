@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 
-public class World : MonoBehaviour
+public class World
 {
     // Instance Attributes
     private int _length;
@@ -128,7 +128,17 @@ public class World : MonoBehaviour
                 output += "\n";
             }
         }
-        
         Debug.Log(output);
+    }
+
+    public void TestPathfinder(int x1, int y1, int x2, int y2)
+    {
+        Debug.Log(_world[x1, y1].GetNeighbors().Length);
+        Debug.Log(_world[x1, y1]);
+        Dictionary<Tile, Tile> path = Pathfinder.AStar(_world[x1, y1], _world[x2, y2]);
+        foreach (var item in path)
+        {
+            Debug.Log(item.Key.ToString()); 
+        }
     }
 }

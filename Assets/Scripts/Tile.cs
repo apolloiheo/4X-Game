@@ -419,5 +419,4 @@ public class Tile : MonoBehaviour
     {
         return _yields;
     }
-
 }

@@ -134,7 +134,6 @@ public class World : MonoBehaviour
                 output += "\n";
             }
         }
-        
         Debug.Log(output);
     }
     
@@ -158,8 +157,6 @@ public class World : MonoBehaviour
     {
         _world[point.x, point.y].SetResource(resource);
     }
-    
-    
     
     // Getter Methods
 

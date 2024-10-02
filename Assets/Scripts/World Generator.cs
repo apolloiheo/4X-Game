@@ -19,7 +19,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(43333333);
+        _random = new Random(4567657);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -56,7 +56,7 @@ public class WorldGenerator : MonoBehaviour
             case 1: // One Continent
                 break;
             case 2: // Two Continents
-                // Determine the random X & Y starting points of continents
+                // Determine the random X & Y starting points of 2 continents
                 int continentStartXWest = random.NextInt((world.GetLength() / 10) * 2, (world.GetLength() / 10) * 3);
                 int continentStartYWest = random.NextInt((world.GetHeight() / 10) * 4, (world.GetHeight() / 10) * 6);
                 int continentStartXEast = random.NextInt((world.GetLength() / 10) * 7, (world.GetLength() / 10) * 8);
@@ -66,37 +66,45 @@ public class WorldGenerator : MonoBehaviour
                 Point continentStart1 = new Point(continentStartXWest, continentStartYWest);
                 Point continentStart2 = new Point(continentStartXEast, continentStartYEast);
 
+                // Store some important factors
                 int totalWorldSize = world.GetLength() * world.GetHeight();
-                int desiredWorldCoverage = (totalWorldSize / 10) * 4; // WIP - How much relative space our continent should take relative to world size.
-                int currentWorldCoverage = 1; // How much relative space our continent is taking relative to world size.
-                double percentageOfWorldCoverage = currentWorldCoverage / totalWorldSize;
-                int probabilityThreshold = 20; // Base percentage of likelihood to NOT place Tile.
+                double desiredWorldCoverage = totalWorldSize * random.NextDouble(.45,.55); // Some random percentage of world size between 45-55%
+                int currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
+                double percentageOfWorldCoverage = currentWorldCoverage / totalWorldSize; // ^ as a percentage
+                int probabilityThreshold = 20; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
+                int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
+                int failureFactor = 5; // The probability factor power of each consecutive failure.
 
-                // Make a queue of the Tiles from which to spread to neighbors (continentStart1 and continentStart2 are first)
+                // Instantiate a queue of Points (to reference the points of Tiles)
                 Queue<Point> queue = new Queue<Point>();
 
-                // Add all the neighbors of each continents start to the queue
+                // Add all neighbors of the first continent to the queue
                 foreach (Tile t in world.GetTile(continentStart1).GetNeighbors())
                 {
                     queue.Enqueue(new Point(t.GetXPos(), t.GetYPos()));
                 }
                 
-                // Turn those two points to plains (or to a market of where the continent started)
+                // Turn both continent starting points to land.
                 world.ModifyTileBiome(continentStart1, 1);
                 world.ModifyTileBiome(continentStart2, 1);
+                
+                // The percentage of land coverage that the first continent will take before switching to building the second.
                 double continentSwitch = random.NextDouble(0.40, 0.60);
+                // Tells the while loop when the first continent is done.
                 bool continentSwitched = false;
                 
-                // Stop when our continents have reached the desiredLandCoverage
+                // Stop when both continents have reached the desired LandCoverage
                 while (currentWorldCoverage < desiredWorldCoverage)
                 {
-                    // At some random point, clear the queue and work on the other continent
+                    // If current coverage has reached the point to switch to the other continent
                     if (currentWorldCoverage >= desiredWorldCoverage * continentSwitch && !continentSwitched)
                     {
+                        // Set to true so this does not repeat
                         continentSwitched = true;
+                        // Clear the previous continent's queue
                         queue.Clear();
                         
-                        // Add all the neighbors of each continents start to the queue
+                        // Add all the neighbors of continent #2 to the queue.
                         foreach (Tile t in world.GetTile(continentStart2).GetNeighbors())
                         {
                             queue.Enqueue(new Point(t.GetXPos(), t.GetYPos()));
@@ -121,14 +129,20 @@ public class WorldGenerator : MonoBehaviour
                     {
                         // Randomly choose the next Neighbor Tile to expand to and set it to currentNeighbor
                         int nextNeighborIndex = random.NextInt(0, possibleNeighbors.Count - 1);
+                        // Reference to the current neighbor
                         Tile currentNeighbor = possibleNeighbors[nextNeighborIndex];
                         // Store its location
                         Point neighborLocation = new Point(currentNeighbor.GetXPos(), currentNeighbor.GetYPos());
-                        // Probability factor
-                        int probability = random.NextInt(0, 100); // A random number between 0 - 100
+                        
+                        // Probability - a random number from 1 to 100
+                        int probability = random.NextInt(0, 100); 
+                        
+                        // Set this to 1, at the extremes of the map to make it way more likely to stop tiles from spreading. 
                         int divisionFactor = 2;
                         
-                        int heightFactor; // Increases the closer currentNeighbor is to 0 or worldHeight
+                        // Increases the closer currentNeighbor's Y is to 0 or worldHeight
+                        int heightFactor; 
+                        
                         if (currentNeighbor.GetYPos() < world.GetHeight() / 2)
                         {
                             if (currentNeighbor.GetYPos() < (world.GetHeight() / 10) * 1)
@@ -145,8 +159,9 @@ public class WorldGenerator : MonoBehaviour
                             }
                             heightFactor = (currentNeighbor.GetYPos() - (world.GetHeight() / 2)) / divisionFactor;
                         }
-
-                        int distanceToCenterFactor; // Increases the closer currentNeighbor is to worldLength / 2
+                        
+                        // Increases the closer currentNeighbor's X is to the center X of the world length.
+                        int distanceToCenterFactor; 
                         
                         if (currentNeighbor.GetXPos() < world.GetLength() / 2)
                         {
@@ -164,8 +179,8 @@ public class WorldGenerator : MonoBehaviour
                             }
                             distanceToCenterFactor = ((world.GetLength() - (currentNeighbor.GetXPos())) / divisionFactor);
                         }
-                        
-                        int distanceToEdgeFactor; // Increase the closer you are to 0 or world.Length
+                        // Increases the closer currentNeighbor's X is to 0 or to max world.Length
+                        int distanceToEdgeFactor; 
                         if (currentNeighbor.GetXPos() < world.GetLength() / 2)
                         {
                             if (currentNeighbor.GetXPos() < (world.GetLength() / 10) * 1)
@@ -182,10 +197,12 @@ public class WorldGenerator : MonoBehaviour
                             }
                             distanceToEdgeFactor = (currentNeighbor.GetXPos() - (world.GetLength() / 2)) / divisionFactor;
                         }
-
-                        // Random chance the Tile won't be changed probability must be higher than our threshold.
-                        if (probability > probabilityThreshold + heightFactor + distanceToCenterFactor + distanceToEdgeFactor)
+                        
+                        // Add all the factors to the probability threshold. Roll a number from 0-100 and see if it expands the tile.
+                        if (probability > probabilityThreshold + heightFactor + distanceToCenterFactor + distanceToEdgeFactor - (consecutiveFailures * failureFactor))
                         {
+                            // Reset consecutive failures
+                            consecutiveFailures = 0;
                             // Add the neighbor to our Point Queue
                             queue.Enqueue(neighborLocation);
                             
@@ -194,6 +211,11 @@ public class WorldGenerator : MonoBehaviour
                             
                             // Updates World Coverage
                             currentWorldCoverage++;
+                        }
+                        else
+                        {
+                            // Update consecutiveFailures
+                            consecutiveFailures++;
                         }
                         // Once it's been processed remove it from the possibleNeighbors list.
                         possibleNeighbors.Remove(currentNeighbor);

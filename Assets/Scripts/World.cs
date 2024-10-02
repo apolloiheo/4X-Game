@@ -8,10 +8,6 @@ public class World : MonoBehaviour
     // Instance Attributes
     private int _length;
     private int _height;
-    private int _continents; // # of Continents in our world. Could be 1, 2 or 3.
-    Point _continentPoint1;
-    Point _continentPoint2;
-    Point _continentPoint3;
     private Tile[,] _world; // 2D Array of Tiles
     
     // Constants
@@ -20,11 +16,10 @@ public class World : MonoBehaviour
     // Class Methods
     
     /* World Constructor */
-    public World(int length, int height, int continents)
+    public World(int length, int height)
     {
         _length = length;  
         _height = height;
-        _continents = continents;
         _world = new Tile[length, height];
     }
     
@@ -108,7 +103,7 @@ public class World : MonoBehaviour
     public void PrintWorld()
     {
         string worldString = "";
-        for (int y = 0; y < _height; y++)
+        for (int y = _height - 1; y >= 0; y--)
         {
             for (int x = 0; x < _length; x++)
             {
@@ -169,27 +164,7 @@ public class World : MonoBehaviour
     {
         return _height;
     }
-
-    public int GetContinents()
-    {
-        return _continents;
-    }
-
-    public Point GetContinentPoint1()
-    {
-        return _continentPoint1;
-    }
-
-    public Point GetContinentPoint2()
-    {
-        return _continentPoint2;
-    }
-
-    public Point GetContinentPoint3()
-    {
-        return _continentPoint3;
-    }
-
+    
     public Tile[,] GetWorld()
     {
         return _world;
@@ -204,24 +179,5 @@ public class World : MonoBehaviour
     {
         return _world[point.x, point.y];
     }
-    
-    // Setter Methods
-
-    public void SetContinentPoint1(Point point)
-    {
-        _continentPoint1 = point;
-    }
-
-    public void SetContinentPoint2(Point point)
-    {
-        _continentPoint2 = point;
-    }
-
-    public void SetContinentPoint3(Point point)
-    {
-        _continentPoint3 = point;
-    }
-    
-    
     
 }

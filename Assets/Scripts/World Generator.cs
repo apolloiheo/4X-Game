@@ -8,6 +8,7 @@ using Random = Unity.Mathematics.Random;
 public class WorldGenerator : MonoBehaviour
 {
     private Random _random; // Random determintic factor
+    private int _continents;
 
     public WorldGenerator()
     {
@@ -18,8 +19,9 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(123456789);
-        World world = new World(length, height, continents);
+        _random = new Random(43333333);
+        _continents = continents;
+        World world = new World(length, height);
         world.FillEmptyWorld(7);
         world.SetTileAdjacency();
         DetermineContinents(world);
@@ -39,15 +41,6 @@ public class WorldGenerator : MonoBehaviour
         int worldLength = world.GetLength();
         int worldHeight = world.GetHeight();
         
-        if (world.GetContinents() == 1)
-        {
-            world.SetContinentPoint1(new Point(worldLength / 2, worldHeight / 2));
-            
-        } else if (world.GetContinents() == 2)
-        {
-            world.SetContinentPoint1(new Point(worldLength / 4, worldHeight / 2));
-            world.SetContinentPoint2(new Point((worldLength / 4) * 3 , worldHeight / 2));
-        }
     }
 
     /* Determine the area of Continents proportional to world size.
@@ -57,11 +50,8 @@ public class WorldGenerator : MonoBehaviour
      */
     private void DetermineLand(World world, Random random)
     {
-        
-        Point continentStart3 = world.GetContinentPoint3();
-        
         // Different Procedures given different numbers of continents
-        switch (world.GetContinents())
+        switch (_continents)
         {
             case 1: // One Continent
                 break;
@@ -71,36 +61,54 @@ public class WorldGenerator : MonoBehaviour
                 int continentStartYWest = random.NextInt((world.GetHeight() / 10) * 4, (world.GetHeight() / 10) * 6);
                 int continentStartXEast = random.NextInt((world.GetLength() / 10) * 7, (world.GetLength() / 10) * 8);
                 int continentStartYEast = random.NextInt((world.GetHeight() / 10) * 4, (world.GetHeight() / 10) * 6);
-        
+
                 // Store those X & Y in a ContinentStart Point for each Continent
                 Point continentStart1 = new Point(continentStartXWest, continentStartYWest);
                 Point continentStart2 = new Point(continentStartXEast, continentStartYEast);
-                
-                int totalWorldSize = world.GetLength() * world.GetHeight(); 
-                int desiredWorldCoverage = (totalWorldSize / 4) * 2; // WIP - How much relative space our continent should take relative to world size.
+
+                int totalWorldSize = world.GetLength() * world.GetHeight();
+                int desiredWorldCoverage = (totalWorldSize / 10) * 4; // WIP - How much relative space our continent should take relative to world size.
                 int currentWorldCoverage = 1; // How much relative space our continent is taking relative to world size.
                 double percentageOfWorldCoverage = currentWorldCoverage / totalWorldSize;
-                int probabilityThreshold = 50; // The number that a random int needs to be lower than in order to place a tile.
-                int consecutiveTilesPlaced = 0; // How many Tiles it has successfully placed in a row (So we can determine the likely good to skip Tiles.
-                
+                int probabilityThreshold = 20; // Base percentage of likelihood to NOT place Tile.
+
                 // Make a queue of the Tiles from which to spread to neighbors (continentStart1 and continentStart2 are first)
                 Queue<Point> queue = new Queue<Point>();
-                queue.Enqueue(continentStart1);
-                queue.Enqueue(continentStart2);
+
+                // Add all the neighbors of each continents start to the queue
+                foreach (Tile t in world.GetTile(continentStart1).GetNeighbors())
+                {
+                    queue.Enqueue(new Point(t.GetXPos(), t.GetYPos()));
+                }
                 
                 // Turn those two points to plains (or to a market of where the continent started)
                 world.ModifyTileBiome(continentStart1, 1);
                 world.ModifyTileBiome(continentStart2, 1);
+                double continentSwitch = random.NextDouble(0.40, 0.60);
+                bool continentSwitched = false;
                 
                 // Stop when our continents have reached the desiredLandCoverage
                 while (currentWorldCoverage < desiredWorldCoverage)
                 {
+                    // At some random point, clear the queue and work on the other continent
+                    if (currentWorldCoverage >= desiredWorldCoverage * continentSwitch && !continentSwitched)
+                    {
+                        continentSwitched = true;
+                        queue.Clear();
+                        
+                        // Add all the neighbors of each continents start to the queue
+                        foreach (Tile t in world.GetTile(continentStart2).GetNeighbors())
+                        {
+                            queue.Enqueue(new Point(t.GetXPos(), t.GetYPos()));
+                        }
+                    }
+
                     // Deque the first Tile
                     Tile currentTile = world.GetTile(queue.Dequeue());
                     // Instantiate an empty List of possible neighbors
                     List<Tile> possibleNeighbors = new List<Tile>();
 
-                    // If it's neighbors are not null and are Ocean, store them in possibleNeighbors.
+                    // If its neighbors are not null and are Ocean, store them in possibleNeighbors.
                     foreach (Tile t in currentTile.GetNeighbors())
                     {
                         if (t is not null && t.GetBiome() == 7)
@@ -108,20 +116,75 @@ public class WorldGenerator : MonoBehaviour
                             possibleNeighbors.Add(t);
                         }
                     }
-                    
-                    // Initial Convert neighbor's to Plains.
+
                     while (possibleNeighbors.Count > 0)
                     {
-                        // Randomly choose the next Tile to expand to.
-                        int nextNeighbor = random.NextInt(0, possibleNeighbors.Count - 1);
-                        // T is the current neighbor TIle
-                        Tile t = possibleNeighbors[nextNeighbor];
+                        // Randomly choose the next Neighbor Tile to expand to and set it to currentNeighbor
+                        int nextNeighborIndex = random.NextInt(0, possibleNeighbors.Count - 1);
+                        Tile currentNeighbor = possibleNeighbors[nextNeighborIndex];
                         // Store its location
-                        Point neighborLocation = new Point(t.GetXPos(), t.GetYPos());
+                        Point neighborLocation = new Point(currentNeighbor.GetXPos(), currentNeighbor.GetYPos());
                         // Probability factor
                         int probability = random.NextInt(0, 100); // A random number between 0 - 100
-                        // Random chance the Tile won't be changed
-                        if (probability > probabilityThreshold)
+                        int divisionFactor = 2;
+                        
+                        int heightFactor; // Increases the closer currentNeighbor is to 0 or worldHeight
+                        if (currentNeighbor.GetYPos() < world.GetHeight() / 2)
+                        {
+                            if (currentNeighbor.GetYPos() < (world.GetHeight() / 10) * 1)
+                            {
+                                divisionFactor = 1;
+                            }
+                            heightFactor = (world.GetHeight() / 2) - currentNeighbor.GetYPos() / divisionFactor;
+                        }
+                        else
+                        {
+                            if (currentNeighbor.GetYPos() > (world.GetHeight() / 10) * 9)
+                            {
+                                divisionFactor = 1;
+                            }
+                            heightFactor = (currentNeighbor.GetYPos() - (world.GetHeight() / 2)) / divisionFactor;
+                        }
+
+                        int distanceToCenterFactor; // Increases the closer currentNeighbor is to worldLength / 2
+                        
+                        if (currentNeighbor.GetXPos() < world.GetLength() / 2)
+                        {
+                            if (currentNeighbor.GetXPos() > (world.GetLength() / 10) * 4)
+                            {
+                                divisionFactor = 1;
+                            }
+                            distanceToCenterFactor = currentNeighbor.GetXPos() / divisionFactor;
+                        }
+                        else
+                        {
+                            if (currentNeighbor.GetXPos() < (world.GetLength() / 10) * 6)
+                            {
+                                divisionFactor = 1;
+                            }
+                            distanceToCenterFactor = ((world.GetLength() - (currentNeighbor.GetXPos())) / divisionFactor);
+                        }
+                        
+                        int distanceToEdgeFactor; // Increase the closer you are to 0 or world.Length
+                        if (currentNeighbor.GetXPos() < world.GetLength() / 2)
+                        {
+                            if (currentNeighbor.GetXPos() < (world.GetLength() / 10) * 1)
+                            {
+                                divisionFactor = 1;
+                            }
+                            distanceToEdgeFactor = ((world.GetLength() / 2) - currentNeighbor.GetXPos()) / divisionFactor;
+                        }
+                        else
+                        {
+                            if (currentNeighbor.GetXPos() > (world.GetLength() / 10) * 9)
+                            {
+                                divisionFactor = 1;
+                            }
+                            distanceToEdgeFactor = (currentNeighbor.GetXPos() - (world.GetLength() / 2)) / divisionFactor;
+                        }
+
+                        // Random chance the Tile won't be changed probability must be higher than our threshold.
+                        if (probability > probabilityThreshold + heightFactor + distanceToCenterFactor + distanceToEdgeFactor)
                         {
                             // Add the neighbor to our Point Queue
                             queue.Enqueue(neighborLocation);
@@ -133,7 +196,7 @@ public class WorldGenerator : MonoBehaviour
                             currentWorldCoverage++;
                         }
                         // Once it's been processed remove it from the possibleNeighbors list.
-                        possibleNeighbors.Remove(t);
+                        possibleNeighbors.Remove(currentNeighbor);
                     }
                 }
                 break;

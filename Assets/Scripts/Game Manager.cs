@@ -33,24 +33,8 @@ public class GameManager : MonoBehaviour
         {
             for (int y = 0; y < world.GetHeight(); y++)
             {
-                // Current Tile Position Vector 3
-                Vector3Int tilePosition = new Vector3Int(x, y, 0);
-                UnityEngine.Tilemaps.Tile tile = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
-                tilemap.SetTile(tilePosition, tile);
+                // To be implemented
                 
-                if (world.GetTile(x, y).GetBiome() == 7)
-                {
-                    tilemap.SetColor(tilePosition, Color.blue);
-                } else if (world.GetTile(x, y).GetBiome() == 0 || world.GetTile(x, y).GetBiome() == 1)
-                {
-                    tilemap.SetColor(tilePosition, Color.yellow);
-                } else if (world.GetTile(x, y).GetBiome() == 5)
-                {
-                    tilemap.SetColor(tilePosition, Color.white);
-                } else if (world.GetTile(x, y).GetBiome() == 3)
-                {
-                    tilemap.SetColor(tilePosition, Color.gray);
-                }
             }
         }
     }

@@ -19,7 +19,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(756757);
+        _random = new Random(4545454);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -40,7 +40,6 @@ public class WorldGenerator : MonoBehaviour
     {
         int worldLength = world.GetLength();
         int worldHeight = world.GetHeight();
-        
     }
 
     /* Determine the area of Continents proportional to world size.
@@ -284,7 +283,7 @@ public class WorldGenerator : MonoBehaviour
             }
         }
         
-        // Add Coast Tiles
+        /*// Add Coast Tiles
         for (int x = 0; x < world.GetLength(); x++)
         {
             for (int y = 0; y < world.GetHeight(); y++)
@@ -300,16 +299,14 @@ public class WorldGenerator : MonoBehaviour
                     }
                 }
             }
-        }
+        }*/
         
     }
-    
-    
 
     /* Determine Hills and Mountains  */
     private void DetermineTerrain(World world)
     {
-        
+        // To be implemented
     }
     
     /* Determine Rivers - From Mountains to Coast  */ 

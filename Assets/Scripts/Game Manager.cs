@@ -5,7 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] public Tilemap tilemap;
+    public Tilemap tilemap;
+    public Tile tile;
     
     // Start is called before the first frame update
     void Start()
@@ -33,24 +34,31 @@ public class GameManager : MonoBehaviour
         {
             for (int y = 0; y < world.GetHeight(); y++)
             {
-                // Current Tile Position Vector 3
-                Vector3Int tilePosition = new Vector3Int(x, y, 0);
-                UnityEngine.Tilemaps.Tile tile = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
-                tilemap.SetTile(tilePosition, tile);
-                
-                if (world.GetTile(x, y).GetBiome() == 7)
+                if (world.GetTile(x, y).GetBiome() == 1)
                 {
-                    tilemap.SetColor(tilePosition, Color.blue);
-                } else if (world.GetTile(x, y).GetBiome() == 0 || world.GetTile(x, y).GetBiome() == 1)
+                    tile.color = new Color32(145, 158, 11, 255);
+                    
+                } else if (world.GetTile(x, y).GetBiome() == 2)
                 {
-                    tilemap.SetColor(tilePosition, Color.yellow);
-                } else if (world.GetTile(x, y).GetBiome() == 5)
-                {
-                    tilemap.SetColor(tilePosition, Color.white);
+                    tile.color = new Color32(92, 128, 82, 255);
                 } else if (world.GetTile(x, y).GetBiome() == 3)
                 {
-                    tilemap.SetColor(tilePosition, Color.gray);
+                    tile.color = new Color32(144, 158, 141, 255);
+                } else if (world.GetTile(x, y).GetBiome() == 4)
+                {
+                    tile.color = new Color32(255, 217, 112, 255);
+                } else if (world.GetTile(x, y).GetBiome() == 5)
+                {
+                    tile.color = Color.white;
+                } else if (world.GetTile(x, y).GetBiome() == 6)
+                {
+                    tile.color = new Color32(110, 187, 255, 255);
+                } else if (world.GetTile(x, y).GetBiome() == 7)
+                {
+                    tile.color = new Color32(20, 102, 184, 255);
                 }
+                
+                tilemap.SetTile(new Vector3Int(y, x, 0), tile);
             }
         }
     }

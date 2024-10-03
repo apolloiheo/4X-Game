@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEditorInternal;
 using UnityEngine;
 
-public class Tile : MonoBehaviour
+public class GameTile : MonoBehaviour
 {
     /*ID INDEX  
         Biomes ID:
@@ -56,7 +56,7 @@ public class Tile : MonoBehaviour
     private int _resource; // The resource on this Tile. Could be a specific Bonus, Luxury, Strategic Resource, or no Resource. CHECK ID INDEX ABOVE^
     private int _improvement; // The Tile Improvement on this Tile or 0 for No Improvement. CHECK ID INDEX ABOVE^
     private int _mc; // Movement cost - the amount of Movement Points a Unit must spend to move unto that Tile.
-    private Tile[] _neighbors; // Adjacent Tiles to these tiles. Index corresponds to Edge assuming flat top/bottom hexagons. Top is 0, Bottom is 3
+    private GameTile[] _neighbors; // Adjacent Tiles to these tiles. Index corresponds to Edge assuming flat top/bottom hexagons. Top is 0, Bottom is 3
     private bool[] _riverAdj; // Are the Tile edges Adjacent to a river? -> [0,1,2,3,4,5] Represent edges on a hexagon starting from the Top moving clockwise. Top is 0, Bottom is 3
     private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile). 
     private Settlement _settlement; // The Settlement on this Tile. May be null (no Settlement on Tile).
@@ -70,14 +70,14 @@ public class Tile : MonoBehaviour
     // Class Methods
     
     /* Natural Tile Constructor - Only Biome, Terrain, Feature, and Resource. (Good for world gen) */
-    public Tile(int biome, int terrain, int feature, int resource)
+    public GameTile(int biome, int terrain, int feature, int resource)
     {
         _biome = biome;
         _terrain = terrain;
         _feature = feature;
         _resource = resource;
         _improvement = Zero;
-        _neighbors = new Tile[TileEdges];
+        _neighbors = new GameTile[TileEdges];
         _unit = null;
         _settlement = null;
         _mc = CalculateMovementCost();
@@ -86,14 +86,14 @@ public class Tile : MonoBehaviour
     }
     
     /* Full Tile Constructor (Good for testing) */
-    public Tile(int biome, int terrain, int feature,  int resource, int tileImprovement, Unit unit, Settlement settlement)
+    public GameTile(int biome, int terrain, int feature,  int resource, int tileImprovement, Unit unit, Settlement settlement)
     {
         _biome = biome;
         _terrain = terrain;
         _feature = feature;
         _resource = resource;
         _improvement = tileImprovement;
-        _neighbors = new Tile[TileEdges];
+        _neighbors = new GameTile[TileEdges];
         _unit = unit;
         _settlement = settlement;
         _riverAdj = CalculateRiverAdjacency();
@@ -344,7 +344,7 @@ public class Tile : MonoBehaviour
         _yields = CalculateYields();
     }
 
-    public void SetNeighbor(int edge, Tile neighbor)
+    public void SetNeighbor(int edge, GameTile neighbor)
     {
         _neighbors[edge] = neighbor;
     }
@@ -395,7 +395,7 @@ public class Tile : MonoBehaviour
         return _improvement;
     }
 
-    public Tile[] GetNeighbors()
+    public GameTile[] GetNeighbors()
     {
         return _neighbors;
     }

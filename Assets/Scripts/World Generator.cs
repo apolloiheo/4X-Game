@@ -19,7 +19,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(756757);
+        _random = new Random(4545454);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -40,7 +40,6 @@ public class WorldGenerator : MonoBehaviour
     {
         int worldLength = world.GetLength();
         int worldHeight = world.GetHeight();
-        
     }
 
     /* Determine the area of Continents proportional to world size.
@@ -79,7 +78,7 @@ public class WorldGenerator : MonoBehaviour
                 Queue<Point> queue = new Queue<Point>();
 
                 // Add all neighbors of the first continent to the queue
-                foreach (Tile t in world.GetTile(continentStart1).GetNeighbors())
+                foreach (GameTile t in world.GetTile(continentStart1).GetNeighbors())
                 {
                     queue.Enqueue(new Point(t.GetXPos(), t.GetYPos()));
                 }
@@ -105,19 +104,19 @@ public class WorldGenerator : MonoBehaviour
                         queue.Clear();
                         
                         // Add all the neighbors of continent #2 to the queue.
-                        foreach (Tile t in world.GetTile(continentStart2).GetNeighbors())
+                        foreach (GameTile t in world.GetTile(continentStart2).GetNeighbors())
                         {
                             queue.Enqueue(new Point(t.GetXPos(), t.GetYPos()));
                         }
                     }
 
                     // Deque the first Tile
-                    Tile currentTile = world.GetTile(queue.Dequeue());
+                    GameTile currentGameTile = world.GetTile(queue.Dequeue());
                     // Instantiate an empty List of possible neighbors
-                    List<Tile> possibleNeighbors = new List<Tile>();
+                    List<GameTile> possibleNeighbors = new List<GameTile>();
 
                     // If its neighbors are not null and are Ocean, store them in possibleNeighbors.
-                    foreach (Tile t in currentTile.GetNeighbors())
+                    foreach (GameTile t in currentGameTile.GetNeighbors())
                     {
                         if (t is not null && t.GetBiome() == 7)
                         {
@@ -130,7 +129,7 @@ public class WorldGenerator : MonoBehaviour
                         // Randomly choose the next Neighbor Tile to expand to and set it to currentNeighbor
                         int nextNeighborIndex = random.NextInt(0, possibleNeighbors.Count - 1);
                         // Reference to the current neighbor
-                        Tile currentNeighbor = possibleNeighbors[nextNeighborIndex];
+                        GameTile currentNeighbor = possibleNeighbors[nextNeighborIndex];
                         // Store its location
                         Point neighborLocation = new Point(currentNeighbor.GetXPos(), currentNeighbor.GetYPos());
                         
@@ -206,8 +205,8 @@ public class WorldGenerator : MonoBehaviour
                             // Add the neighbor to our Point Queue
                             queue.Enqueue(neighborLocation);
                             
-                            // Modify the Tile's Biome (0 for now for visibility)
-                            world.ModifyTileBiome(neighborLocation, 0);
+                            // Modify the Tile's Biome 
+                            world.ModifyTileBiome(neighborLocation, 1);
                             
                             // Updates World Coverage
                             currentWorldCoverage++;
@@ -258,7 +257,7 @@ public class WorldGenerator : MonoBehaviour
             for (int y = 0; y < world.GetHeight(); y++)
             {
                 // All Plains above/below the North/South Tundra Line should be tundra
-                if (world.GetTile(x, y).GetBiome() == 0)
+                if (world.GetTile(x, y).GetBiome() == 1)
                 {
                     if (y <= southTundraLine || y >= northTundraLine)
                     {
@@ -269,7 +268,7 @@ public class WorldGenerator : MonoBehaviour
                 // Any Plains adjacent to Snow should be Tundra.
                 if (world.GetTile(x, y).GetBiome() == 5)
                 {
-                    foreach (Tile neighbor in world.GetTile(x, y).GetNeighbors())
+                    foreach (GameTile neighbor in world.GetTile(x, y).GetNeighbors())
                     {
                         if (neighbor is not null)
                         {
@@ -291,7 +290,7 @@ public class WorldGenerator : MonoBehaviour
             {
                 if (world.GetTile(x, y).GetBiome() == 7)
                 {
-                    foreach (Tile neighbor in world.GetTile(x, y).GetNeighbors())
+                    foreach (GameTile neighbor in world.GetTile(x, y).GetNeighbors())
                     {
                         if (neighbor is not null && neighbor.GetBiome() != 7 && neighbor.GetBiome() != 6)
                         {
@@ -303,13 +302,11 @@ public class WorldGenerator : MonoBehaviour
         }
         
     }
-    
-    
 
     /* Determine Hills and Mountains  */
     private void DetermineTerrain(World world)
     {
-        
+        // To be implemented
     }
     
     /* Determine Rivers - From Mountains to Coast  */ 

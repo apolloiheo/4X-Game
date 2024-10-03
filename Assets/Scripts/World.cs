@@ -9,7 +9,6 @@ public class World : MonoBehaviour
     private int _length;
     private int _height;
     private Tile[,] _world; // 2D Array of Tiles
-    private int _continents; // # of Continents in our world. Could be 1, 2 or 3.
     
     // Constants
     private const int DefaultBiomeFill = 7; // 1.Plains, 2.Grassland, 3.Tundra, 4.Desert, 5.Snow, 6.Coast, 7.Ocean
@@ -17,11 +16,10 @@ public class World : MonoBehaviour
     // Class Methods
     
     /* World Constructor */
-    public World(int length, int height, int continents)
+    public World(int length, int height)
     {
         _length = length;  
         _height = height;
-        _continents = continents;
         _world = new Tile[length, height];
     }
     
@@ -105,7 +103,7 @@ public class World : MonoBehaviour
     public void PrintWorld()
     {
         string worldString = "";
-        for (int y = 0; y < _height; y++)
+        for (int y = _height - 1; y >= 0; y--)
         {
             for (int x = 0; x < _length; x++)
             {
@@ -131,7 +129,55 @@ public class World : MonoBehaviour
                 output += "\n";
             }
         }
-        
         Debug.Log(output);
     }
+    
+    // Tile Modification Methods
+    public void ModifyTileBiome(Point point, int biome)
+    {
+        _world[point.x, point.y].SetBiome(biome); 
+    }
+
+    public void ModifyTileTerrain(Point point, int terrain)
+    {
+        _world[point.x, point.y].SetTerrain(terrain);
+    }
+
+    public void ModifyTileFeature(Point point, int feature)
+    {
+        _world[point.x, point.y].SetFeature(feature);
+    }
+
+    public void ModifyTileResource(Point point, int resource)
+    {
+        _world[point.x, point.y].SetResource(resource);
+    }
+    
+    // Getter Methods
+
+    public int GetLength()
+    {
+        return _length;
+    }
+
+    public int GetHeight()
+    {
+        return _height;
+    }
+    
+    public Tile[,] GetWorld()
+    {
+        return _world;
+    }
+
+    public Tile GetTile(int x, int y)
+    {
+        return _world[x, y];
+    }
+
+    public Tile GetTile(Point point)
+    {
+        return _world[point.x, point.y];
+    }
+    
 }

@@ -8,7 +8,7 @@ public class World : MonoBehaviour
     // Instance Attributes
     private int _length;
     private int _height;
-    private Tile[,] _world; // 2D Array of Tiles
+    private GameTile[,] _world; // 2D Array of Tiles
     
     // Constants
     private const int DefaultBiomeFill = 7; // 1.Plains, 2.Grassland, 3.Tundra, 4.Desert, 5.Snow, 6.Coast, 7.Ocean
@@ -20,7 +20,7 @@ public class World : MonoBehaviour
     {
         _length = length;  
         _height = height;
-        _world = new Tile[length, height];
+        _world = new GameTile[length, height];
     }
     
     /* Fill an empty world with a starting Tile. */
@@ -31,14 +31,14 @@ public class World : MonoBehaviour
             for (int y = 0; y < _height; y++)
             {
                 // Instantiate default/background tile to fill world with
-                Tile tile = new Tile(DefaultBiomeFill, 0, 0, 0);
+                GameTile gameTile = new GameTile(DefaultBiomeFill, 0, 0, 0);
                 
                 // Record its X & Y position within its instance attributes
-                tile.SetXPos(x);
-                tile.SetYPos(y);
+                gameTile.SetXPos(x);
+                gameTile.SetYPos(y);
                 
                 // Store it in 2D array.
-                _world[x, y] = tile;
+                _world[x, y] = gameTile;
             }
         }
     }
@@ -165,17 +165,17 @@ public class World : MonoBehaviour
         return _height;
     }
     
-    public Tile[,] GetWorld()
+    public GameTile[,] GetWorld()
     {
         return _world;
     }
 
-    public Tile GetTile(int x, int y)
+    public GameTile GetTile(int x, int y)
     {
         return _world[x, y];
     }
 
-    public Tile GetTile(Point point)
+    public GameTile GetTile(Point point)
     {
         return _world[point.x, point.y];
     }

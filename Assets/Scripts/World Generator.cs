@@ -14,7 +14,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(5656556);
+        _random = new Random(3333333);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -52,10 +52,10 @@ public class WorldGenerator : MonoBehaviour
                 break;
             case 2: // Two Continents
                 // Determine the random X & Y starting points of 2 continents
-                int continentStartXWest = random.NextInt((world.GetLength() / 10) * 2, (world.GetLength() / 10) * 4);
-                int continentStartYWest = random.NextInt((world.GetHeight() / 10) * 3, (world.GetHeight() / 10) * 7);
-                int continentStartXEast = random.NextInt((world.GetLength() / 10) * 7, (world.GetLength() / 10) * 8);
-                int continentStartYEast = random.NextInt((world.GetHeight() / 10) * 4, (world.GetHeight() / 10) * 6);
+                int continentStartXWest = random.NextInt((int)(world.GetLength()  * .25), (int)(world.GetLength() * .35));
+                int continentStartYWest = random.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
+                int continentStartXEast = random.NextInt((int)(world.GetLength() * .65), (int)(world.GetLength() * .75));
+                int continentStartYEast = random.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
 
                 // Store those X & Y in a ContinentStart Point for each Continent
                 Point continentStart1 = new Point(continentStartXWest, continentStartYWest);

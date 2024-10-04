@@ -14,7 +14,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(322323);
+        _random = new Random(5656556);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -48,11 +48,12 @@ public class WorldGenerator : MonoBehaviour
         switch (_continents)
         {
             case 1: // One Continent
+                
                 break;
             case 2: // Two Continents
                 // Determine the random X & Y starting points of 2 continents
-                int continentStartXWest = random.NextInt((world.GetLength() / 10) * 2, (world.GetLength() / 10) * 3);
-                int continentStartYWest = random.NextInt((world.GetHeight() / 10) * 4, (world.GetHeight() / 10) * 6);
+                int continentStartXWest = random.NextInt((world.GetLength() / 10) * 2, (world.GetLength() / 10) * 4);
+                int continentStartYWest = random.NextInt((world.GetHeight() / 10) * 3, (world.GetHeight() / 10) * 7);
                 int continentStartXEast = random.NextInt((world.GetLength() / 10) * 7, (world.GetLength() / 10) * 8);
                 int continentStartYEast = random.NextInt((world.GetHeight() / 10) * 4, (world.GetHeight() / 10) * 6);
 

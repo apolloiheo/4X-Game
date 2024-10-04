@@ -8,6 +8,7 @@ public class Unit : MonoBehaviour
     private string _name; // The Unit's name.
     private int _health; // A Unit's current Health Points (Default of 100)
     private int _movementPoints; // A Unit's current Movement Points per turn.
+    private int _currentMovementPoints; // A Unit's remaining movement points this turn.
     private int _combatStrength; // A Unit's base Combat Strength Stat - used to determine Attack Damage and Defense Damage.
     private int _supplies; // A Unit's current Supplies stat - Determines how many turns it can stay out of your territory before taking damage.
     private int _attackRange; // The range of Tiles a Unit can attack from. (Melee: 0, Ranged: 1 - X).
@@ -61,8 +62,6 @@ public class Unit : MonoBehaviour
             SetTile(nextGameTile);
             SetMovementPoints(GetMovementPoints() - _gameTile.GetMovementCost()); // Reduce Unit's MP by tile's MC
         }
-        
-        
     }
 
     

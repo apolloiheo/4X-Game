@@ -6,11 +6,11 @@ public class Settlement : MonoBehaviour
 {
     private string _name;
     private Civilization _civilization; // Owner
-    private List<GameTile> _territory;
-    private List<GameTile> _workedTiles;
-    private int[] _yieldsPt; // [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4]
-    private int _population;
-    private int _foodSurplus;
+    private List<GameTile> _territory; // Tiles a Settlement controls.
+    private List<GameTile> _workedTiles; // Tiles in Territory that are being worked by a Population
+    private int[] _yieldsPt; // [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4] YieldsPT -> Yields Per Turn
+    private int _population; // The size of Settlement and the units you can assign to Tiles
+    private int _foodSurplus; // The build up of extra food needed to grow a Settlement.
     private int _combatStrength;
     private List<Building> _buildings;
     private List<CityProject> _projects;

@@ -7,14 +7,14 @@ public static class Position
 {
     // EvenQ and EvenQ to Axial isn't necessary, but exists in case we ever would want to work with offset coordinates for whatever reason
     // or if we need to convert the Axial coordinates back into the original tile's coordinates.
-    public static EvenQPos EvenQ(Tile a) { 
+    public static EvenQPos EvenQ(GameTile a) { 
         int col = a.GetXPos();
         int row = a.GetYPos() + (a.GetXPos() + (a.GetXPos() & 1)) / 2;
         return new EvenQPos(col, row);
         }
 
 
-    public static AxialPos Axial(Tile a) {
+    public static AxialPos Axial(GameTile a) {
         int q = a.GetXPos();
         int r = a.GetYPos() - (a.GetXPos() + (a.GetXPos() & 1)) / 2;
         return new AxialPos(q, r);
@@ -40,7 +40,7 @@ public static class Position
               + Mathf.Abs(a.r - b.r)) / 2;
           }
 
-    public static float axial_distance(Tile a, Tile b)
+    public static float axial_distance(GameTile a, GameTile b)
     {
         AxialPos posA = Axial(a);
         AxialPos posB = Axial(b);
@@ -48,7 +48,7 @@ public static class Position
     }
 
     // All in one
-    public static float cost_distance(Tile a, Tile b)
+    public static float cost_distance(GameTile a, GameTile b)
     {
         return axial_distance(a, b) * a.GetMovementCost();
     }

@@ -15,7 +15,7 @@ public class Unit : MonoBehaviour
     private bool _hasOrder; // Determines whether a Unit has already been given an order for this turn.
     private bool _exhausted; // Determines if a Unit still has moves to make this turn.
     private bool _fortified; // Determines if a Unit was ordered to Fortify this turn.
-    private Tile _tile; //The Tile this Unit is on. 
+    private GameTile _gameTile; //The Tile this Unit is on. 
     private Civilization _civilization; // The Civilization that owns this Unit.
     private bool[] _promotions; // Promotions are Unit powers/abilities - Array index determines whether a promotion/power has been unlocked. WILL BE REDONE INTO A NODE TREE LATER
 
@@ -39,7 +39,7 @@ public class Unit : MonoBehaviour
         _exhausted = false;
         _hasOrder = false;
         _fortified = false;
-        _tile = null;
+        _gameTile = null;
         _civilization = null;
         _promotions = new bool[TotalPromotions]; // No Promotions (booleans are initialized to False)
     }
@@ -132,9 +132,9 @@ public class Unit : MonoBehaviour
         _fortified = fortified;
     }
 
-    public void SetTile(Tile tile)
+    public void SetTile(GameTile gameTile)
     {
-        _tile = tile;
+        _gameTile = gameTile;
     }
 
     public void SetCivilization(Civilization civilization)
@@ -195,9 +195,9 @@ public class Unit : MonoBehaviour
         return _fortified;
     }
 
-    public Tile GetTile()
+    public GameTile GetTile()
     {
-        return _tile;
+        return _gameTile;
     }
     
     public bool[] GetPromotions()

@@ -8,12 +8,12 @@ public static class Pathfinder
 // if _terrain is 2 the tile is impassable.
 // C# version 9 doees not have a Priority Queue, so for now I'm going to borrow one from Red Blob
 {
-    public static Dictionary<Tile,Tile> AStar(Tile start, Tile goal)
+    public static Dictionary<GameTile,GameTile> AStar(GameTile start, GameTile goal)
     {
-        Dictionary<Tile,Tile> cameFrom = new Dictionary<Tile, Tile>();
-        Dictionary<Tile, double>  costSoFar = new Dictionary<Tile, double>();
+        Dictionary<GameTile,GameTile> cameFrom = new Dictionary<GameTile, GameTile>();
+        Dictionary<GameTile, double>  costSoFar = new Dictionary<GameTile, double>();
 
-        PriorityQueue<Tile, double> frontier = new PriorityQueue<Tile, double>();
+        PriorityQueue<GameTile, double> frontier = new PriorityQueue<GameTile, double>();
         Debug.Log(start);
         Debug.Log(goal);
         Debug.Log(frontier);
@@ -23,8 +23,8 @@ public static class Pathfinder
         costSoFar[start] = 0;
 
         while (frontier.Count > 0) {
-            Tile current = frontier.Dequeue();
-            if (current == goal)
+            GameTile current = frontier.Dequeue();
+            if (current.GetXPos() == goal.GetXPos() && current.GetYPos() == goal.GetYPos())
             {
                 break;
             }
@@ -32,23 +32,29 @@ public static class Pathfinder
             for (int x = 0; x < current.GetNeighbors().Length; x++)
             {
                 Debug.Log(x);
-                Tile neighbour = current.GetNeighbors()[x];
+                GameTile neighbour = current.GetNeighbors()[x];
+                if (neighbour == null)
+                {
+                    continue;
+                }
                 Debug.Log(neighbour);
                 /* if (neighbour.GetTerrain() == 2)
                 {
                     continue; 
                 } */
+                
                 double new_cost = costSoFar[current] + neighbour.GetMovementCost();
                 if (!costSoFar.ContainsKey(neighbour) || new_cost < costSoFar[neighbour])
                 {
                     costSoFar[neighbour] = new_cost;
-                    double priority = new_cost + Position.cost_distance(current, neighbour);
-                    frontier.Enqueue(current, priority);
+                    double priority = new_cost + Position.cost_distance(neighbour, goal);
+                    frontier.Enqueue(neighbour, priority);
                     cameFrom[neighbour] = current;
                 }
             }
             
     }
+        
         return cameFrom;
     }
 
@@ -84,4 +90,7 @@ public static class Pathfinder
             return bestItem;
         }
     }
+
+    // Implement early-early exit A* - cost_limit based on movement points, exit when movement points are depleted 
+    // Split the movement paths into turns 
 }

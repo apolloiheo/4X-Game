@@ -62,8 +62,6 @@ public class Unit : MonoBehaviour
             SetTile(nextGameTile);
             SetMovementPoints(GetMovementPoints() - _gameTile.GetMovementCost()); // Reduce Unit's MP by tile's MC
         }
-        
-        
     }
 
     

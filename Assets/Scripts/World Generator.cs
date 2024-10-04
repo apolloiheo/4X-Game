@@ -14,7 +14,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(3333333);
+        _random = new Random(56756565);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -79,8 +79,8 @@ public class WorldGenerator : MonoBehaviour
                 }
                 
                 // Turn both continent starting points to land.
-                world.ModifyTileBiome(continentStart1, 1);
-                world.ModifyTileBiome(continentStart2, 1);
+                world.ModifyTileBiome(continentStart1, 0);
+                world.ModifyTileBiome(continentStart2, 0);
                 
                 // The percentage of land coverage that the first continent will take before switching to building the second.
                 double continentSwitch = random.NextDouble(0.40, 0.60);
@@ -199,10 +199,14 @@ public class WorldGenerator : MonoBehaviour
                             consecutiveFailures = 0;
                             // Add the neighbor to our Point Queue
                             queue.Enqueue(neighborLocation);
-                            
-                            // Modify the Tile's Biome 
-                            world.ModifyTileBiome(neighborLocation, 1);
-                            
+
+                            // For Testing - need to see where the continent started
+                            if (world.GetTile(neighborLocation).GetBiome() != 0)
+                            {
+                                // Modify the Tile's Biome 
+                                world.ModifyTileBiome(neighborLocation, 1);
+                            }
+
                             // Updates World Coverage
                             currentWorldCoverage++;
                         }

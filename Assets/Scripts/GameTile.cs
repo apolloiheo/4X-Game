@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEditorInternal;
 using UnityEngine;
 
-public class GameTile : MonoBehaviour
+public class GameTile 
 {
     /*ID INDEX  
         Biomes ID:

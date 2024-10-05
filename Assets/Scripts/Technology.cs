@@ -7,4 +7,7 @@ public class Technology : MonoBehaviour
     private Civilization _civilization; // Owner
     private int _technologyCost;
     private int _technologyProgress;
+    
+    
+    
 }

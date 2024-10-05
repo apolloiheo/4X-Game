@@ -31,7 +31,7 @@ public class Civilization : MonoBehaviour
     {
         _gold += _goldPt;
         _culture += _culturePt;
-
+        
         // To be implemented
         // Science per turn gets added to the current Technology being researched
 

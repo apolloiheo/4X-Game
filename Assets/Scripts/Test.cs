@@ -7,6 +7,12 @@ public class Test : MonoBehaviour
 {
     public Tilemap tilemap;
     public Tile tile;
+    public Tile praireTile;
+    public Tile tundraTile;
+    public Tile oceanTile;
+    public Tile coastTile;
+    public Tile snowTile;
+    
     
     // Start is called before the first frame update
     void Start()
@@ -56,8 +62,28 @@ public class Test : MonoBehaviour
                 {
                     tile.color = new Color32(20, 102, 184, 255);
                 }
-                
-                tilemap.SetTile(new Vector3Int(y, x, 0), tile);
+
+                if (world.GetTile(x, y).GetBiome() == 1)
+                {
+                    tilemap.SetTile(new Vector3Int(y, x, 0), praireTile);
+                }
+                else if (world.GetTile(x, y).GetBiome() == 3)
+                {
+                    tilemap.SetTile(new Vector3Int(y, x, 0), tundraTile);
+                } else if (world.GetTile(x, y).GetBiome() == 5)
+                {
+                    tilemap.SetTile(new Vector3Int(y, x, 0), snowTile);
+                } else if (world.GetTile(x, y).GetBiome() == 6)
+                {
+                    tilemap.SetTile(new Vector3Int(y, x, 0), coastTile);
+                } else if (world.GetTile(x, y).GetBiome() == 7)
+                {
+                    tilemap.SetTile(new Vector3Int(y, x, 0), oceanTile);
+                }
+                else
+                {
+                    tilemap.SetTile(new Vector3Int(y, x, 0), tile);
+                }
             }
         }
     }

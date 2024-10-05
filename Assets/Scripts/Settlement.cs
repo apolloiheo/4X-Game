@@ -44,6 +44,16 @@ public class Settlement : MonoBehaviour
 
         // Updated Growth
         _foodSurplus += _yieldsPt[Food] - (_population * 2);
+
+        // Check if Settlement will grow
+        if (_foodSurplus >= FoodSurplusRequirement)
+        {
+            // If so, 50% of remaining food surplus is carried over.
+            _foodSurplus = (_foodSurplus - FoodSurplusRequirement) / 2 ;
+            
+            // Increase population
+            _population += 1;
+        }
     }
 
     /* New Settlement Constructor - for Gameplay */

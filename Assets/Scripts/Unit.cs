@@ -54,8 +54,14 @@ public class Unit : MonoBehaviour
     // End the turn
     private void Instance_OnTurnEnd(object sender, System.EventArgs e)
     {
-        // To be implemented
-        throw new System.NotImplementedException();
+        if (_fortified)
+        {
+            _health += 10;
+        }
+        
+        _exhausted = false;
+        _hasOrder = false;
+        _currentMovementPoints = _movementPoints;
     }
 
     // Public methods

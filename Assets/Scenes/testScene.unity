@@ -311,7 +311,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilemap: {fileID: 11725298}
-  tile: {fileID: 11400000, guid: 428e9e04e6b673d4c8fb4d0f793a184c, type: 2}
+  tile: {fileID: 11400000, guid: 8a7502e213718684899cb57e07fe11e3, type: 2}
+  praireTile: {fileID: 11400000, guid: 27b1ce3b55e8ee448ba52b1f59f01dac, type: 2}
+  tundraTile: {fileID: 11400000, guid: d3282121067883d49b314b754d68b7ea, type: 2}
+  oceanTile: {fileID: 11400000, guid: 915e93b146a9f5c4cb41a9c752eadbe6, type: 2}
+  coastTile: {fileID: 11400000, guid: b64fd190c77cb094392f62a2d3681f85, type: 2}
+  snowTile: {fileID: 11400000, guid: 4c0ca4c6837bbf746a35c888955c094f, type: 2}
 --- !u!1 &480577141
 GameObject:
   m_ObjectHideFlags: 0

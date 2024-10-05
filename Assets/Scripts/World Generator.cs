@@ -14,7 +14,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(56756565);
+        _random = new Random(6767676);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);

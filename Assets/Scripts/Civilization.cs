@@ -19,8 +19,25 @@ public class Civilization : MonoBehaviour
     private const int Gold = 2;
     private const int Culture = 3;
     private const int Science = 4;
-    
 
+    private void Start()
+    {
+        // Listen to GameManager OnTurnEnd event
+        GameManager.Instance.OnTurnEnd += Instance_OnTurnEnd;
+    }
+
+    // End the turn
+    private void Instance_OnTurnEnd(object sender, System.EventArgs e)
+    {
+        _gold += _goldPt;
+        _culture += _culturePt;
+
+        // To be implemented
+        // Science per turn gets added to the current Technology being researched
+
+
+
+    }
 
     public void CollectYieldsPt()
     {
@@ -35,18 +52,6 @@ public class Civilization : MonoBehaviour
             _culturePt += settlement.GetYieldsPt()[Culture];
             _sciencePt += settlement.GetYieldsPt()[Science];
         }
-        
-    }
-
-    public void TurnEnded()
-    {
-        _gold += _goldPt;
-        _culture += _culturePt;
-        
-        // To be implemented
-        // Science per turn gets added to the current Technology being researched
-        
-        
         
     }
     

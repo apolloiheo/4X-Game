@@ -27,7 +27,26 @@ public class Settlement : MonoBehaviour
     private const int Culture = 3;
     private const int Science = 4;
 
-    /* New Settlement Constructor - for Gameplay */ 
+    private void Start()
+    {
+        // Listen to GameManager OnTurnEnd event
+        GameManager.Instance.OnTurnEnd += Instance_OnTurnEnd;
+    }
+
+    // End the turn
+    private void Instance_OnTurnEnd(object sender, System.EventArgs e)
+    {
+        // Update Settlement Yields
+        CalculateYields();
+
+        // Add current Production per turn to the City Project's progress
+        _currentCityProject.AddToProgress(_yieldsPt[Production]);
+
+        // Updated Growth
+        _foodSurplus += _yieldsPt[Food] - (_population * 2);
+    }
+
+    /* New Settlement Constructor - for Gameplay */
     public Settlement(string name, Civilization civilization, GameTile gameTile)
     {
         _name = name;
@@ -76,22 +95,6 @@ public class Settlement : MonoBehaviour
                 _yieldsPt[yield] += b.GetYields()[yield];
             }
         }
-    }
-
-
-    /* Logic for when the turn ends */
-    public void TurnEnded()
-    {
-        // Update Settlement Yields
-        CalculateYields();
-        
-        // Add current Production per turn to the City Project's progress
-        _currentCityProject.AddToProgress(_yieldsPt[Production]);
-        
-        // Updated Growth
-        _foodSurplus += _yieldsPt[Food] - (_population * 2);
-
-
     }
 
     private void CalculateFoodSurplus()

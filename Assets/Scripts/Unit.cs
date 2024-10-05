@@ -44,7 +44,20 @@ public class Unit : MonoBehaviour
         _civilization = null;
         _promotions = new bool[TotalPromotions]; // No Promotions (booleans are initialized to False)
     }
-    
+
+    private void Start()
+    {
+        // Listen to GameManager OnTurnEnd event
+        GameManager.Instance.OnTurnEnd += Instance_OnTurnEnd;
+    }
+
+    // End the turn
+    private void Instance_OnTurnEnd(object sender, System.EventArgs e)
+    {
+        // To be implemented
+        throw new System.NotImplementedException();
+    }
+
     // Public methods
 
     /* Move a Unit across Tiles */

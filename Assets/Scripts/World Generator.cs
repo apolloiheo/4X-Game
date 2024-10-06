@@ -14,7 +14,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(46464564);
+        _random = new Random(5656565);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -159,7 +159,7 @@ public class WorldGenerator : MonoBehaviour
                         
                         if (currentNeighbor.GetXPos() < world.GetLength() / 2)
                         {
-                            if (currentNeighbor.GetXPos() > world.GetLength() * .45)
+                            if (currentNeighbor.GetXPos() > world.GetLength() * .40)
                             {
                                 divisionFactor = 1;
                             }
@@ -167,7 +167,7 @@ public class WorldGenerator : MonoBehaviour
                         }
                         else
                         {
-                            if (currentNeighbor.GetXPos() < world.GetLength() * .55)
+                            if (currentNeighbor.GetXPos() < world.GetLength() * .60)
                             {
                                 divisionFactor = 1;
                             }

@@ -18,6 +18,11 @@ public class World : MonoBehaviour
     /* World Constructor */
     public World(int length, int height)
     {
+        // Length must be odd in order to connect world horizontally.
+        if (length % 2 != 0)
+        {
+            throw new System.ArgumentException("Length must be even.");
+        }
         _length = length;  
         _height = height;
         _world = new GameTile[length, height];
@@ -96,6 +101,33 @@ public class World : MonoBehaviour
                     }
                 } 
             }
+        }
+
+        // Set the horizontal edges of world adjacent to each other.
+        for (int y = _height - 1; y >= 0; y--)
+        {
+            // Edge 1
+            if (y < _height - 1 && y > 0)
+            {
+                _world[_length - 1, y].SetNeighbor(1, _world[0, y + 1]);
+                _world[0, y + 1].SetNeighbor(4, _world[_length - 1, y]);
+            }
+            
+            // Edge 2
+            _world[_length - 1, y].SetNeighbor(2, _world[0, y]);
+            _world[0, y].SetNeighbor(5, _world[_length - 1, y]);
+            
+            // Edge 4
+            if (y > 0 && y < _height - 1)
+            {
+                _world[0, y].SetNeighbor(4, _world[_length - 1, y - 1]);
+                _world[_length - 1, y - 1].SetNeighbor(1, _world[0, y]);
+            }
+            
+            // Edge 5
+            _world[0, y].SetNeighbor(5, _world[_length - 1, y]);
+            _world[_length - 1, y].SetNeighbor(2, _world[0, y]);
+            
         }
     }
 

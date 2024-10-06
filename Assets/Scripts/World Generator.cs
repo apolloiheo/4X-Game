@@ -14,7 +14,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(6767676);
+        _random = new Random(46464564);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -52,10 +52,10 @@ public class WorldGenerator : MonoBehaviour
                 break;
             case 2: // Two Continents
                 // Determine the random X & Y starting points of 2 continents
-                int continentStartXWest = random.NextInt((int)(world.GetLength()  * .25), (int)(world.GetLength() * .35));
-                int continentStartYWest = random.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
-                int continentStartXEast = random.NextInt((int)(world.GetLength() * .65), (int)(world.GetLength() * .75));
-                int continentStartYEast = random.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
+                int continentStartXWest = random.NextInt((int)(world.GetLength()  * .10), (int)(world.GetLength() * .40));
+                int continentStartYWest = random.NextInt((int)(world.GetHeight() * .20), (int)(world.GetHeight() * .80));
+                int continentStartXEast = random.NextInt((int)(world.GetLength() * .60), (int)(world.GetLength() * .90));
+                int continentStartYEast = random.NextInt((int)(world.GetHeight() * .20), (int)(world.GetHeight() * .80));
 
                 // Store those X & Y in a ContinentStart Point for each Continent
                 Point continentStart1 = new Point(continentStartXWest, continentStartYWest);
@@ -67,9 +67,9 @@ public class WorldGenerator : MonoBehaviour
                 int currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
                 int probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
                 int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
-                int failureFactor = 12; // The probability factor power of each consecutive failure.
+                int failureFactor = 15; // The probability factor power of each consecutive failure.
 
-                // Instantiate a queue of Points (to reference the points of Tiles)
+                // Instantiate a queue of Points (to reference the points of Tiles) Queues are lines - first come, first served
                 Queue<Point> queue = new Queue<Point>();
 
                 // Add all neighbors of the first continent to the queue

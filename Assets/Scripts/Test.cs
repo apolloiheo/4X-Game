@@ -31,6 +31,8 @@ public class Test : MonoBehaviour
         gameWorld.TestTileAdjacency(0,1);
         gameWorld.TestTileAdjacency(0,2);
         gameWorld.TestTileAdjacency(99,49);
+        gameWorld.TestTileAdjacency(99,48);
+        gameWorld.TestTileAdjacency(0,0);
     }
 
     public void DrawTilemap(World world)
@@ -63,7 +65,8 @@ public class Test : MonoBehaviour
                     tile.color = new Color32(20, 102, 184, 255);
                 }
 
-                if (world.GetTile(x, y).GetBiome() == 1)
+                // Tile Texture - commented out for easier testing for now
+                /*if (world.GetTile(x, y).GetBiome() == 1)
                 {
                     tilemap.SetTile(new Vector3Int(y, x, 0), praireTile);
                 }
@@ -83,7 +86,8 @@ public class Test : MonoBehaviour
                 else
                 {
                     tilemap.SetTile(new Vector3Int(y, x, 0), tile);
-                }
+                }*/
+                tilemap.SetTile(new Vector3Int(y, x, 0), tile);
             }
         }
     }

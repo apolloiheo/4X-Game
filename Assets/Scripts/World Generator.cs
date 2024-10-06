@@ -14,7 +14,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(5656565);
+        _random = new Random(678686);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -65,9 +65,9 @@ public class WorldGenerator : MonoBehaviour
                 int totalWorldSize = world.GetLength() * world.GetHeight();
                 double desiredWorldCoverage = totalWorldSize * random.NextDouble(.40,.50); // Some random percentage of world size between 45-55%
                 int currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
-                int probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
+                int probabilityThreshold = 25; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
                 int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
-                int failureFactor = 15; // The probability factor power of each consecutive failure.
+                int failureFactor = 12; // The probability factor power of each consecutive failure.
 
                 // Instantiate a queue of Points (to reference the points of Tiles) Queues are lines - first come, first served
                 Queue<Point> queue = new Queue<Point>();

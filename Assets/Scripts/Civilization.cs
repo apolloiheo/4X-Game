@@ -11,7 +11,7 @@ public class Civilization : MonoBehaviour
     private int _sciencePt; // A Civilization's science generation per turn.
     private List<Settlement> _settlements; // A List of the Settlements this Civilization owns.
     private List<Unit> _units; // A List of the Units this Civilization owns.
-    private Tree _technology; // ** WIP - Technology tree for each Civilization
+    private TechnologyTree _technology; // ** WIP - Technology tree for each Civilization
     private Tree _cultureTree; // ** WIP - Cultural tree for each Civilization
 
     
@@ -31,9 +31,10 @@ public class Civilization : MonoBehaviour
     {
         _gold += _goldPt;
         _culture += _culturePt;
-        
+
         // To be implemented
         // Science per turn gets added to the current Technology being researched
+        _technology.AddToProgress(_sciencePt);
 
 
 

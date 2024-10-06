@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class World
 {
@@ -130,15 +132,41 @@ public class World
         }
         Debug.Log(output);
     }
-
-    public void TestPathfinder(int x1, int y1, int x2, int y2)
+    // Sets a random amount of world tiles to be mountains, then tests patthfinding on it.
+    // Destructively modifies the world.
+    public void TestPathfinder(int x1, int y1, int x2, int y2, double pOfMountain)
     {
-        Debug.Log(_world[x1, y1].GetNeighbors().Length);
-        Debug.Log(_world[x1, y1]);
-        Dictionary<GameTile, GameTile> path = Pathfinder.AStar(_world[x1, y1], _world[x2, y2]);
-        foreach (var item in path)
+        for (int y = 0; y < _height; y++)
         {
-            Debug.Log(item.Key.ToString()); 
+            for (int x = 0; x < _length; x++)
+            {
+                if (Random.Range(0, 10) > pOfMountain && x!= x1 && y!= y1 && x != x2 && y != y2 )
+                {
+                    _world[x,y].SetTerrain(2);
+                }
+            }
+        }
+
+        List<Tuple<GameTile, int>> path = Pathfinder.AStarWithLimit(_world[x1, y1], _world[x2, y2], 250);
+        foreach (var tuple in path)
+        {
+            Debug.Log(tuple.Item1);
+        }
+    }
+    // Creates a unit in a position(or uses a unit already in the position) and attempts to move it to the target location.
+    public void TestUnitMovement(int startX, int startY, int endX, int endY, int movementPoints=2)
+    {
+        GameTile startTile = _world[startX, startY];
+        GameTile endTile = _world[endX, endY];
+        if (startTile.GetUnit() is not null)
+        {
+            startTile.GetUnit().Move(endTile);
+        }
+        else
+        {
+            startTile.SetUnit(new Unit("Recruit", movementPoints, 0, 0, 0 ));
+            startTile.GetUnit().Move(endTile);
         }
     }
 }
+

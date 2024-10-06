@@ -351,6 +351,11 @@ public class GameTile
 
     public void SetUnit(Unit unit)
     {
+        _unit = unit;
+        if (unit != null)
+        {
+            _unit.SetTile(this);
+        }
         
     }
 

@@ -50,7 +50,7 @@ public static class Position
     // All in one
     public static float cost_distance(GameTile a, GameTile b)
     {
-        return axial_distance(a, b) * a.GetMovementCost();
+        return axial_distance(a, b) * b.GetMovementCost();
     }
 
 

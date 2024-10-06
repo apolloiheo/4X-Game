@@ -19,6 +19,6 @@ public class GameManager : MonoBehaviour
         gameWorld.TestTileAdjacency(0,0);
         gameWorld.TestTileAdjacency(1,0);
         gameWorld.SetTileAdjacency();
-        gameWorld.TestPathfinder(1,0,0,0);
+        gameWorld.TestUnitMovement(25,25, 27, 23, 2);
     }
 }

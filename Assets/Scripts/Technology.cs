@@ -10,6 +10,7 @@ public class Technology : MonoBehaviour
     private int _technologyProgress;
     private List<Technology> _dependencies; // All technologies that must be researched before this tech can be researched
     private List<Technology> _successors; // All technologies that can be researched after this tech is researched
+    private bool _researched = false;
     
     public void AddToProgress(int science)
     {
@@ -25,12 +26,33 @@ public class Technology : MonoBehaviour
     private void Complete()
     {
         // Complete research
+        _researched = true;
         _tree.ResearchTechnology(this);
     }
 
     public List<Technology> GetSuccessors()
     {
         return _successors;
+    }
+
+    public bool IsResearched()
+    {
+        return _researched;
+    }
+
+    // Check if this technology is researchable
+    public bool IsResearchable()
+    {
+        // If any dependencies are not researched, return false
+        foreach (Technology tech in _dependencies)
+        {
+            if (!tech.IsResearched())
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

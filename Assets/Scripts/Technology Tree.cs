@@ -38,7 +38,10 @@ public class TechnologyTree : MonoBehaviour
     {
         foreach (Technology tech in techList)
         {
-            _researchable.Add(tech);
+            if (tech.IsResearchable())
+            {
+                _researchable.Add(tech);
+            }
         }
     }
 }

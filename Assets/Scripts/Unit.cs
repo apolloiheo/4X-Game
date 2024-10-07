@@ -82,6 +82,20 @@ public class Unit
         Debug.Log("Ended at" + _gameTile.GetXPos() +  _gameTile.GetYPos());
         Debug.Log("Was trying to arrive at" + target.GetXPos() +  target.GetYPos());
     }
+
+    /* Returns all the possible Tiles that this Unity can move to.
+      Use _gameTile
+      Check _currentMovementPoints
+      Connect with move so that the Move(target) checks if target is  PossibleMoves()
+     */
+    public GameTile[] PossibleMoves()
+    {
+        // To be implemented
+        GameTile[] possibleTiles = new GameTile[TotalPromotions];
+
+
+        return possibleTiles;
+    }
     
     /* Move a Unit to one of it's adjacent tiles */
     public void MoveOneTile(GameTile nextGameTile)

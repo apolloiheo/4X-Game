@@ -39,17 +39,17 @@ public class Test : MonoBehaviour
     public void DrawTilemap(World world)
     {
 
-        for (int y = 30; y > 15; y--)
+        /*for (int y = 30; y > 15; y--)
         {
             if (y != 28)
             {
                 world.ModifyTileTerrain(new Point(30, y), 2);
             }
-        }
+        }*/
         
 
         List<GameTile> path = new List<GameTile>();
-        List<Tuple<GameTile, int>> list = Pathfinder.AStarWithLimit(world.GetTile(16, 25), world.GetTile(30, 30), 15);
+        List<Tuple<GameTile, int>> list = Pathfinder.AStarWithLimit(world.GetTile(16, 15), world.GetTile(3, 16), 15);
 
         foreach (Tuple<GameTile, int> t in list)
         {

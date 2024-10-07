@@ -9,7 +9,6 @@ public class WorldGenWalker : MonoBehaviour
     public GameTile CurrTile; //the tile that the walker is standing on
     public World world;
     public int direction; //a number from 0-5, which will pull from the list of neighbors
-    private Random _random;
     public bool tooFarUp = false;
     public bool tooFarDown = false;
 
@@ -18,8 +17,6 @@ public class WorldGenWalker : MonoBehaviour
         world = w;
         CurrTile = startTile;
         direction = _direction;
-        _random.InitState();
-        _random = new Random(8);
     }
 
     /*
@@ -45,10 +42,10 @@ public class WorldGenWalker : MonoBehaviour
      */
     public bool move() 
     {
-        if (CurrTile == null || _random.NextInt(0, 100) > 98) // 1% chance for walker to go rogue
+        if (CurrTile == null || UnityEngine.Random.Range(0, 100) > 98) // 1% chance for walker to go rogue
         {
-            int randomX = _random.NextInt(0, world.GetLength() - 1);
-            int randomY = _random.NextInt(0, world.GetHeight() - 1);
+            int randomX = UnityEngine.Random.Range(0, world.GetLength());
+            int randomY = UnityEngine.Random.Range(0, world.GetHeight());
             CurrTile = world.GetTile(new Point(randomX, randomY));
             return false;
         }
@@ -61,16 +58,16 @@ public class WorldGenWalker : MonoBehaviour
             if (currNeighbor == null)
             {
                 CurrTile = neighbors[direction];
-                direction = _random.NextInt(0, 6);
+                direction = UnityEngine.Random.Range(0, 6);
                 
                 if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
                 {
-                    direction = _random.NextInt(0, 6);
+                    direction = UnityEngine.Random.Range(0, 6);
                 }
                 
                 if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
                 {
-                    direction = _random.NextInt(0, 6);
+                    direction = UnityEngine.Random.Range(0, 6);
                 }
                 return false;
             }
@@ -80,7 +77,7 @@ public class WorldGenWalker : MonoBehaviour
         Point point = new Point(currNeighbor.GetXPos(), currNeighbor.GetYPos());
         world.ModifyTileBiome(point, 1);
         CurrTile = neighbors[direction];
-        direction = _random.NextInt(0, 6);
+        direction = UnityEngine.Random.Range(0, 6);
         return true;
         
     }
@@ -99,7 +96,7 @@ public class WorldGenWalker : MonoBehaviour
                 validNeighbors.AddLast(neighbor);
             }
         }
-        for (int i = 0; i < _random.NextInt(0, validNeighbors.Count); i++)
+        for (int i = 0; i < UnityEngine.Random.Range(0, validNeighbors.Count); i++)
         {
             validNeighbors.RemoveFirst();
         }

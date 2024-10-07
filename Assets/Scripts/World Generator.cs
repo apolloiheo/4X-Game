@@ -333,7 +333,6 @@ public class WorldGenerator : MonoBehaviour
         }
         
         // Convert all 0 Tiles adjacent to Snow into Tundra - 0 should later be changed to plains
-        // Store all those tundra Tiles in a Queue
         int totalTundraCoverage = totalSnowCoverage * 3/2;
         int currentTundraCoverage = 0;
         int northTundraLine = northSnowLine - (world.GetHeight() / 12);
@@ -373,8 +372,88 @@ public class WorldGenerator : MonoBehaviour
                 {
                     currentTundraCoverage++; //tundra coverage increases, otherwise keep iterating
                 }
+                if (walker.CurrTile != null)
+                {
+                    if (walker.CurrTile.GetYPos() > world.GetHeight() / 2 && walker.CurrTile.GetYPos() < northTundraLine)
+                    {
+                        walker.tooFarDown = true;
+                    }
+                    else
+                    {
+                        walker.tooFarDown = false;
+                    }
+
+                    if (walker.CurrTile.GetYPos() < world.GetHeight() / 2 && walker.CurrTile.GetYPos() > southTundraLine)
+                    {
+                        walker.tooFarUp = true;
+                    }
+                    else
+                    {
+                        walker.tooFarUp = false;
+                    }
+                }
             }
         }
+        
+        int totalDesertCoverage = totalSnowCoverage/3;
+        int currentDesertCoverage = 0;
+        int northDesertLine = world.GetHeight()/2 + (world.GetHeight() / 8);
+        int southDesertLine = world.GetHeight()/2 - (world.GetHeight() / 8);
+        foreach (WorldGenWalker walker in walkers)
+        {
+            walker.newBiome = 4;
+        }
+        while (currentDesertCoverage < totalDesertCoverage)
+        {
+            foreach (WorldGenWalker walker in walkers) //goes through all the walkers in the list
+            {
+                if (walker.move()) //the walker moves and if it returns true(made a desert tile),
+                {
+                    currentDesertCoverage++; //desert coverage increases, otherwise keep iterating
+                }
+                if (walker.CurrTile != null)
+                {
+                    if (walker.CurrTile.GetYPos() > world.GetHeight() / 2 && walker.CurrTile.GetYPos() > northDesertLine)
+                    {
+                        walker.tooFarUp = true;
+                    }
+                    else
+                    {
+                        walker.tooFarUp = false;
+                    }
+
+                    if (walker.CurrTile.GetYPos() < world.GetHeight() / 2 && walker.CurrTile.GetYPos() < southDesertLine)
+                    {
+                        walker.tooFarDown = true;
+                    }
+                    else
+                    {
+                        walker.tooFarDown = false;
+                    }
+                }
+            }
+        }
+        
+        int totalGrassCoverage = totalSnowCoverage*2;
+        int currentGrassCoverage = 0;
+        foreach (WorldGenWalker walker in walkers)
+        {
+            walker.newBiome = 2;
+        }
+        while (currentGrassCoverage < totalGrassCoverage)
+        {
+            foreach (WorldGenWalker walker in walkers) //goes through all the walkers in the list
+            {
+                if (walker.move()) //the walker moves and if it returns true(made a grass tile),
+                {
+                    currentGrassCoverage++; //grass coverage increases, otherwise keep iterating
+                }
+            }
+        }
+
+        
+        
+        
         
         // Add Coast Tiles
         for (int x = 0; x < world.GetLength(); x++)

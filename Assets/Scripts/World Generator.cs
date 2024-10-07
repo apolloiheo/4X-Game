@@ -61,6 +61,7 @@ public class WorldGenerator : MonoBehaviour
                 WorldGenWalker[] walkers = new WorldGenWalker[numWalkers];
                 GameTile startTile = world.GetTile(StartX, StartY);
                 int StartDirection = _random.NextInt(0, 6);
+                
                 for (int i = 0; i < numWalkers; i++)
                 {
                     walkers[i] = new WorldGenWalker(world, startTile, StartDirection);

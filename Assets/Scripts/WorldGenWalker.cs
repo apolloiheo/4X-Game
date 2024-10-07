@@ -19,14 +19,16 @@ public class WorldGenWalker : MonoBehaviour
         failSafeTile = startTile;
         direction = _direction;
         _random.InitState();
-        _random = new Random(124);
+        _random = new Random(1);
     }
 
     public bool move()
     {
         if (CurrTile == null)
         {
-            CurrTile = failSafeTile;
+            int randomX = _random.NextInt(0, world.GetLength() - 1);
+            int randomY = _random.NextInt(0, world.GetHeight() - 1);
+            CurrTile = world.GetTile(new Point(randomX, randomY));
             return false;
         }
         GameTile[] neighbors = CurrTile.GetNeighbors();

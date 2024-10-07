@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unit : MonoBehaviour
+public class Unit
 {
     // Instance Properties
     private string _name; // The Unit's name.
@@ -54,17 +55,46 @@ public class Unit : MonoBehaviour
     // End the turn
     private void Instance_OnTurnEnd(object sender, System.EventArgs e)
     {
-        // To be implemented
-        throw new System.NotImplementedException();
+        if (_fortified)
+        {
+            _health += 10;
+        }
+        
+        _exhausted = false;
+        _hasOrder = false;
+        _currentMovementPoints = _movementPoints;
     }
 
     // Public methods
 
     /* Move a Unit across Tiles */
-    public void Move()
+    public void Move(GameTile target)
     {
         // To be implemented
+        Debug.Log("Started at" + _gameTile.GetXPos() +  _gameTile.GetYPos());
+        List<Tuple<GameTile,int>> path = Pathfinder.UnitAstar(_gameTile, target);
+        foreach (var node in path)
+        {
+            _gameTile.SetUnit(null);
+            _gameTile = node.Item1;
+        }
         
+        Debug.Log("Ended at" + _gameTile.GetXPos() +  _gameTile.GetYPos());
+        Debug.Log("Was trying to arrive at" + target.GetXPos() +  target.GetYPos());
+    }
+
+    /* Returns all the possible Tiles that this Unity can move to.
+      Use _gameTile
+      Check _currentMovementPoints
+      Connect with move so that the Move(target) checks if target is  PossibleMoves()
+     */
+    public GameTile[] PossibleMoves()
+    {
+        // To be implemented
+        GameTile[] possibleTiles = new GameTile[TotalPromotions];
+
+
+        return possibleTiles;
     }
     
     /* Move a Unit to one of it's adjacent tiles */

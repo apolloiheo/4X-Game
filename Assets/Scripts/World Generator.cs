@@ -95,10 +95,12 @@ public class WorldGenerator : MonoBehaviour
                 break;
             case 2: // Two Continents
                 // Determine the random X & Y starting points of 2 continents
+    
                 int continentStartXWest = UnityEngine.Random.Range((int)(world.GetLength()  * .25), (int)(world.GetLength() * .35));
                 int continentStartYWest = UnityEngine.Random.Range((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
                 int continentStartXEast = UnityEngine.Random.Range((int)(world.GetLength() * .65), (int)(world.GetLength() * .75));
                 int continentStartYEast = UnityEngine.Random.Range((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
+
 
                 // Store those X & Y in a ContinentStart Point for each Continent
                 Point continentStart1 = new Point(continentStartXWest, continentStartYWest);
@@ -112,7 +114,7 @@ public class WorldGenerator : MonoBehaviour
                 // int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
                 // int failureFactor = 12; // The probability factor power of each consecutive failure.
 
-                // Instantiate a queue of Points (to reference the points of Tiles)
+                // Instantiate a queue of Points (to reference the points of Tiles) Queues are lines - first come, first served
                 Queue<Point> queue = new Queue<Point>();
 
                 // Add all neighbors of the first continent to the queue
@@ -202,7 +204,7 @@ public class WorldGenerator : MonoBehaviour
                         
                         if (currentNeighbor.GetXPos() < world.GetLength() / 2)
                         {
-                            if (currentNeighbor.GetXPos() > world.GetLength() * .45)
+                            if (currentNeighbor.GetXPos() > world.GetLength() * .40)
                             {
                                 divisionFactor = 1;
                             }
@@ -210,7 +212,7 @@ public class WorldGenerator : MonoBehaviour
                         }
                         else
                         {
-                            if (currentNeighbor.GetXPos() < world.GetLength() * .55)
+                            if (currentNeighbor.GetXPos() < world.GetLength() * .60)
                             {
                                 divisionFactor = 1;
                             }

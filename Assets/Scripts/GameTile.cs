@@ -61,7 +61,7 @@ public class GameTile
     private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile). 
     private Settlement _settlement; // The Settlement on this Tile. May be null (no Settlement on Tile).
     private int[] _yields; // An int array of a Tile's Yields. [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4]
-    
+
     // Constants
     private const int TotalYields = 5;
     private const int Zero = 0;

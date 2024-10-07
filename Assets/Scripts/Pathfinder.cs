@@ -90,7 +90,7 @@ public static class Pathfinder
             foreach (GameTile neighbor in current.GetNeighbors())
             {
                 // Mountains are impassable. Void/null tiles shouldn't be considered.
-                if (neighbor == null || neighbor.GetTerrain() == 2)
+                if (neighbor == null || neighbor.GetTerrain() == 2 || neighbor.GetBiome() == 7 || neighbor.GetBiome() == 6)
                 {
                     continue;
                 }

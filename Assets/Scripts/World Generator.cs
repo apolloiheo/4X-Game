@@ -45,9 +45,37 @@ public class WorldGenerator : MonoBehaviour
     private void DetermineLand(World world, Random random)
     {
         // Different Procedures given different numbers of continents
+        int totalWorldSize = world.GetLength() * world.GetHeight();
+        double desiredWorldCoverage = totalWorldSize * random.NextDouble(.40,.50); // Some random percentage of world size between 45-55%
+        int currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
+        int probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
+        int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
+        int failureFactor = 12; // The probability factor power of each consecutive failure.
+        
         switch (_continents)
         {
             case 1: // One Continent
+                int StartX = world.GetLength()/2;
+                int StartY = world.GetHeight()/2;
+                int numWalkers = 20;
+                WorldGenWalker[] walkers = new WorldGenWalker[numWalkers];
+                GameTile startTile = world.GetTile(StartX, StartY);
+                int StartDirection = _random.NextInt(0, 6);
+                for (int i = 0; i < numWalkers; i++)
+                {
+                    walkers[i] = new WorldGenWalker(world, startTile, StartDirection);
+                }
+                
+                while (currentWorldCoverage < desiredWorldCoverage)
+                {
+                    for (int i = 0; i < numWalkers; i++)
+                    {
+                        if (walkers[i].move())
+                        {
+                            currentWorldCoverage++;
+                        }
+                    }
+                }
                 
                 break;
             case 2: // Two Continents
@@ -62,12 +90,12 @@ public class WorldGenerator : MonoBehaviour
                 Point continentStart2 = new Point(continentStartXEast, continentStartYEast);
 
                 // Store some important factors
-                int totalWorldSize = world.GetLength() * world.GetHeight();
-                double desiredWorldCoverage = totalWorldSize * random.NextDouble(.40,.50); // Some random percentage of world size between 45-55%
-                int currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
-                int probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
-                int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
-                int failureFactor = 12; // The probability factor power of each consecutive failure.
+                // int totalWorldSize = world.GetLength() * world.GetHeight();
+                // double desiredWorldCoverage = totalWorldSize * random.NextDouble(.40,.50); // Some random percentage of world size between 45-55%
+                // int currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
+                // int probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
+                // int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
+                // int failureFactor = 12; // The probability factor power of each consecutive failure.
 
                 // Instantiate a queue of Points (to reference the points of Tiles)
                 Queue<Point> queue = new Queue<Point>();

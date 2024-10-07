@@ -16,7 +16,7 @@ public class Test : MonoBehaviour
 
     private void TestWorldGeneration()
     {
-        World gameWorld = new WorldGenerator().GenerateWorld(100, 50,2);
+        World gameWorld = new WorldGenerator().GenerateWorld(100, 50,1);
         DrawTilemap(gameWorld);
         gameWorld.SetTileAdjacency();
         gameWorld.TestTileAdjacency(2,0);

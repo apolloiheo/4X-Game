@@ -10,39 +10,68 @@ public class WorldGenWalker : MonoBehaviour
     public World world;
     public int direction;
     private Random _random;
-    public int failCount = 0;
+    private GameTile failSafeTile;
 
     public WorldGenWalker(World w, GameTile startTile, int _direction)
     {
         world = w;
         CurrTile = startTile;
+        failSafeTile = startTile;
         direction = _direction;
         _random.InitState();
-        _random = new Random(3);
+        _random = new Random(124);
     }
 
     public bool move()
     {
+        if (CurrTile == null)
+        {
+            CurrTile = failSafeTile;
+            return false;
+        }
         GameTile[] neighbors = CurrTile.GetNeighbors();
+        GameTile currNeighbor = neighbors[direction];
 
-        while (neighbors[direction] == null)
+        if (currNeighbor == null || currNeighbor.GetBiome() != 7)
         {
-            direction = _random.NextInt(0, neighbors.Length);
+            currNeighbor = findNewNeighbor(neighbors);
+            if (currNeighbor == null)
+            {
+                CurrTile = neighbors[direction];
+                direction = _random.NextInt(0, 6);
+                return false;
+            }
         }
         
-        Point point = new Point(neighbors[direction].GetXPos(), neighbors[direction].GetYPos());
-        if (neighbors[direction].GetBiome() == 7)
-        {
-            world.ModifyTileBiome(point, 1);
-            CurrTile = neighbors[direction];
-            direction = _random.NextInt(0, 6);
-            return true;
-        }
         
+        Point point = new Point(currNeighbor.GetXPos(), currNeighbor.GetYPos());
+        world.ModifyTileBiome(point, 1);
         CurrTile = neighbors[direction];
         direction = _random.NextInt(0, 6);
-        failCount++;
-        return false;
+        return true;
         
+    }
+
+    public GameTile findNewNeighbor(GameTile[] neighbors)
+    {
+        LinkedList<GameTile> validNeighbors = new LinkedList<GameTile>();
+        foreach (GameTile neighbor in neighbors)
+        {
+            if (neighbor != null && neighbor.GetBiome() == 7)
+            {
+                validNeighbors.AddLast(neighbor);
+            }
+        }
+        for (int i = 0; i < _random.NextInt(0, validNeighbors.Count); i++)
+        {
+            validNeighbors.RemoveFirst();
+        }
+
+        if (validNeighbors.Count > 0)
+        {
+            return validNeighbors.First.Value;
+        }
+
+        return null;
     }
 }

@@ -57,14 +57,13 @@ public class WorldGenerator : MonoBehaviour
             case 1: // One Continent
                 int StartX = world.GetLength()/2;
                 int StartY = world.GetHeight()/2;
-                int numWalkers = 20;
+                int numWalkers = 5;
                 WorldGenWalker[] walkers = new WorldGenWalker[numWalkers];
                 GameTile startTile = world.GetTile(StartX, StartY);
-                int StartDirection = _random.NextInt(0, 6);
                 
                 for (int i = 0; i < numWalkers; i++)
                 {
-                    walkers[i] = new WorldGenWalker(world, startTile, StartDirection);
+                    walkers[i] = new WorldGenWalker(world, startTile, _random.NextInt(0, 6));
                 }
                 
                 while (currentWorldCoverage < desiredWorldCoverage)
@@ -77,7 +76,6 @@ public class WorldGenerator : MonoBehaviour
                         }
                     }
                 }
-                
                 break;
             case 2: // Two Continents
                 // Determine the random X & Y starting points of 2 continents

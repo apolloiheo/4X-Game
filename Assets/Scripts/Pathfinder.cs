@@ -73,34 +73,54 @@ public static class Pathfinder
         while (frontier.Count > 0)
         {
             GameTile current = frontier.Dequeue();
-
+            // We have a path to our destination.
             if (current == goal)
             {
                 break;
             }
-
-            if (costSoFar[current] >= movementPoints)
+            // We check to see if we have used ALL our movement points and haven't reached the goal.
+            // We'll need a check later making sure that even if we were not able to, we still have a valid path.
+            if ((int)costSoFar[current] == movementPoints)
             {
                 goal = current;
                 break;
             }
+            
 
             foreach (GameTile neighbor in current.GetNeighbors())
             {
+                // Mountains are impassable. Void/null tiles shouldn't be considered.
                 if (neighbor == null || neighbor.GetTerrain() == 2)
                 {
                     continue;
                 }
-
+                // If neighbor is the goal, and it is reachable with the current movement points, just go there and terminate. 
+                if (neighbor == goal && neighbor.GetMovementCost() + costSoFar[current] <= movementPoints)
+                {
+                    cameFrom[neighbor] = current;
+                    break;
+                }
+    
                 double newCost = costSoFar[current] + neighbor.GetMovementCost();
-
+                
                 if (!costSoFar.ContainsKey(neighbor) || newCost < costSoFar[neighbor])
                 {
-                    costSoFar[neighbor] = newCost;
-                    double priority = newCost + Position.cost_distance(neighbor, goal);
-                    frontier.Enqueue(neighbor, priority);
-                    cameFrom[neighbor] = current;
+                    // We need to ensure that going to the neighbor doesn't exceed our movementpoints.
+                    if (newCost<= movementPoints){
+                        costSoFar[neighbor] = newCost;
+                        double priority = newCost + Position.cost_distance(neighbor, goal);
+                        frontier.Enqueue(neighbor, priority);
+                        cameFrom[neighbor] = current;
+                    }
                 }
+            }
+            // We run a check to see if the frontier is empty(meaning that the loop will terminate)
+            // If it is, it means we haven't teminated in any other way(movement points used up, found goal)
+            // It also means that no neighbours in this iteration were added to the frontier, and therefore do not form a valid path.
+            // Therefore, we can maintain a valid path by setting our goal to the last reached current.
+            if (frontier.Count == 0)
+            {
+                goal = current;
             }
         }
 

@@ -26,14 +26,14 @@ public class WorldGenWalker : MonoBehaviour
      * then move in the current direction and sets a new random number
      * as its new direction
      *
-     * several failsafes in place:
-     * if the currtile is null, which will happen
+     * several fail safes in place:
+     * if the currTile is null, which will happen
      * if the walker traverses off of the map,
      * it will start again from a new completely random tile
      *
      * if the direction would take the walker onto land or off the map,
      * it looks for a valid neighbor that is neither null nor land
-     *(the above is done through the findnewneighbor function
+     *(the above is done through the findNewNeighbor function)
      *
      * if all else fails it just takes a random step which will
      * sometimes take it off of the map, in which case the first failsafe
@@ -73,6 +73,10 @@ public class WorldGenWalker : MonoBehaviour
         
     }
 
+    /*goes through the list of neighbors and finds all non-null water tiles
+     stores all valid tiles in a linked list, then randomly selects one
+     returns the randomly selected Tile to be used as currNeighbor in move()
+     */
     public GameTile findNewNeighbor(GameTile[] neighbors)
     {
         LinkedList<GameTile> validNeighbors = new LinkedList<GameTile>();

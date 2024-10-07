@@ -68,9 +68,9 @@ public class WorldGenerator : MonoBehaviour
                 
                 while (currentWorldCoverage < desiredWorldCoverage)
                 {
-                    for (int i = 0; i < numWalkers; i++)
+                    for (int i = 0; i < numWalkers; i++) //goes through all the walkers in the list
                     {
-                        if (walkers[i].move()) //the walkers move and if it returns true(made a land tile)
+                        if (walkers[i].move()) //the walker moves and if it returns true(made a land tile),
                         {
                             currentWorldCoverage++; //world coverage increases, otherwise keep iterating
                         }

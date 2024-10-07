@@ -57,22 +57,22 @@ public class WorldGenerator : MonoBehaviour
             case 1: // One Continent
                 int StartX = world.GetLength()/2;
                 int StartY = world.GetHeight()/2;
-                int numWalkers = 5;
-                WorldGenWalker[] walkers = new WorldGenWalker[numWalkers];
-                GameTile startTile = world.GetTile(StartX, StartY);
+                int numWalkers = 5; //creating this many walkers
+                WorldGenWalker[] walkers = new WorldGenWalker[numWalkers];//see WorldGenWalker class
+                GameTile startTile = world.GetTile(StartX, StartY); //start tile for walkers is just center of map
                 
                 for (int i = 0; i < numWalkers; i++)
                 {
-                    walkers[i] = new WorldGenWalker(world, startTile, _random.NextInt(0, 6));
+                    walkers[i] = new WorldGenWalker(world, startTile, _random.NextInt(0, 6)); //fills list with walkers
                 }
                 
                 while (currentWorldCoverage < desiredWorldCoverage)
                 {
                     for (int i = 0; i < numWalkers; i++)
                     {
-                        if (walkers[i].move())
+                        if (walkers[i].move()) //the walkers move and if it returns true(made a land tile)
                         {
-                            currentWorldCoverage++;
+                            currentWorldCoverage++; //world coverage increases, otherwise keep iterating
                         }
                     }
                 }

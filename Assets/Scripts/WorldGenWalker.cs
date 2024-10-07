@@ -6,23 +6,42 @@ using Random = Unity.Mathematics.Random;
 
 public class WorldGenWalker : MonoBehaviour
 {
-    public GameTile CurrTile;
+    public GameTile CurrTile; //the tile that the walker is standing on
     public World world;
-    public int direction;
+    public int direction; //a number from 0-5, which will pull from the list of neighbors
     private Random _random;
-    private GameTile failSafeTile;
 
-    public WorldGenWalker(World w, GameTile startTile, int _direction)
+    public WorldGenWalker(World w, GameTile startTile, int _direction) //initializing variables
     {
         world = w;
         CurrTile = startTile;
-        failSafeTile = startTile;
         direction = _direction;
         _random.InitState();
-        _random = new Random(1);
+        _random = new Random(3);
     }
 
-    public bool move()
+    /*
+     * the walker will take a step
+     * changes the tile it is currently standing on,
+     * then move in the current direction and sets a new random number
+     * as its new direction
+     *
+     * several failsafes in place:
+     * if the currtile is null, which will happen
+     * if the walker traverses off of the map,
+     * it will start again from a new completely random tile
+     *
+     * if the direction would take the walker onto land or off the map,
+     * it looks for a valid neighbor that is neither null nor land
+     *(the above is done through the findnewneighbor function
+     *
+     * if all else fails it just takes a random step which will
+     * sometimes take it off of the map, in which case the first failsafe
+     * triggers
+     *
+     * returns true if it modified a tile, false if it didn't
+     */
+    public bool move() 
     {
         if (CurrTile == null)
         {

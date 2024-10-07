@@ -68,11 +68,29 @@ public class WorldGenerator : MonoBehaviour
                 
                 while (currentWorldCoverage < desiredWorldCoverage)
                 {
-                    for (int i = 0; i < numWalkers; i++) //goes through all the walkers in the list
+                    foreach (WorldGenWalker walker in walkers) //goes through all the walkers in the list
                     {
-                        if (walkers[i].move()) //the walker moves and if it returns true(made a land tile),
+                        if (walker.move()) //the walker moves and if it returns true(made a land tile),
                         {
                             currentWorldCoverage++; //world coverage increases, otherwise keep iterating
+                        }
+
+                        if (walker.CurrTile != null)
+                        {
+                            if (walker.CurrTile.GetYPos() > world.GetHeight() * 0.7) //being above 70% of world height is too high
+                            {
+                                walker.tooFarUp = true;
+                            }
+                            else {
+                                walker.tooFarUp = false;
+                            }
+                            if (walker.CurrTile.GetYPos() < world.GetHeight() * 0.3) //being above 30% of world height is too high
+                            {
+                                walker.tooFarDown = true;
+                            }
+                            else {
+                                walker.tooFarDown = false;
+                            }
                         }
                     }
                 }

@@ -10,6 +10,8 @@ public class WorldGenWalker : MonoBehaviour
     public World world;
     public int direction; //a number from 0-5, which will pull from the list of neighbors
     private Random _random;
+    public bool tooFarUp = false;
+    public bool tooFarDown = false;
 
     public WorldGenWalker(World w, GameTile startTile, int _direction) //initializing variables
     {
@@ -17,7 +19,7 @@ public class WorldGenWalker : MonoBehaviour
         CurrTile = startTile;
         direction = _direction;
         _random.InitState();
-        _random = new Random(3);
+        _random = new Random(8);
     }
 
     /*
@@ -43,7 +45,7 @@ public class WorldGenWalker : MonoBehaviour
      */
     public bool move() 
     {
-        if (CurrTile == null)
+        if (CurrTile == null || _random.NextInt(0, 100) > 98) // 1% chance for walker to go rogue
         {
             int randomX = _random.NextInt(0, world.GetLength() - 1);
             int randomY = _random.NextInt(0, world.GetHeight() - 1);
@@ -60,6 +62,16 @@ public class WorldGenWalker : MonoBehaviour
             {
                 CurrTile = neighbors[direction];
                 direction = _random.NextInt(0, 6);
+                
+                if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
+                {
+                    direction = _random.NextInt(0, 6);
+                }
+                
+                if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
+                {
+                    direction = _random.NextInt(0, 6);
+                }
                 return false;
             }
         }

@@ -39,6 +39,7 @@ public class WorldGenerator : MonoBehaviour
         - Randomly expand tiles around it to form continent. 
         - Stop when it reaches a % of world coverage.
      */
+    
     private void DetermineLand(World world)
     {
         // Different Procedures given different numbers of continents
@@ -60,7 +61,7 @@ public class WorldGenerator : MonoBehaviour
                 
                 for (int i = 0; i < numWalkers; i++)
                 {
-                    walkers[i] = new WorldGenWalker(world, startTile, UnityEngine.Random.Range(0, 6)); //fills list with walkers
+                    walkers[i] = new WorldGenWalker(world, startTile, UnityEngine.Random.Range(0, 6), 7, 1); //fills list with walkers
                 }
                 
                 while (currentWorldCoverage < desiredWorldCoverage)
@@ -267,6 +268,7 @@ public class WorldGenerator : MonoBehaviour
         }
         DetermineBiomes(world);
     }
+    
 
     /* Determine Biomes on landmasses and on Coasts */
     private void DetermineBiomes(World world)
@@ -274,15 +276,57 @@ public class WorldGenerator : MonoBehaviour
         // Convert Tiles at the North and South edges to snow.
         int northSnowLine = world.GetHeight() - (world.GetHeight() / 7);
         int southSnowLine = world.GetHeight() / 7;
-        for (int x = 0; x < world.GetLength(); x++)
+        int totalSnowCoverage = world.GetHeight() * world.GetLength()/25;//% of world coverage in snow, bugged rn so it is higher than this number
+        int currentSnowCoverage = 0;
+        
+        int numSnowStarts = UnityEngine.Random.Range(10, 20);//10-20 random starting points for snow
+        GameTile[] snowStarts = new GameTile[numSnowStarts];
+        WorldGenWalker[] walkers = new WorldGenWalker[numSnowStarts];
+        currentSnowCoverage+=numSnowStarts;
+        for (int i = 0; i < numSnowStarts; i++)
         {
-            for (int y = 0; y < world.GetHeight(); y++)
+            if (UnityEngine.Random.Range(0, 2) == 0)//50/50 chance to make a SnowStart at top or bottom
             {
-                if (world.GetTile(x, y).GetBiome() != 7)
+                snowStarts[i] = world.GetTile(UnityEngine.Random.Range(0, world.GetLength()), UnityEngine.Random.Range(0, southSnowLine));
+            }
+            else
+            {
+                snowStarts[i] = world.GetTile(UnityEngine.Random.Range(0, world.GetLength()), UnityEngine.Random.Range(northSnowLine, world.GetHeight()));
+            }
+        }
+
+        for (int i = 0; i < numSnowStarts; i++)
+        {
+            walkers[i] = new WorldGenWalker(world, snowStarts[i], UnityEngine.Random.Range(0, 6), 1, 5);
+        }
+
+        while (currentSnowCoverage < totalSnowCoverage)
+        {
+            foreach (WorldGenWalker walker in walkers) //goes through all the walkers in the list
+            {
+                if (walker.move()) //the walker moves and if it returns true(made a snow tile),
                 {
-                    if (y <= southSnowLine || y >= northSnowLine)
+                    currentSnowCoverage++; //snow coverage increases, otherwise keep iterating
+                }
+
+                if (walker.CurrTile != null)
+                {
+                    if (walker.CurrTile.GetYPos() > world.GetHeight() / 2 && walker.CurrTile.GetYPos() < northSnowLine)
                     {
-                        world.GetTile(x, y).SetBiome(5);
+                        walker.tooFarDown = true;
+                    }
+                    else
+                    {
+                        walker.tooFarDown = false;
+                    }
+
+                    if (walker.CurrTile.GetYPos() < world.GetHeight() / 2 && walker.CurrTile.GetYPos() > southSnowLine)
+                    {
+                        walker.tooFarUp = true;
+                    }
+                    else
+                    {
+                        walker.tooFarUp = false;
                     }
                 }
             }
@@ -290,22 +334,14 @@ public class WorldGenerator : MonoBehaviour
         
         // Convert all 0 Tiles adjacent to Snow into Tundra - 0 should later be changed to plains
         // Store all those tundra Tiles in a Queue
-        Queue<Point> tundraQueue = new Queue<Point>();
+        int totalTundraCoverage = totalSnowCoverage * 3/2;
+        int currentTundraCoverage = 0;
         int northTundraLine = northSnowLine - (world.GetHeight() / 12);
         int southTundraLine = southSnowLine + (world.GetHeight() / 12);
         for (int x = 0; x < world.GetLength(); x++)
         {
             for (int y = 0; y < world.GetHeight(); y++)
             {
-                // All Plains above/below the North/South Tundra Line should be tundra
-                if (world.GetTile(x, y).GetBiome() == 1)
-                {
-                    if (y <= southTundraLine || y >= northTundraLine)
-                    {
-                        world.GetTile(x, y).SetBiome(3);
-                    }
-                }
-                
                 // Any Plains adjacent to Snow should be Tundra.
                 if (world.GetTile(x, y).GetBiome() == 5)
                 {
@@ -313,13 +349,29 @@ public class WorldGenerator : MonoBehaviour
                     {
                         if (neighbor is not null)
                         {
-                            if (neighbor.GetBiome() == 0)
+                            if (neighbor.GetBiome() == 1)
                             {
                                 neighbor.SetBiome(3);
-                                tundraQueue.Enqueue(new Point(neighbor.GetXPos(), neighbor.GetYPos()));
+                                currentTundraCoverage++;
                             }
                         }
                     }
+                }
+            }
+        }
+
+        foreach (WorldGenWalker walker in walkers)
+        {
+            walker.newBiome = 3;
+        }
+
+        while (currentTundraCoverage < totalTundraCoverage)
+        {
+            foreach (WorldGenWalker walker in walkers) //goes through all the walkers in the list
+            {
+                if (walker.move()) //the walker moves and if it returns true(made a snow tile),
+                {
+                    currentTundraCoverage++; //tundra coverage increases, otherwise keep iterating
                 }
             }
         }

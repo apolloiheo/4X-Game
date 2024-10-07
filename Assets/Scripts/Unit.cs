@@ -9,6 +9,7 @@ public class Unit
     private string _name; // The Unit's name.
     private int _health; // A Unit's current Health Points (Default of 100)
     private int _movementPoints; // A Unit's current Movement Points per turn.
+    private int _currentMovementPoints; // A Unit's remaining movement points this turn.
     private int _combatStrength; // A Unit's base Combat Strength Stat - used to determine Attack Damage and Defense Damage.
     private int _supplies; // A Unit's current Supplies stat - Determines how many turns it can stay out of your territory before taking damage.
     private int _attackRange; // The range of Tiles a Unit can attack from. (Melee: 0, Ranged: 1 - X).
@@ -44,7 +45,26 @@ public class Unit
         _civilization = null;
         _promotions = new bool[TotalPromotions]; // No Promotions (booleans are initialized to False)
     }
-    
+
+    private void Start()
+    {
+        // Listen to GameManager OnTurnEnd event
+        GameManager.Instance.OnTurnEnd += Instance_OnTurnEnd;
+    }
+
+    // End the turn
+    private void Instance_OnTurnEnd(object sender, System.EventArgs e)
+    {
+        if (_fortified)
+        {
+            _health += 10;
+        }
+        
+        _exhausted = false;
+        _hasOrder = false;
+        _currentMovementPoints = _movementPoints;
+    }
+
     // Public methods
 
     /* Move a Unit across Tiles */
@@ -62,6 +82,17 @@ public class Unit
         Debug.Log("Ended at" + _gameTile.GetXPos() +  _gameTile.GetYPos());
         Debug.Log("Was trying to arrive at" + target.GetXPos() +  target.GetYPos());
     }
+    
+    /* Move a Unit to one of it's adjacent tiles */
+    public void MoveOneTile(GameTile nextGameTile)
+    {
+        if (nextGameTile.GetMovementCost() <= GetMovementPoints() && IsExhausted()) // Check if the Unit has enough MP and isn't exhausted
+        {
+            SetTile(nextGameTile);
+            SetMovementPoints(GetMovementPoints() - _gameTile.GetMovementCost()); // Reduce Unit's MP by tile's MC
+        }
+    }
+
     
     /* Attack another Unit */
     public void Attack(Unit target)

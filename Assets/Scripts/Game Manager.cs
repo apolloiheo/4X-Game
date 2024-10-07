@@ -1,24 +1,47 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+
+    // Property to handle the GameManager instance
+    public static GameManager Instance { get; private set; }
+
+    public event EventHandler OnTurnEnd;
+
+    private int _gameTurns; // The number of turns so far.
+    private Civilization[] _civilization; // All Civilizations (players and NPC)
+
+    private void Awake()
     {
-        TestWorldGeneration();
+        // Set GameManager instance to this object
+        if (Instance != null)
+        {
+            Debug.LogError("More than one GameManager instance");
+        }
+        Instance = this;
     }
 
-    private void TestWorldGeneration()
+    public void StartGame()
     {
-        World gameWorld = new World(100,50);
-        gameWorld.FillEmptyWorld(1);
-        //gameWorld.PrintWorld();
-        gameWorld.SetTileAdjacency();
-        gameWorld.TestTileAdjacency(0,0);
-        gameWorld.TestTileAdjacency(1,0);
-        gameWorld.SetTileAdjacency();
-        gameWorld.TestUnitMovement(25,25, 27, 23, 3);
+        
     }
+
+    public void NewTurn()
+    {
+        ++_gameTurns;
+
+        // End the turn (invokes all functions associated with this event)
+        OnTurnEnd?.Invoke(this, EventArgs.Empty);
+
+    }
+
+    public void EndGame()
+    {
+
+    }
+    
 }

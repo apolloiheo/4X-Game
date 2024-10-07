@@ -20,6 +20,11 @@ public class World
     /* World Constructor */
     public World(int length, int height)
     {
+        // Length must be odd in order to connect world horizontally.
+        if (length % 2 != 0)
+        {
+            throw new System.ArgumentException("Length must be even.");
+        }
         _length = length;  
         _height = height;
         _world = new GameTile[length, height];
@@ -45,7 +50,7 @@ public class World
         }
     }
 
-    /* Sets Tile Adjacency (neighbors) based on a Flat Top/Bottom hexagon  with an even-q orientation. */
+    /* Sets Tile Adjacency (neighbors) based on a Flat Top/Bottom hexagon grid with an even-q orientation (0,0 must be at bottom left of grid). */
     public void SetTileAdjacency()
     {
         for (int x = 0; x < _length; x++)
@@ -99,13 +104,40 @@ public class World
                 } 
             }
         }
+
+        // Set the horizontal edges of world adjacent to each other.
+        for (int y = _height - 1; y >= 0; y--)
+        {
+            // Edge 1
+            if (y < _height - 1 && y > 0)
+            {
+                _world[_length - 1, y].SetNeighbor(1, _world[0, y + 1]);
+                _world[0, y + 1].SetNeighbor(4, _world[_length - 1, y]);
+            }
+            
+            // Edge 2
+            _world[_length - 1, y].SetNeighbor(2, _world[0, y]);
+            _world[0, y].SetNeighbor(5, _world[_length - 1, y]);
+            
+            // Edge 4
+            if (y > 0 && y < _height - 1)
+            {
+                _world[0, y].SetNeighbor(4, _world[_length - 1, y - 1]);
+                _world[_length - 1, y - 1].SetNeighbor(1, _world[0, y]);
+            }
+            
+            // Edge 5
+            _world[0, y].SetNeighbor(5, _world[_length - 1, y]);
+            _world[_length - 1, y].SetNeighbor(2, _world[0, y]);
+            
+        }
     }
 
     /* Print the world to console. (Bad way to test but will do for now) */
     public void PrintWorld()
     {
         string worldString = "";
-        for (int y = 0; y < _height; y++)
+        for (int y = _height - 1; y >= 0; y--)
         {
             for (int x = 0; x < _length; x++)
             {
@@ -116,6 +148,7 @@ public class World
         Debug.Log(worldString);
     }
 
+    /* Takes a Tile's X & Y Position on a 2D grid and prints a list of its neighbors' X & Y.  */
     public void TestTileAdjacency(int xPos, int yPos)
     {
         string output = "Tile ("+xPos+","+yPos+") is adjacent to: " + "\n";
@@ -132,6 +165,7 @@ public class World
         }
         Debug.Log(output);
     }
+
     // Sets a random amount of world tiles to be mountains, then tests patthfinding on it.
     // Destructively modifies the world.
     public void TestPathfinder(int x1, int y1, int x2, int y2, double pOfMountain)
@@ -153,6 +187,7 @@ public class World
             Debug.Log(tuple.Item1);
         }
     }
+
     // Creates a unit in a position(or uses a unit already in the position) and attempts to move it to the target location.
     public void TestUnitMovement(int startX, int startY, int endX, int endY, int movementPoints=2)
     {
@@ -168,5 +203,54 @@ public class World
             startTile.GetUnit().Move(endTile);
         }
     }
+    
+    // Tile Modification Methods
+    public void ModifyTileBiome(Point point, int biome)
+    {
+        _world[point.x, point.y].SetBiome(biome); 
+    }
+
+    public void ModifyTileTerrain(Point point, int terrain)
+    {
+        _world[point.x, point.y].SetTerrain(terrain);
+    }
+
+    public void ModifyTileFeature(Point point, int feature)
+    {
+        _world[point.x, point.y].SetFeature(feature);
+    }
+
+    public void ModifyTileResource(Point point, int resource)
+    {
+        _world[point.x, point.y].SetResource(resource);
+    }
+    
+    // Getter Methods
+
+    public int GetLength()
+    {
+        return _length;
+    }
+
+    public int GetHeight()
+    {
+        return _height;
+    }
+    
+    public GameTile[,] GetWorld()
+    {
+        return _world;
+    }
+
+    public GameTile GetTile(int x, int y)
+    {
+        return _world[x, y];
+    }
+
+    public GameTile GetTile(Point point)
+    {
+        return _world[point.x, point.y];
+    }
+   
 }
 

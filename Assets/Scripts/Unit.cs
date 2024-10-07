@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unit : MonoBehaviour
+public class Unit
 {
     // Instance Properties
     private string _name; // The Unit's name.
@@ -67,10 +68,19 @@ public class Unit : MonoBehaviour
     // Public methods
 
     /* Move a Unit across Tiles */
-    public void Move()
+    public void Move(GameTile target)
     {
         // To be implemented
+        Debug.Log("Started at" + _gameTile.GetXPos() +  _gameTile.GetYPos());
+        List<Tuple<GameTile,int>> path = Pathfinder.UnitAstar(_gameTile, target);
+        foreach (var node in path)
+        {
+            _gameTile.SetUnit(null);
+            _gameTile = node.Item1;
+        }
         
+        Debug.Log("Ended at" + _gameTile.GetXPos() +  _gameTile.GetYPos());
+        Debug.Log("Was trying to arrive at" + target.GetXPos() +  target.GetYPos());
     }
     
     /* Move a Unit to one of it's adjacent tiles */

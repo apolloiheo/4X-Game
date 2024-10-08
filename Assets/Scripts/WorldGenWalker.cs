@@ -8,24 +8,25 @@ public class WorldGenWalker : MonoBehaviour
 {
     public GameTile CurrTile; //the tile that the walker is standing on
     public World world;
-    public int direction; //a number from 0-5, which will pull from the list of neighbors
+    public int direction = UnityEngine.Random.Range(0, 6); //a number from 0-5, which will pull from the list of neighbors
     public bool tooFarUp = false;
     public bool tooFarDown = false;
-    public int oldBiome;
-    public int newBiome;
+    public int oldTrait;
+    public int newTrait;
+    public string modify;
     
     public bool DefaultIsValidNeighbor(GameTile tile)
     {
         return true;
     }
 
-    public WorldGenWalker(World w, GameTile startTile, int _direction, int _oldBiome, int _newBiome) //initializing variables
+    public WorldGenWalker(World w, GameTile startTile, string _modify, int _oldTrait, int _newTrait) //initializing variables
     {
         world = w;
         CurrTile = startTile;
-        direction = _direction;
-        oldBiome = _oldBiome;
-        newBiome = _newBiome;
+        oldTrait = _oldTrait;
+        newTrait = _newTrait;
+        modify = _modify;
     }
 
     /*
@@ -55,49 +56,110 @@ public class WorldGenWalker : MonoBehaviour
         {
             int randomX = UnityEngine.Random.Range(0, world.GetLength());
             int randomY = UnityEngine.Random.Range(0, world.GetHeight());
-            CurrTile = world.GetTile(new Point(randomX, randomY)); //teleports to a completely random spot
+            CurrTile = world.GetTile(randomX, randomY); //teleports to a completely random spot
             return false;
         }
         GameTile[] neighbors = CurrTile.GetNeighbors();
         GameTile currNeighbor = neighbors[direction];
 
-        if (currNeighbor == null || currNeighbor.GetBiome() != oldBiome)
+        switch (modify)
         {
-            currNeighbor = findNewNeighbor(neighbors);
-            if (currNeighbor == null)
-            {
-                CurrTile = neighbors[direction];
-                direction = UnityEngine.Random.Range(0, 6);
-                
-                if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
+            case "biome":
+                if (currNeighbor == null || currNeighbor.GetBiome() != oldTrait)
                 {
-                    direction = UnityEngine.Random.Range(0, 6);
+                    currNeighbor = findNewNeighbor(neighbors);
+                    if (currNeighbor == null)
+                    {
+                        CurrTile = neighbors[direction];
+                        direction = UnityEngine.Random.Range(0, 6);
+        
+                        if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
+        
+                        if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
+                        return false;
+                    }
                 }
-                
-                if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
+
+                break;
+            case "terrain":
+                if (currNeighbor == null || currNeighbor.GetTerrain() != oldTrait || currNeighbor.GetBiome() == 7)
                 {
-                    direction = UnityEngine.Random.Range(0, 6);
+                    currNeighbor = findNewNeighbor(neighbors);
+                    if (currNeighbor == null)
+                    {
+                        CurrTile = neighbors[direction];
+                        direction = UnityEngine.Random.Range(0, 6);
+        
+                        if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
+        
+                        if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
+                        return false;
+                    }
                 }
-                return false;
-            }
+
+                break;
+            case "feature":
+                if (currNeighbor == null || currNeighbor.GetFeature() != oldTrait || currNeighbor.GetFeature() == 7)
+                {
+                    currNeighbor = findNewNeighbor(neighbors);
+                    if (currNeighbor == null)
+                    {
+                        CurrTile = neighbors[direction];
+                        direction = UnityEngine.Random.Range(0, 6);
+        
+                        if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
+        
+                        if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
+                        return false;
+                    }
+                }
+
+                break;
+        }
+
+        switch (modify)
+        {
+            case "biome":
+                currNeighbor.SetBiome(newTrait);
+                break;
+            case "terrain":
+                currNeighbor.SetTerrain(newTrait);
+                break;
+            case "feature":
+                currNeighbor.SetFeature(newTrait);
+                break;
         }
         
-        
-        Point point = new Point(currNeighbor.GetXPos(), currNeighbor.GetYPos());
-        world.ModifyTileBiome(point, newBiome);
         CurrTile = neighbors[direction];
         direction = UnityEngine.Random.Range(0, 6);
         if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
         {
             direction = UnityEngine.Random.Range(0, 6);
         }
-                
+        
         if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
         {
             direction = UnityEngine.Random.Range(0, 6);
         }
         return true;
-        
     }
 
     /*goes through the list of neighbors and finds all non-null water tiles
@@ -107,13 +169,39 @@ public class WorldGenWalker : MonoBehaviour
     public GameTile findNewNeighbor(GameTile[] neighbors)
     {
         LinkedList<GameTile> validNeighbors = new LinkedList<GameTile>();
-        
-        foreach (GameTile neighbor in neighbors)
+
+        switch (modify)
         {
-            if (neighbor != null && neighbor.GetBiome() == oldBiome)
-            {
-                validNeighbors.AddLast(neighbor);
-            }
+            case "biome":
+                foreach (GameTile neighbor in neighbors)
+                {
+                    if (neighbor != null && neighbor.GetBiome() == oldTrait)
+                    {
+                        validNeighbors.AddLast(neighbor);
+                    }
+                }
+
+                break;
+            case "terrain":
+                foreach (GameTile neighbor in neighbors)
+                {
+                    if (neighbor != null && neighbor.GetTerrain() == oldTrait && neighbor.GetBiome() != 7)
+                    {
+                        validNeighbors.AddLast(neighbor);
+                    }
+                }
+
+                break;
+            case "feature":
+                foreach (GameTile neighbor in neighbors)
+                {
+                    if (neighbor != null && neighbor.GetFeature() == oldTrait)
+                    {
+                        validNeighbors.AddLast(neighbor);
+                    }
+                }
+
+                break;
         }
         
         for (int i = 0; i < UnityEngine.Random.Range(0, validNeighbors.Count); i++)

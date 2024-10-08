@@ -62,7 +62,7 @@ public class WorldGenerator : MonoBehaviour
                 
                 for (int i = 0; i < numWalkers; i++)
                 {
-                    walkers[i] = new WorldGenWalker(world, startTile, UnityEngine.Random.Range(0, 6), 7, 1); //fills list with walkers
+                    walkers[i] = new WorldGenWalker(world, startTile,"biome", 7, 1); //fills list with walkers
                 }
                 
                 while (currentWorldCoverage < desiredWorldCoverage)
@@ -300,7 +300,7 @@ public class WorldGenerator : MonoBehaviour
 
         for (int i = 0; i < numSnowStarts; i++)
         {
-            walkers[i] = new WorldGenWalker(world, snowStarts[i], UnityEngine.Random.Range(0, 6), 1, 5);
+            walkers[i] = new WorldGenWalker(world, snowStarts[i],"biome", 1, 5);;
         }
 
         while (currentSnowCoverage < totalSnowCoverage)
@@ -364,7 +364,7 @@ public class WorldGenerator : MonoBehaviour
 
         foreach (WorldGenWalker walker in walkers)
         {
-            walker.newBiome = 3;
+            walker.newTrait = 3;
         }
 
         while (currentTundraCoverage < totalTundraCoverage)
@@ -404,7 +404,7 @@ public class WorldGenerator : MonoBehaviour
         int southDesertLine = world.GetHeight()/2 - (world.GetHeight() / 8);
         foreach (WorldGenWalker walker in walkers)
         {
-            walker.newBiome = 4;
+            walker.newTrait = 4;
         }
         while (currentDesertCoverage < totalDesertCoverage)
         {
@@ -441,7 +441,7 @@ public class WorldGenerator : MonoBehaviour
         int currentGrassCoverage = 0;
         foreach (WorldGenWalker walker in walkers)
         {
-            walker.newBiome = 2;
+            walker.newTrait = 2;
         }
         while (currentGrassCoverage < totalGrassCoverage)
         {
@@ -598,6 +598,38 @@ public class WorldGenerator : MonoBehaviour
     private void DetermineTerrain(World world)
     {
         // To be implemented
+        int randomX = UnityEngine.Random.Range(0, world.GetLength());
+        int randomY = UnityEngine.Random.Range(0, world.GetHeight());
+        WorldGenWalker[] walkers = new WorldGenWalker[UnityEngine.Random.Range(3, 8)];
+        int mountainSize = 0;
+        int desiredMountainSize;
+        for (int i = 0; i < walkers.Length; i++)
+        {
+            randomX = UnityEngine.Random.Range(0, world.GetLength());
+            randomY = UnityEngine.Random.Range(0, world.GetHeight());
+            walkers[i] = new WorldGenWalker(world, world.GetTile(randomX, randomY), "terrain", 0, 2);
+            Debug.Log("x = " + randomX + ", y =" + randomY);
+        }
+        foreach (WorldGenWalker walker in walkers)
+        {
+            if (UnityEngine.Random.Range(0, 2) == 0)
+            {
+                walker.tooFarUp = true;
+            }
+            else
+            {
+                walker.tooFarDown = true;
+            }
+
+            desiredMountainSize = UnityEngine.Random.Range(100, 150);//random numbers, can be adjusted
+            while (mountainSize < desiredMountainSize)
+            {
+                if (walker.move())
+                {
+                    mountainSize++;
+                }
+            }
+        }
     }
     
     /* Determine Rivers - From Mountains to Coast  */ 

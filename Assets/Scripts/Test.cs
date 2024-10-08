@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -13,7 +14,7 @@ public class Test : MonoBehaviour
     public Tile oceanTile;
     public Tile coastTile;
     public Tile snowTile;
-
+    
 
     // Start is called before the first frame update
     void Start()
@@ -91,12 +92,8 @@ public class Test : MonoBehaviour
                     tile.color = new Color32(20, 102, 184, 255);
                 }
 
-
-
-
-
-
                 // Tile Texture - commented out for easier testing for now
+                
                 /*if (world.GetTile(x, y).GetBiome() == 1)
                 {
                     tilemap.SetTile(new Vector3Int(y, x, 0), praireTile);
@@ -117,14 +114,24 @@ public class Test : MonoBehaviour
                 else
                 {
                     tilemap.SetTile(new Vector3Int(y, x, 0), tile);
-                }*/
+                }
                     
                 if (path.Contains(world.GetTile(x, y)))
                 {
                     tile.color = Color.blue;
+                }*/
+                
+                if (world.GetTile(x, y).GetTerrain() == 2)
+                {
+                    tile.color = new Color32(99, 73, 43, 255);
                 }
                 
                 tilemap.SetTile(new Vector3Int(y, x, 0), tile);
+                
+                
+                
+                
+
             }
         }
     }

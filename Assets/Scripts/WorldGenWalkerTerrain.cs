@@ -68,21 +68,24 @@ public class WorldGenWalkerTerrain : MonoBehaviour
             {
                 CurrTile = neighbors[direction];
                 direction = UnityEngine.Random.Range(0, 6);
-                
-                if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
+
+                if (tooFarUp &&
+                    (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
                 {
                     direction = UnityEngine.Random.Range(0, 6);
                 }
-                
-                if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
+
+                if (tooFarDown &&
+                    (direction == 2 || direction == 3 ||
+                     direction == 4)) //too far down causes a re-roll for downward tiles
                 {
                     direction = UnityEngine.Random.Range(0, 6);
                 }
+
                 return false;
             }
         }
-        
-        
+
         Point point = new Point(currNeighbor.GetXPos(), currNeighbor.GetYPos());
         world.ModifyTileBiome(point, newBiome);
         CurrTile = neighbors[direction];

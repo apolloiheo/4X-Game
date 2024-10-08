@@ -56,8 +56,9 @@ public class WorldGenerator : MonoBehaviour
                 int StartX = world.GetLength()/2;
                 int StartY = world.GetHeight()/2;
                 int numWalkers = 5; //creating this many walkers
-                WorldGenWalker[] walkers = new WorldGenWalker[numWalkers];//see WorldGenWalker class
+                WorldGenWalker[] walkers = new WorldGenWalker[numWalkers]; //see WorldGenWalker class
                 GameTile startTile = world.GetTile(StartX, StartY); //start tile for walkers is just center of map
+                //startTile.SetTerrain(2);
                 
                 for (int i = 0; i < numWalkers; i++)
                 {
@@ -334,7 +335,7 @@ public class WorldGenerator : MonoBehaviour
             }
         }
         
-        // Convert all 0 Tiles adjacent to Snow into Tundra - 0 should later be changed to plains
+        // Convert all Plains Tiles adjacent to Snow into Tundra 
         int totalTundraCoverage = totalSnowCoverage * 3/2;
         int currentTundraCoverage = 0;
         int northTundraLine = northSnowLine - (world.GetHeight() / 12);
@@ -454,7 +455,7 @@ public class WorldGenerator : MonoBehaviour
         }
 
         
-        
+        CleanUpTiles(world);
         
         
         // Add Coast Tiles
@@ -474,6 +475,122 @@ public class WorldGenerator : MonoBehaviour
                 }
             }
         }
+        
+    }
+
+    /* Removes Snow, Tundra, and corrects Tile positions.  */
+    public void CleanUpTiles(World world)
+    {
+        int totalLand = 0;
+        int totalPlains = 0;
+        int totalGrass = 0;
+        int totalDesert = 0;
+        
+        
+        // Calculate total tiles and types.
+        for (int x = 0; x < world.GetLength(); x++)
+        {
+            for (int y = 0; y < world.GetHeight(); y++)
+            {
+                if (world.GetTile(x, y).GetBiome() != 6 || world.GetTile(x, y).GetBiome() != 7)
+                {
+                    totalLand++;
+                }
+
+                if (world.GetTile(x, y).GetBiome() == 1)
+                {
+                    totalPlains++;
+                } else if (world.GetTile(x, y).GetBiome() == 2)
+                {
+                    totalGrass++;
+                } else if (world.GetTile(x, y).GetBiome() == 4)
+                {
+                    totalDesert++;
+                }
+            }
+        }
+        
+        // Change the Biomes on tiles
+        for (int x = 0; x < world.GetLength(); x++)
+        {
+            for (int y = 0; y < world.GetHeight(); y++)
+            {
+                // If Tile is Tundra
+                if (world.GetTile(x, y).GetBiome() == 3)
+                {
+                    if (y > world.GetHeight() * .25 && y < world.GetHeight() * .75)
+                    {
+                        world.GetTile(x, y).SetBiome(ChangeBiome());
+                    } 
+                } 
+                // If Tile is Desert
+                else if (world.GetTile(x, y).GetBiome() == 4)
+                {
+                    if (y < world.GetHeight() * .20 || y > world.GetHeight() * .80)
+                    {
+                        world.GetTile(x, y).SetBiome(ChangeBiome());
+                    }
+                    
+                    // For any Desert that has Tundra adjacent to it. Change the Tile to something else.
+                    foreach (GameTile neighbor in world.GetTile(x, y).GetNeighbors())
+                    {
+                        if (neighbor is not null && neighbor.GetBiome() == 3)
+                        {
+                            world.GetTile(x, y).SetBiome(ChangeBiome());
+                        }
+                    }
+                }
+                // If Tile is Snow 
+                else if (world.GetTile(x, y).GetBiome() == 5)
+                {
+                    // And it's inside the restricted zone.
+                    if (y > world.GetHeight() * .15 && y < world.GetHeight() * .85)
+                    {
+                        // Change it to either Grass or Plains depending on what is needed
+                        world.GetTile(x, y).SetBiome(ChangeBiome());
+                        continue;
+                    }
+                    
+                    // For every Snow Tile's neighbors. If it's neighbors are not Tundra, change it
+                    foreach (GameTile neighbor in world.GetTile(x, y).GetNeighbors())
+                    {
+                        if (neighbor is not null && neighbor.GetBiome() != 7 && neighbor.GetBiome() != 6 && neighbor.GetBiome() != 5)
+                        {
+                            neighbor.SetBiome(3);
+                        }
+                    }
+                } 
+                // If near the edges
+                else if (y < world.GetHeight() * .15 || y > world.GetHeight() * .85)
+                {
+                    // And it's a Grass or Plains
+                    if (world.GetTile(x, y).GetBiome() == 1 || world.GetTile(x, y).GetBiome() == 2)
+                    {
+                        // Make it Tundra
+                        world.GetTile(x, y).SetBiome(3);
+                    }
+                }
+                
+                
+            }
+        }
+        
+        
+        // Return the desired Biome type to match.
+        int ChangeBiome()
+        {
+            int newBiome;
+
+            if (totalPlains < totalGrass)
+            {
+                return 1;
+            }
+            else
+            {
+                return 2;
+            }
+        }
+        
         
     }
 

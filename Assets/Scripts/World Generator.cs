@@ -600,7 +600,7 @@ public class WorldGenerator : MonoBehaviour
         // To be implemented
         int randomX = UnityEngine.Random.Range(0, world.GetLength());
         int randomY = UnityEngine.Random.Range(0, world.GetHeight());
-        WorldGenWalker[] walkers = new WorldGenWalker[UnityEngine.Random.Range(3, 8)];
+        WorldGenWalker[] walkers = new WorldGenWalker[UnityEngine.Random.Range(3, 10)];
         int mountainSize = 0;
         int desiredMountainSize;
         for (int i = 0; i < walkers.Length; i++)

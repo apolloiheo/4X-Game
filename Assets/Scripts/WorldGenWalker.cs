@@ -91,7 +91,7 @@ public class WorldGenWalker : MonoBehaviour
                 if (currNeighbor == null || currNeighbor.GetTerrain() != oldTrait || currNeighbor.GetBiome() == 7)
                 {
                     currNeighbor = findNewNeighbor(neighbors);
-                    if (currNeighbor == null)
+                    if (currNeighbor == null || currNeighbor.GetBiome() == 4)
                     {
                         CurrTile = neighbors[direction];
                         direction = UnityEngine.Random.Range(0, 6);

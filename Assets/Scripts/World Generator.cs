@@ -598,14 +598,14 @@ public class WorldGenerator : MonoBehaviour
     private void DetermineTerrain(World world)
     {
         // To be implemented
-        int randomX = UnityEngine.Random.Range(0, world.GetLength());
+        int randomX = UnityEngine.Random.Range(world.GetLength()/4, world.GetLength() * 3/4);
         int randomY = UnityEngine.Random.Range(0, world.GetHeight());
         WorldGenWalker[] walkers = new WorldGenWalker[UnityEngine.Random.Range(3, 10)];
         int mountainSize = 0;
         int desiredMountainSize;
         for (int i = 0; i < walkers.Length; i++)
         {
-            randomX = UnityEngine.Random.Range(0, world.GetLength());
+            randomX = UnityEngine.Random.Range(world.GetLength()/4, world.GetLength() * 3/4);
             randomY = UnityEngine.Random.Range(0, world.GetHeight());
             walkers[i] = new WorldGenWalker(world, world.GetTile(randomX, randomY), "terrain", 0, 2);
             Debug.Log("x = " + randomX + ", y =" + randomY);
@@ -619,6 +619,14 @@ public class WorldGenerator : MonoBehaviour
             else
             {
                 walker.tooFarDown = true;
+            }
+            if (UnityEngine.Random.Range(0, 3) ==  0)
+            {
+                walker.tooFarLeft = true;
+            }
+            else if (UnityEngine.Random.Range(0, 3) == 1)
+            {
+                walker.tooFarRight = true;
             }
 
             desiredMountainSize = UnityEngine.Random.Range(100, 150);//random numbers, can be adjusted

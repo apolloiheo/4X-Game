@@ -11,6 +11,8 @@ public class WorldGenWalker : MonoBehaviour
     public int direction = UnityEngine.Random.Range(0, 6); //a number from 0-5, which will pull from the list of neighbors
     public bool tooFarUp = false;
     public bool tooFarDown = false;
+    public bool tooFarLeft = false;
+    public bool tooFarRight = false;
     public int oldTrait;
     public int newTrait;
     public string modify;
@@ -82,6 +84,16 @@ public class WorldGenWalker : MonoBehaviour
                         {
                             direction = UnityEngine.Random.Range(0, 6);
                         }
+                        
+                        if (tooFarLeft && (direction == 5 || direction == 4)) //too far left causes re-roll for leftward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
+        
+                        if (tooFarRight && (direction == 1 || direction == 2)) //too far right causes a re-roll for rightward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
                         return false;
                     }
                 }
@@ -102,6 +114,15 @@ public class WorldGenWalker : MonoBehaviour
                         }
         
                         if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
+                        if (tooFarLeft && (direction == 5 || direction == 4)) //too far left causes re-roll for leftward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
+        
+                        if (tooFarRight && (direction == 1 || direction == 2)) //too far right causes a re-roll for rightward tiles
                         {
                             direction = UnityEngine.Random.Range(0, 6);
                         }
@@ -128,6 +149,15 @@ public class WorldGenWalker : MonoBehaviour
                         {
                             direction = UnityEngine.Random.Range(0, 6);
                         }
+                        if (tooFarLeft && (direction == 5 || direction == 4)) //too far left causes re-roll for leftward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
+        
+                        if (tooFarRight && (direction == 1 || direction == 2)) //too far right causes a re-roll for rightward tiles
+                        {
+                            direction = UnityEngine.Random.Range(0, 6);
+                        }
                         return false;
                     }
                 }
@@ -150,12 +180,23 @@ public class WorldGenWalker : MonoBehaviour
         
         CurrTile = neighbors[direction];
         direction = UnityEngine.Random.Range(0, 6);
+        
         if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
         {
             direction = UnityEngine.Random.Range(0, 6);
         }
         
         if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
+        {
+            direction = UnityEngine.Random.Range(0, 6);
+        }
+        
+        if (tooFarLeft && (direction == 5 || direction == 4)) //too far left causes re-roll for leftward tiles
+        {
+            direction = UnityEngine.Random.Range(0, 6);
+        }
+        
+        if (tooFarRight && (direction == 1 || direction == 2)) //too far right causes a re-roll for rightward tiles
         {
             direction = UnityEngine.Random.Range(0, 6);
         }

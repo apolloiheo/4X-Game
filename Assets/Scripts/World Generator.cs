@@ -15,7 +15,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _rand.InitState();
-        _rand = new Random(1);
+        _rand = new Random(676767);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -56,7 +56,7 @@ public class WorldGenerator : MonoBehaviour
         
         switch (_continents)
         {
-            case 1: // One Continent
+            case 1: // Fractal Map
                 int StartX = world.GetLength()/2;
                 int StartY = world.GetHeight()/2;
                 int numWalkers = 5; //creating this many walkers
@@ -73,7 +73,7 @@ public class WorldGenerator : MonoBehaviour
                 {
                     foreach (WorldGenWalker walker in walkers) //goes through all the walkers in the list
                     {
-                        if (walker.move()) //the walker moves and if it returns true(made a land tile),
+                        if (walker.Move()) //the walker moves and if it returns true(made a land tile),
                         {
                             currentWorldCoverage++; //world coverage increases, otherwise keep iterating
                         }
@@ -98,7 +98,7 @@ public class WorldGenerator : MonoBehaviour
                     }
                 }
                 break;
-            case 2: // Two Continents
+            case 2: // Two Standard Continents
                 // Determine the random X & Y starting points of 2 continents
     
                 int continentStartXWest = _rand.NextInt((int)(world.GetLength()  * .25), (int)(world.GetLength() * .35));
@@ -309,7 +309,7 @@ public class WorldGenerator : MonoBehaviour
         {
             foreach (WorldGenWalker walker in walkers) //goes through all the walkers in the list
             {
-                if (walker.move()) //the walker moves and if it returns true(made a snow tile),
+                if (walker.Move()) //the walker moves and if it returns true(made a snow tile),
                 {
                     currentSnowCoverage++; //snow coverage increases, otherwise keep iterating
                 }
@@ -373,7 +373,7 @@ public class WorldGenerator : MonoBehaviour
         {
             foreach (WorldGenWalker walker in walkers) //goes through all the walkers in the list
             {
-                if (walker.move()) //the walker moves and if it returns true(made a snow tile),
+                if (walker.Move()) //the walker moves and if it returns true(made a snow tile),
                 {
                     currentTundraCoverage++; //tundra coverage increases, otherwise keep iterating
                 }
@@ -412,7 +412,7 @@ public class WorldGenerator : MonoBehaviour
         {
             foreach (WorldGenWalker walker in walkers) //goes through all the walkers in the list
             {
-                if (walker.move()) //the walker moves and if it returns true(made a desert tile),
+                if (walker.Move()) //the walker moves and if it returns true(made a desert tile),
                 {
                     currentDesertCoverage++; //desert coverage increases, otherwise keep iterating
                 }
@@ -449,16 +449,14 @@ public class WorldGenerator : MonoBehaviour
         {
             foreach (WorldGenWalker walker in walkers) //goes through all the walkers in the list
             {
-                if (walker.move()) //the walker moves and if it returns true(made a grass tile),
+                if (walker.Move()) //the walker moves and if it returns true(made a grass tile),
                 {
                     currentGrassCoverage++; //grass coverage increases, otherwise keep iterating
                 }
             }
         }
-
         
         CleanUpTiles(world);
-        
         
         // Add Coast Tiles
         for (int x = 0; x < world.GetLength(); x++)
@@ -599,10 +597,11 @@ public class WorldGenerator : MonoBehaviour
     /* Determine Hills and Mountains  */
     private void DetermineTerrain(World world)
     {
-        // To be implemented
+        // Determine Mountain Ranges
         int randomX = _rand.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
         int randomY = _rand.NextInt(0, world.GetHeight());
-        WorldGenWalker[] walkers = new WorldGenWalker[_rand.NextInt(3, 10)];
+        WorldGenWalker[] walkers = new WorldGenWalker[_rand.NextInt(3, 6)];
+        
         int mountainSize = 0;
         int desiredMountainSize;
         for (int i = 0; i < walkers.Length; i++)
@@ -634,9 +633,49 @@ public class WorldGenerator : MonoBehaviour
             desiredMountainSize = _rand.NextInt(100, 150);//random numbers, can be adjusted
             while (mountainSize < desiredMountainSize)
             {
-                if (walker.move())
+                if (walker.Move())
                 {
                     mountainSize++;
+                }
+            }
+
+            mountainSize = 0;
+        }
+        
+        CleanUpMountains(world);
+
+        void CleanUpMountains(World world)
+        {
+            // Instantiate list of all Mountain Tiles
+            List<GameTile> mountains = new List<GameTile>();
+            
+            // Scan world
+            for (int x = 0; x < world.GetLength(); x++)
+            {
+                for (int y = 0; y < world.GetHeight(); y++)
+                {
+                    if (world.GetTile(x, y).GetTerrain() == 2)
+                    {
+                        mountains.Add(world.GetTile(x, y));
+                    }
+                }
+            }
+            
+            
+            // For all mountains in world
+            foreach (GameTile mountain in mountains)
+            {
+                // For all their neighbors
+                foreach (GameTile neighbor in mountain.GetNeighbors())
+                {
+                    // If none of that mountain's neighbors are null or anything other than Mountains
+                    if (neighbor is null || neighbor.GetTerrain() != 2)
+                    {
+                        break;
+                    }
+                    //Make them Flat. - This means this mountain was surrounded by mountains.
+                    mountain.SetTerrain(0);
+                    //neighbor.SetTerrain(0);
                 }
             }
         }

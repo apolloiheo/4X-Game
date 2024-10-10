@@ -55,7 +55,7 @@ public class WorldGenWalker : MonoBehaviour
      *
      * returns true if it modified a tile, false if it didn't 
      */ 
-    public bool move() 
+    public bool Move() 
     {
         if (_currTile == null || rand.NextInt(0, 100) > 98) // 1% chance for walker to go rogue
         {
@@ -112,22 +112,68 @@ public class WorldGenWalker : MonoBehaviour
                         direction = rand.NextInt(0, 6);
         
                         if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
-                        {
-                            direction = rand.NextInt(0, 6);
+                        { 
+                            int randomDirection = rand.NextInt(1, 4); // Pick one of three directions away from Up
+
+                            if (randomDirection == 1)
+                            {
+                                direction = 4;
+                            } else if (randomDirection == 2)
+                            {
+                                direction = 3;
+                            } else if (randomDirection == 3)
+                            {
+                                direction = 2;
+                            }
+
+                            //direction = rand.NextInt(0, 6);
                         }
         
                         if (tooFarDown && (direction == 2 || direction == 3 || direction == 4)) //too far down causes a re-roll for downward tiles
                         {
-                            direction = rand.NextInt(0, 6);
+                            int randomDirection = rand.NextInt(1, 4); // Pick one of three directions away from Down
+
+                            if (randomDirection == 1)
+                            {
+                                direction = 5;
+                            } else if (randomDirection == 2)
+                            {
+                                direction = 0;
+                            } else if (randomDirection == 3)
+                            {
+                                direction = 1;
+                            }
+                            
+                            //direction = rand.NextInt(0, 6);
                         }
                         if (tooFarLeft && (direction == 5 || direction == 4)) //too far left causes re-roll for leftward tiles
                         {
-                            direction = rand.NextInt(0, 6);
+                            int randomDirection = rand.NextInt(1, 3); // Pick one of two directions away from Left
+
+                            if (randomDirection == 1)
+                            {
+                                direction = 1;
+                            } else if (randomDirection == 2)
+                            {
+                                direction = 2;
+                            } 
+                            
+                            //direction = rand.NextInt(0, 6);
                         }
         
                         if (tooFarRight && (direction == 1 || direction == 2)) //too far right causes a re-roll for rightward tiles
                         {
-                            direction = rand.NextInt(0, 6);
+                            int randomDirection = rand.NextInt(1, 3); // Pick one of two directions away from Right
+
+                            if (randomDirection == 1)
+                            {
+                                direction = 5;
+                            } else if (randomDirection == 2)
+                            {
+                                direction = 4;
+                            } 
+
+                            //direction = rand.NextInt(0, 6);
                         }
                         return false;
                     }

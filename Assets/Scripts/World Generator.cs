@@ -8,10 +8,13 @@ using Random = Unity.Mathematics.Random;
 public class WorldGenerator : MonoBehaviour
 {
     private int _continents;
+    public Random rand;
     
     /* Returns a fully generated game world. */
     public World GenerateWorld(int length, int height, int continents)
     {
+        rand.InitState();
+        rand = new Random(1);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -44,7 +47,7 @@ public class WorldGenerator : MonoBehaviour
     {
         // Different Procedures given different numbers of continents
         int totalWorldSize = world.GetLength() * world.GetHeight();
-        float desiredWorldCoverage = totalWorldSize * UnityEngine.Random.Range((float) .40, (float) .50); // Some random percentage of world size between 45-55%
+        float desiredWorldCoverage = totalWorldSize * rand.NextFloat((float) .40, (float) .50); // Some random percentage of world size between 45-55%
         int currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
         int probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
         int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
@@ -62,7 +65,7 @@ public class WorldGenerator : MonoBehaviour
                 
                 for (int i = 0; i < numWalkers; i++)
                 {
-                    walkers[i] = new WorldGenWalker(world, startTile,"biome", 7, 1); //fills list with walkers
+                    walkers[i] = new WorldGenWalker(world, startTile,"biome", 7, 1, rand); //fills list with walkers
                 }
                 
                 while (currentWorldCoverage < desiredWorldCoverage)
@@ -97,10 +100,10 @@ public class WorldGenerator : MonoBehaviour
             case 2: // Two Continents
                 // Determine the random X & Y starting points of 2 continents
     
-                int continentStartXWest = UnityEngine.Random.Range((int)(world.GetLength()  * .25), (int)(world.GetLength() * .35));
-                int continentStartYWest = UnityEngine.Random.Range((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
-                int continentStartXEast = UnityEngine.Random.Range((int)(world.GetLength() * .65), (int)(world.GetLength() * .75));
-                int continentStartYEast = UnityEngine.Random.Range((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
+                int continentStartXWest = rand.NextInt((int)(world.GetLength()  * .25), (int)(world.GetLength() * .35));
+                int continentStartYWest = rand.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
+                int continentStartXEast = rand.NextInt((int)(world.GetLength() * .65), (int)(world.GetLength() * .75));
+                int continentStartYEast = rand.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
 
 
                 // Store those X & Y in a ContinentStart Point for each Continent
@@ -129,7 +132,7 @@ public class WorldGenerator : MonoBehaviour
                 world.ModifyTileBiome(continentStart2, 0);
                 
                 // The percentage of land coverage that the first continent will take before switching to building the second.
-                float continentSwitch = UnityEngine.Random.Range((float)0.4, (float)0.6);
+                float continentSwitch = rand.NextFloat((float)0.4, (float)0.6);
                 // Tells the while loop when the first continent is done.
                 bool continentSwitched = false;
                 
@@ -168,14 +171,14 @@ public class WorldGenerator : MonoBehaviour
                     while (possibleNeighbors.Count > 0)
                     {
                         // Randomly choose the next Neighbor Tile to expand to and set it to currentNeighbor
-                        int nextNeighborIndex = UnityEngine.Random.Range(0, possibleNeighbors.Count - 1);
+                        int nextNeighborIndex = rand.NextInt(0, possibleNeighbors.Count - 1);
                         // Reference to the current neighbor
                         GameTile currentNeighbor = possibleNeighbors[nextNeighborIndex];
                         // Store its location
                         Point neighborLocation = new Point(currentNeighbor.GetXPos(), currentNeighbor.GetYPos());
                         
                         // Probability - a random number from 1 to 100
-                        int probability = UnityEngine.Random.Range(0, 100); 
+                        int probability = rand.NextInt(0, 100); 
                         
                         // Set this to 1, at the extremes of the map to make it way more likely to stop tiles from spreading. 
                         int divisionFactor = 2;
@@ -282,25 +285,25 @@ public class WorldGenerator : MonoBehaviour
         int totalSnowCoverage = world.GetHeight() * world.GetLength()/25;//% of world coverage in snow, bugged rn so it is higher than this number
         int currentSnowCoverage = 0;
         
-        int numSnowStarts = UnityEngine.Random.Range(10, 20);//10-20 random starting points for snow
+        int numSnowStarts = rand.NextInt(10, 20);//10-20 random starting points for snow
         GameTile[] snowStarts = new GameTile[numSnowStarts];
         WorldGenWalker[] walkers = new WorldGenWalker[numSnowStarts];
         currentSnowCoverage+=numSnowStarts;
         for (int i = 0; i < numSnowStarts; i++)
         {
-            if (UnityEngine.Random.Range(0, 2) == 0)//50/50 chance to make a SnowStart at top or bottom
+            if (rand.NextInt(0, 2) == 0)//50/50 chance to make a SnowStart at top or bottom
             {
-                snowStarts[i] = world.GetTile(UnityEngine.Random.Range(0, world.GetLength()), UnityEngine.Random.Range(0, southSnowLine));
+                snowStarts[i] = world.GetTile(rand.NextInt(0, world.GetLength()), rand.NextInt(0, southSnowLine));
             }
             else
             {
-                snowStarts[i] = world.GetTile(UnityEngine.Random.Range(0, world.GetLength()), UnityEngine.Random.Range(northSnowLine, world.GetHeight()));
+                snowStarts[i] = world.GetTile(rand.NextInt(0, world.GetLength()), rand.NextInt(northSnowLine, world.GetHeight()));
             }
         }
 
         for (int i = 0; i < numSnowStarts; i++)
         {
-            walkers[i] = new WorldGenWalker(world, snowStarts[i],"biome", 1, 5);;
+            walkers[i] = new WorldGenWalker(world, snowStarts[i],"biome", 1, 5, rand);
         }
 
         while (currentSnowCoverage < totalSnowCoverage)
@@ -598,21 +601,21 @@ public class WorldGenerator : MonoBehaviour
     private void DetermineTerrain(World world)
     {
         // To be implemented
-        int randomX = UnityEngine.Random.Range(world.GetLength()/4, world.GetLength() * 3/4);
-        int randomY = UnityEngine.Random.Range(0, world.GetHeight());
-        WorldGenWalker[] walkers = new WorldGenWalker[UnityEngine.Random.Range(3, 10)];
+        int randomX = rand.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
+        int randomY = rand.NextInt(0, world.GetHeight());
+        WorldGenWalker[] walkers = new WorldGenWalker[rand.NextInt(3, 10)];
         int mountainSize = 0;
         int desiredMountainSize;
         for (int i = 0; i < walkers.Length; i++)
         {
-            randomX = UnityEngine.Random.Range(world.GetLength()/4, world.GetLength() * 3/4);
-            randomY = UnityEngine.Random.Range(0, world.GetHeight());
-            walkers[i] = new WorldGenWalker(world, world.GetTile(randomX, randomY), "terrain", 0, 2);
+            randomX = rand.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
+            randomY = rand.NextInt(0, world.GetHeight());
+            walkers[i] = new WorldGenWalker(world, world.GetTile(randomX, randomY), "terrain", 0, 2, rand);
             Debug.Log("x = " + randomX + ", y =" + randomY);
         }
         foreach (WorldGenWalker walker in walkers)
         {
-            if (UnityEngine.Random.Range(0, 2) == 0)
+            if (rand.NextInt(0, 2) == 0)
             {
                 walker.tooFarUp = true;
             }
@@ -620,16 +623,16 @@ public class WorldGenerator : MonoBehaviour
             {
                 walker.tooFarDown = true;
             }
-            if (UnityEngine.Random.Range(0, 3) ==  0)
+            if (rand.NextInt(0, 3) ==  0)
             {
                 walker.tooFarLeft = true;
             }
-            else if (UnityEngine.Random.Range(0, 3) == 1)
+            else if (rand.NextInt(0, 3) == 1)
             {
                 walker.tooFarRight = true;
             }
 
-            desiredMountainSize = UnityEngine.Random.Range(100, 150);//random numbers, can be adjusted
+            desiredMountainSize = rand.NextInt(100, 150);//random numbers, can be adjusted
             while (mountainSize < desiredMountainSize)
             {
                 if (walker.move())

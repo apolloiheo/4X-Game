@@ -3,18 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
+using UnityEngine.Serialization;
 using Random = Unity.Mathematics.Random;
 
 public class WorldGenerator : MonoBehaviour
 {
     private int _continents;
-    public Random rand;
+    public Random _rand;
     
     /* Returns a fully generated game world. */
     public World GenerateWorld(int length, int height, int continents)
     {
-        rand.InitState();
-        rand = new Random(1);
+        _rand.InitState();
+        _rand = new Random(1);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -47,7 +48,7 @@ public class WorldGenerator : MonoBehaviour
     {
         // Different Procedures given different numbers of continents
         int totalWorldSize = world.GetLength() * world.GetHeight();
-        float desiredWorldCoverage = totalWorldSize * rand.NextFloat((float) .40, (float) .50); // Some random percentage of world size between 45-55%
+        float desiredWorldCoverage = totalWorldSize * _rand.NextFloat((float) .40, (float) .50); // Some random percentage of world size between 45-55%
         int currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
         int probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
         int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
@@ -65,7 +66,7 @@ public class WorldGenerator : MonoBehaviour
                 
                 for (int i = 0; i < numWalkers; i++)
                 {
-                    walkers[i] = new WorldGenWalker(world, startTile,"biome", 7, 1, rand); //fills list with walkers
+                    walkers[i] = new WorldGenWalker(world, startTile,"biome", 7, 1, _rand); //fills list with walkers
                 }
                 
                 while (currentWorldCoverage < desiredWorldCoverage)
@@ -77,16 +78,16 @@ public class WorldGenerator : MonoBehaviour
                             currentWorldCoverage++; //world coverage increases, otherwise keep iterating
                         }
 
-                        if (walker.CurrTile != null)
+                        if (walker._currTile != null)
                         {
-                            if (walker.CurrTile.GetYPos() > world.GetHeight() * 0.7) //being above 70% of world height is too high
+                            if (walker._currTile.GetYPos() > world.GetHeight() * 0.7) //being above 70% of world height is too high
                             {
                                 walker.tooFarUp = true;
                             }
                             else {
                                 walker.tooFarUp = false;
                             }
-                            if (walker.CurrTile.GetYPos() < world.GetHeight() * 0.3) //being above 30% of world height is too high
+                            if (walker._currTile.GetYPos() < world.GetHeight() * 0.3) //being above 30% of world height is too high
                             {
                                 walker.tooFarDown = true;
                             }
@@ -100,23 +101,21 @@ public class WorldGenerator : MonoBehaviour
             case 2: // Two Continents
                 // Determine the random X & Y starting points of 2 continents
     
-                int continentStartXWest = rand.NextInt((int)(world.GetLength()  * .25), (int)(world.GetLength() * .35));
-                int continentStartYWest = rand.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
-                int continentStartXEast = rand.NextInt((int)(world.GetLength() * .65), (int)(world.GetLength() * .75));
-                int continentStartYEast = rand.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
+                int continentStartXWest = _rand.NextInt((int)(world.GetLength()  * .25), (int)(world.GetLength() * .35));
+                int continentStartYWest = _rand.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
+                int continentStartXEast = _rand.NextInt((int)(world.GetLength() * .65), (int)(world.GetLength() * .75));
+                int continentStartYEast = _rand.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
 
 
                 // Store those X & Y in a ContinentStart Point for each Continent
                 Point continentStart1 = new Point(continentStartXWest, continentStartYWest);
                 Point continentStart2 = new Point(continentStartXEast, continentStartYEast);
 
-                // Store some important factors
-                // int totalWorldSize = world.GetLength() * world.GetHeight();
-                // double desiredWorldCoverage = totalWorldSize * random.NextDouble(.40,.50); // Some random percentage of world size between 45-55%
-                // int currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
-                // int probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
-                // int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
-                // int failureFactor = 12; // The probability factor power of each consecutive failure.
+                // Set important factors for this world gen 
+                currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
+                probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
+                consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
+                failureFactor = 12; // The probability factor power of each consecutive failure.
 
                 // Instantiate a queue of Points (to reference the points of Tiles) Queues are lines - first come, first served
                 Queue<Point> queue = new Queue<Point>();
@@ -132,7 +131,7 @@ public class WorldGenerator : MonoBehaviour
                 world.ModifyTileBiome(continentStart2, 0);
                 
                 // The percentage of land coverage that the first continent will take before switching to building the second.
-                float continentSwitch = rand.NextFloat((float)0.4, (float)0.6);
+                float continentSwitch = _rand.NextFloat((float)0.4, (float)0.6);
                 // Tells the while loop when the first continent is done.
                 bool continentSwitched = false;
                 
@@ -171,14 +170,14 @@ public class WorldGenerator : MonoBehaviour
                     while (possibleNeighbors.Count > 0)
                     {
                         // Randomly choose the next Neighbor Tile to expand to and set it to currentNeighbor
-                        int nextNeighborIndex = rand.NextInt(0, possibleNeighbors.Count - 1);
+                        int nextNeighborIndex = _rand.NextInt(0, possibleNeighbors.Count - 1);
                         // Reference to the current neighbor
                         GameTile currentNeighbor = possibleNeighbors[nextNeighborIndex];
                         // Store its location
                         Point neighborLocation = new Point(currentNeighbor.GetXPos(), currentNeighbor.GetYPos());
                         
                         // Probability - a random number from 1 to 100
-                        int probability = rand.NextInt(0, 100); 
+                        int probability = _rand.NextInt(0, 100); 
                         
                         // Set this to 1, at the extremes of the map to make it way more likely to stop tiles from spreading. 
                         int divisionFactor = 2;
@@ -285,25 +284,25 @@ public class WorldGenerator : MonoBehaviour
         int totalSnowCoverage = world.GetHeight() * world.GetLength()/25;//% of world coverage in snow, bugged rn so it is higher than this number
         int currentSnowCoverage = 0;
         
-        int numSnowStarts = rand.NextInt(10, 20);//10-20 random starting points for snow
+        int numSnowStarts = _rand.NextInt(10, 20);//10-20 random starting points for snow
         GameTile[] snowStarts = new GameTile[numSnowStarts];
         WorldGenWalker[] walkers = new WorldGenWalker[numSnowStarts];
         currentSnowCoverage+=numSnowStarts;
         for (int i = 0; i < numSnowStarts; i++)
         {
-            if (rand.NextInt(0, 2) == 0)//50/50 chance to make a SnowStart at top or bottom
+            if (_rand.NextInt(0, 2) == 0)//50/50 chance to make a SnowStart at top or bottom
             {
-                snowStarts[i] = world.GetTile(rand.NextInt(0, world.GetLength()), rand.NextInt(0, southSnowLine));
+                snowStarts[i] = world.GetTile(_rand.NextInt(0, world.GetLength()), _rand.NextInt(0, southSnowLine));
             }
             else
             {
-                snowStarts[i] = world.GetTile(rand.NextInt(0, world.GetLength()), rand.NextInt(northSnowLine, world.GetHeight()));
+                snowStarts[i] = world.GetTile(_rand.NextInt(0, world.GetLength()), _rand.NextInt(northSnowLine, world.GetHeight()));
             }
         }
 
         for (int i = 0; i < numSnowStarts; i++)
         {
-            walkers[i] = new WorldGenWalker(world, snowStarts[i],"biome", 1, 5, rand);
+            walkers[i] = new WorldGenWalker(world, snowStarts[i],"biome", 1, 5, _rand);
         }
 
         while (currentSnowCoverage < totalSnowCoverage)
@@ -315,9 +314,9 @@ public class WorldGenerator : MonoBehaviour
                     currentSnowCoverage++; //snow coverage increases, otherwise keep iterating
                 }
 
-                if (walker.CurrTile != null)
+                if (walker._currTile != null)
                 {
-                    if (walker.CurrTile.GetYPos() > world.GetHeight() / 2 && walker.CurrTile.GetYPos() < northSnowLine)
+                    if (walker._currTile.GetYPos() > world.GetHeight() / 2 && walker._currTile.GetYPos() < northSnowLine)
                     {
                         walker.tooFarDown = true;
                     }
@@ -326,7 +325,7 @@ public class WorldGenerator : MonoBehaviour
                         walker.tooFarDown = false;
                     }
 
-                    if (walker.CurrTile.GetYPos() < world.GetHeight() / 2 && walker.CurrTile.GetYPos() > southSnowLine)
+                    if (walker._currTile.GetYPos() < world.GetHeight() / 2 && walker._currTile.GetYPos() > southSnowLine)
                     {
                         walker.tooFarUp = true;
                     }
@@ -378,9 +377,9 @@ public class WorldGenerator : MonoBehaviour
                 {
                     currentTundraCoverage++; //tundra coverage increases, otherwise keep iterating
                 }
-                if (walker.CurrTile != null)
+                if (walker._currTile != null)
                 {
-                    if (walker.CurrTile.GetYPos() > world.GetHeight() / 2 && walker.CurrTile.GetYPos() < northTundraLine)
+                    if (walker._currTile.GetYPos() > world.GetHeight() / 2 && walker._currTile.GetYPos() < northTundraLine)
                     {
                         walker.tooFarDown = true;
                     }
@@ -389,7 +388,7 @@ public class WorldGenerator : MonoBehaviour
                         walker.tooFarDown = false;
                     }
 
-                    if (walker.CurrTile.GetYPos() < world.GetHeight() / 2 && walker.CurrTile.GetYPos() > southTundraLine)
+                    if (walker._currTile.GetYPos() < world.GetHeight() / 2 && walker._currTile.GetYPos() > southTundraLine)
                     {
                         walker.tooFarUp = true;
                     }
@@ -417,9 +416,9 @@ public class WorldGenerator : MonoBehaviour
                 {
                     currentDesertCoverage++; //desert coverage increases, otherwise keep iterating
                 }
-                if (walker.CurrTile != null)
+                if (walker._currTile != null)
                 {
-                    if (walker.CurrTile.GetYPos() > world.GetHeight() / 2 && walker.CurrTile.GetYPos() > northDesertLine)
+                    if (walker._currTile.GetYPos() > world.GetHeight() / 2 && walker._currTile.GetYPos() > northDesertLine)
                     {
                         walker.tooFarUp = true;
                     }
@@ -428,7 +427,7 @@ public class WorldGenerator : MonoBehaviour
                         walker.tooFarUp = false;
                     }
 
-                    if (walker.CurrTile.GetYPos() < world.GetHeight() / 2 && walker.CurrTile.GetYPos() < southDesertLine)
+                    if (walker._currTile.GetYPos() < world.GetHeight() / 2 && walker._currTile.GetYPos() < southDesertLine)
                     {
                         walker.tooFarDown = true;
                     }
@@ -601,21 +600,21 @@ public class WorldGenerator : MonoBehaviour
     private void DetermineTerrain(World world)
     {
         // To be implemented
-        int randomX = rand.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
-        int randomY = rand.NextInt(0, world.GetHeight());
-        WorldGenWalker[] walkers = new WorldGenWalker[rand.NextInt(3, 10)];
+        int randomX = _rand.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
+        int randomY = _rand.NextInt(0, world.GetHeight());
+        WorldGenWalker[] walkers = new WorldGenWalker[_rand.NextInt(3, 10)];
         int mountainSize = 0;
         int desiredMountainSize;
         for (int i = 0; i < walkers.Length; i++)
         {
-            randomX = rand.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
-            randomY = rand.NextInt(0, world.GetHeight());
-            walkers[i] = new WorldGenWalker(world, world.GetTile(randomX, randomY), "terrain", 0, 2, rand);
+            randomX = _rand.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
+            randomY = _rand.NextInt(0, world.GetHeight());
+            walkers[i] = new WorldGenWalker(world, world.GetTile(randomX, randomY), "terrain", 0, 2, _rand);
             Debug.Log("x = " + randomX + ", y =" + randomY);
         }
         foreach (WorldGenWalker walker in walkers)
         {
-            if (rand.NextInt(0, 2) == 0)
+            if (_rand.NextInt(0, 2) == 0)
             {
                 walker.tooFarUp = true;
             }
@@ -623,16 +622,16 @@ public class WorldGenerator : MonoBehaviour
             {
                 walker.tooFarDown = true;
             }
-            if (rand.NextInt(0, 3) ==  0)
+            if (_rand.NextInt(0, 3) ==  0)
             {
                 walker.tooFarLeft = true;
             }
-            else if (rand.NextInt(0, 3) == 1)
+            else if (_rand.NextInt(0, 3) == 1)
             {
                 walker.tooFarRight = true;
             }
 
-            desiredMountainSize = rand.NextInt(100, 150);//random numbers, can be adjusted
+            desiredMountainSize = _rand.NextInt(100, 150);//random numbers, can be adjusted
             while (mountainSize < desiredMountainSize)
             {
                 if (walker.move())

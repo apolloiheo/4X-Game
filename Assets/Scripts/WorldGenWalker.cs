@@ -6,8 +6,8 @@ using Random = Unity.Mathematics.Random;
 
 public class WorldGenWalker : MonoBehaviour
 {
-    public GameTile CurrTile; //the tile that the walker is standing on
-    public World world;
+    public GameTile _currTile; //the tile that the walker is standing on
+    private World _world;
     public int direction; //a number from 0-5, which will pull from the list of neighbors
     public bool tooFarUp = false;
     public bool tooFarDown = false;
@@ -26,8 +26,8 @@ public class WorldGenWalker : MonoBehaviour
     public WorldGenWalker(World w, GameTile startTile, string _modify, int _oldTrait, int _newTrait, Random Rand) //initializing variables
     {
         rand = Rand;
-        world = w;
-        CurrTile = startTile;
+        _world = w;
+        _currTile = startTile;
         oldTrait = _oldTrait;
         newTrait = _newTrait;
         modify = _modify;
@@ -57,14 +57,14 @@ public class WorldGenWalker : MonoBehaviour
      */ 
     public bool move() 
     {
-        if (CurrTile == null || rand.NextInt(0, 100) > 98) // 1% chance for walker to go rogue
+        if (_currTile == null || rand.NextInt(0, 100) > 98) // 1% chance for walker to go rogue
         {
-            int randomX = rand.NextInt(0, world.GetLength());
-            int randomY = rand.NextInt(0, world.GetHeight());
-            CurrTile = world.GetTile(randomX, randomY); //teleports to a completely random spot
+            int randomX = rand.NextInt(0, _world.GetLength());
+            int randomY = rand.NextInt(0, _world.GetHeight());
+            _currTile = _world.GetTile(randomX, randomY); //teleports to a completely random spot
             return false;
         }
-        GameTile[] neighbors = CurrTile.GetNeighbors();
+        GameTile[] neighbors = _currTile.GetNeighbors();
         GameTile currNeighbor = neighbors[direction];
 
         switch (modify)
@@ -75,7 +75,7 @@ public class WorldGenWalker : MonoBehaviour
                     currNeighbor = findNewNeighbor(neighbors);
                     if (currNeighbor == null)
                     {
-                        CurrTile = neighbors[direction];
+                        _currTile = neighbors[direction];
                         direction = rand.NextInt(0, 6);
         
                         if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
@@ -108,7 +108,7 @@ public class WorldGenWalker : MonoBehaviour
                     currNeighbor = findNewNeighbor(neighbors);
                     if (currNeighbor == null || currNeighbor.GetBiome() == 4)
                     {
-                        CurrTile = neighbors[direction];
+                        _currTile = neighbors[direction];
                         direction = rand.NextInt(0, 6);
         
                         if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
@@ -140,7 +140,7 @@ public class WorldGenWalker : MonoBehaviour
                     currNeighbor = findNewNeighbor(neighbors);
                     if (currNeighbor == null)
                     {
-                        CurrTile = neighbors[direction];
+                        _currTile = neighbors[direction];
                         direction = rand.NextInt(0, 6);
         
                         if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles
@@ -181,7 +181,7 @@ public class WorldGenWalker : MonoBehaviour
                 break;
         }
         
-        CurrTile = neighbors[direction];
+        _currTile = neighbors[direction];
         direction = rand.NextInt(0, 6);
         
         if (tooFarUp && (direction == 0 || direction == 1 || direction == 5)) //too far up causes re-roll for upward tiles

@@ -15,7 +15,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _rand.InitState();
-        _rand = new Random(12121);
+        _rand = new Random(4546464);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -702,6 +702,44 @@ public class WorldGenerator : MonoBehaviour
                 if (_rand.NextInt(0, 100) < 0 + coastalFactor)
                 {
                     mountain.SetTerrain(0);
+                }
+            }
+            
+            List<GameTile> hills = new List<GameTile>();
+            
+            // Dot random Hills around the world - give every flat tile a 15% chance to spawn a Hill. 
+            for (int x = 0; x < world.GetLength(); x++)
+            {
+                for (int y = 0; y < world.GetHeight(); y++)
+                {
+                    // If it's flat already, isn't Coast or Ocean
+                    if (world.GetTile(x, y).GetTerrain() == 0 && world.GetTile(x, y).GetBiome() != 6 &&
+                        world.GetTile(x, y).GetBiome() != 7)
+                    {
+                        // If next int is less than 15
+                        if (_rand.NextInt(0, 100) < 15)
+                        {
+                            // Maker it hills
+                            world.GetTile(x, y).SetTerrain(1);
+                            hills.Add(world.GetTile(x, y));
+                        }
+                    }
+                }
+            }
+            
+            // For reach hill, give it another 15% chance it's neighbors will be hills
+            foreach (GameTile hill in hills)
+            {
+                foreach (GameTile neighbor in hill.GetNeighbors())
+                {
+                    if (neighbor is not null && neighbor.GetTerrain() == 0 && neighbor.GetBiome() != 6 &&
+                        neighbor.GetBiome() != 7)
+                    {
+                        if (_rand.NextInt(0, 100) < 15)
+                        {
+                            neighbor.SetTerrain(1);
+                        }
+                    }
                 }
             }
         }

@@ -15,7 +15,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _rand.InitState();
-        _rand = new Random(676767);
+        _rand = new Random(12121);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -657,6 +657,11 @@ public class WorldGenerator : MonoBehaviour
                     if (world.GetTile(x, y).GetTerrain() == 2)
                     {
                         mountains.Add(world.GetTile(x, y));
+
+                        if (world.GetTile(x, y).GetBiome() == 6 || world.GetTile(x, y).GetBiome() == 7)
+                        {
+                            world.GetTile(x,y).SetTerrain(0);
+                        }
                     }
                 }
             }
@@ -676,6 +681,27 @@ public class WorldGenerator : MonoBehaviour
                     //Make them Flat. - This means this mountain was surrounded by mountains.
                     mountain.SetTerrain(0);
                     //neighbor.SetTerrain(0);
+                }
+            }
+            
+            // For all mountains in world give a slight probabilty of deleting if it is adjacent to coast
+            foreach (GameTile mountain in mountains)
+            {
+                int coastalNeighbors = 0;
+                int coastalFactor = 30 * coastalNeighbors;
+                // For all their neighbors
+                foreach (GameTile neighbor in mountain.GetNeighbors())
+                {
+                    
+                    if (neighbor is not null && neighbor.GetBiome() == 6)
+                    {
+                        coastalNeighbors++;
+                    }
+                }
+
+                if (_rand.NextInt(0, 100) < 0 + coastalFactor)
+                {
+                    mountain.SetTerrain(0);
                 }
             }
         }

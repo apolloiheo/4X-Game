@@ -7,6 +7,7 @@ using UnityEngine.Tilemaps;
 
 public class Test : MonoBehaviour
 {
+    public GameObject square;
     public Tilemap tilemap;
     public Tile tile;
     public Tile prairieTile;
@@ -61,6 +62,8 @@ public class Test : MonoBehaviour
             }
         }*/
         
+        
+        
 
         List<GameTile> path = new List<GameTile>();
         List<Tuple<GameTile, int>> list = Pathfinder.AStarWithLimit(world.GetTile(16, 15), world.GetTile(3, 16), 15);
@@ -74,6 +77,15 @@ public class Test : MonoBehaviour
         {
             for (int y = 0; y < world.GetHeight(); y++)
             {
+                float tileHeight = 1f;
+                float tileWidth = 1f;
+                if (x == 99 && y == 49)
+                {
+                    square.transform.position = new Vector3(x * .75f * tileWidth, y * tileHeight + (tileHeight / 2) * (x % 2));
+                }
+                
+                
+
                 // Plains
                 if (world.GetTile(x, y).GetBiome() == 1)
                 {

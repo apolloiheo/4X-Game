@@ -77,12 +77,28 @@ public class Test : MonoBehaviour
         {
             for (int y = 0; y < world.GetHeight(); y++)
             {
-                float tileHeight = 1f;
-                float tileWidth = 1f;
+                // Grid can be switched, check if Height is Width
+                float tileHeight = .8f;
+                float tileWidth = .7f;
+                float edge = 4f;
+                
                 if (x == 99 && y == 49)
                 {
                     square.transform.position = new Vector3(x * .75f * tileWidth, y * tileHeight + (tileHeight / 2) * (x % 2));
+
+
+
+                    float bigX = tileWidth * x * .75f;
+                    float bigY = y * tileHeight + (tileHeight / 2) * (x % 2);
+                    
+                    square.transform.position = new Vector3((float)(bigX + Math.Pow(-1f, Math.Pow(0f, (5f - edge) * (4f - edge))) * Math.Pow(0f, Math.Pow(0f, edge % 3f)) * tileWidth * 3/8), 
+                        (float)(bigY + Math.Pow(-1f, Math.Pow(0f, Math.Abs((edge - 2f) * (edge - 3f) * (edge - 4f)))) * (tileHeight/4f + tileHeight /4f * Math.Abs(Math.Pow(0f, Math.Pow(0f, edge % 3f)) - 1f))), 
+                        0f);
                 }
+
+
+                
+                
                 
                 
 

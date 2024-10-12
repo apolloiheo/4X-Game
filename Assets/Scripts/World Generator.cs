@@ -748,6 +748,23 @@ public class WorldGenerator : MonoBehaviour
     /* Determine Rivers - From Mountains to Coast  */ 
     private void DetermineRivers(World world)
     {
+        void SetRiverEdges(List<GameTile> riverPath)
+        {
+            // Iterate through each consecutive pair of tiles in the river path
+            for (int i = 0; i < riverPath.Count - 1; i++)
+            {
+                GameTile currentTile = riverPath[i];
+                GameTile nextTile = riverPath[i + 1];
+
+                // Find the shared edge between the current and next tile
+                int currentTileEdgeIndex = GetSharedEdgeIndex(currentTile, nextTile);
+                int nextTileEdgeIndex = (currentTileEdgeIndex + 3) % 6;  // Opposite edge index
+
+                // Set the river edge for both the current and next tiles
+                currentTile.[currentTileEdgeIndex] = true;
+                nextTile.riverEdges[nextTileEdgeIndex] = true;
+            }
+        }
         
     }
     

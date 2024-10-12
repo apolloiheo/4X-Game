@@ -41,29 +41,10 @@ public class Test : MonoBehaviour
 
         DrawTilemap(gameWorld);
         gameWorld.SetTileAdjacency();
-        gameWorld.TestTileAdjacency(2, 0);
-        gameWorld.TestTileAdjacency(1, 0);
-        gameWorld.TestTileAdjacency(3, 0);
-        gameWorld.TestTileAdjacency(0, 1);
-        gameWorld.TestTileAdjacency(0, 2);
-        gameWorld.TestTileAdjacency(99, 49);
-        gameWorld.TestTileAdjacency(99, 48);
-        gameWorld.TestTileAdjacency(0, 0);
     }
 
     public void DrawTilemap(World world)
     {
-
-        /*for (int y = 30; y > 15; y--)
-        {
-            if (y != 28)
-            {
-                world.ModifyTileTerrain(new Point(30, y), 2);
-            }
-        }*/
-        
-        
-        
 
         List<GameTile> path = new List<GameTile>();
         List<Tuple<GameTile, int>> list = Pathfinder.AStarWithLimit(world.GetTile(16, 15), world.GetTile(3, 16), 15);
@@ -95,13 +76,7 @@ public class Test : MonoBehaviour
                         (float)(bigY + Math.Pow(-1f, Math.Pow(0f, Math.Abs((edge - 2f) * (edge - 3f) * (edge - 4f)))) * (tileHeight/4f + tileHeight /4f * Math.Abs(Math.Pow(0f, Math.Pow(0f, edge % 3f)) - 1f))), 
                         0f);
                 }
-
-
                 
-                
-                
-                
-
                 // Plains
                 if (world.GetTile(x, y).GetBiome() == 1)
                 {

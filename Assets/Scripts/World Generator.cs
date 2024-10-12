@@ -9,13 +9,13 @@ using Random = Unity.Mathematics.Random;
 public class WorldGenerator : MonoBehaviour
 {
     private int _continents;
-    public Random _rand;
+    [FormerlySerializedAs("_rand")] public Random _random;
     
     /* Returns a fully generated game world. */
     public World GenerateWorld(int length, int height, int continents)
     {
-        _rand.InitState();
-        _rand = new Random(1231231);
+        _random.InitState();
+        _random = new Random(1231231);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -48,7 +48,7 @@ public class WorldGenerator : MonoBehaviour
     {
         // Different Procedures given different numbers of continents
         int totalWorldSize = world.GetLength() * world.GetHeight();
-        float desiredWorldCoverage = totalWorldSize * _rand.NextFloat((float) .40, (float) .50); // Some random percentage of world size between 45-55%
+        float desiredWorldCoverage = totalWorldSize * _random.NextFloat((float) .40, (float) .50); // Some random percentage of world size between 45-55%
         int currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
         int probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
         int consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
@@ -66,7 +66,7 @@ public class WorldGenerator : MonoBehaviour
                 
                 for (int i = 0; i < numWalkers; i++)
                 {
-                    walkers[i] = new WorldGenWalker(world, startTile,"biome", 7, 1, _rand); //fills list with walkers
+                    walkers[i] = new WorldGenWalker(world, startTile,"biome", 7, 1, _random); //fills list with walkers
                 }
                 
                 while (currentWorldCoverage < desiredWorldCoverage)
@@ -101,10 +101,10 @@ public class WorldGenerator : MonoBehaviour
             case 2: // Two Standard Continents
                 // Determine the random X & Y starting points of 2 continents
     
-                int continentStartXWest = _rand.NextInt((int)(world.GetLength()  * .25), (int)(world.GetLength() * .35));
-                int continentStartYWest = _rand.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
-                int continentStartXEast = _rand.NextInt((int)(world.GetLength() * .65), (int)(world.GetLength() * .75));
-                int continentStartYEast = _rand.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
+                int continentStartXWest = _random.NextInt((int)(world.GetLength()  * .25), (int)(world.GetLength() * .35));
+                int continentStartYWest = _random.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
+                int continentStartXEast = _random.NextInt((int)(world.GetLength() * .65), (int)(world.GetLength() * .75));
+                int continentStartYEast = _random.NextInt((int)(world.GetHeight() * .25), (int)(world.GetHeight() * .75));
 
 
                 // Store those X & Y in a ContinentStart Point for each Continent
@@ -131,7 +131,7 @@ public class WorldGenerator : MonoBehaviour
                 world.ModifyTileBiome(continentStart2, 0);
                 
                 // The percentage of land coverage that the first continent will take before switching to building the second.
-                float continentSwitch = _rand.NextFloat((float)0.4, (float)0.6);
+                float continentSwitch = _random.NextFloat((float)0.4, (float)0.6);
                 // Tells the while loop when the first continent is done.
                 bool continentSwitched = false;
                 
@@ -170,14 +170,14 @@ public class WorldGenerator : MonoBehaviour
                     while (possibleNeighbors.Count > 0)
                     {
                         // Randomly choose the next Neighbor Tile to expand to and set it to currentNeighbor
-                        int nextNeighborIndex = _rand.NextInt(0, possibleNeighbors.Count - 1);
+                        int nextNeighborIndex = _random.NextInt(0, possibleNeighbors.Count - 1);
                         // Reference to the current neighbor
                         GameTile currentNeighbor = possibleNeighbors[nextNeighborIndex];
                         // Store its location
                         Point neighborLocation = new Point(currentNeighbor.GetXPos(), currentNeighbor.GetYPos());
                         
                         // Probability - a random number from 1 to 100
-                        int probability = _rand.NextInt(0, 100); 
+                        int probability = _random.NextInt(0, 100); 
                         
                         // Set this to 1, at the extremes of the map to make it way more likely to stop tiles from spreading. 
                         int divisionFactor = 2;
@@ -284,25 +284,25 @@ public class WorldGenerator : MonoBehaviour
         int totalSnowCoverage = world.GetHeight() * world.GetLength()/25;//% of world coverage in snow, bugged rn so it is higher than this number
         int currentSnowCoverage = 0;
         
-        int numSnowStarts = _rand.NextInt(10, 20);//10-20 random starting points for snow
+        int numSnowStarts = _random.NextInt(10, 20);//10-20 random starting points for snow
         GameTile[] snowStarts = new GameTile[numSnowStarts];
         WorldGenWalker[] walkers = new WorldGenWalker[numSnowStarts];
         currentSnowCoverage+=numSnowStarts;
         for (int i = 0; i < numSnowStarts; i++)
         {
-            if (_rand.NextInt(0, 2) == 0)//50/50 chance to make a SnowStart at top or bottom
+            if (_random.NextInt(0, 2) == 0)//50/50 chance to make a SnowStart at top or bottom
             {
-                snowStarts[i] = world.GetTile(_rand.NextInt(0, world.GetLength()), _rand.NextInt(0, southSnowLine));
+                snowStarts[i] = world.GetTile(_random.NextInt(0, world.GetLength()), _random.NextInt(0, southSnowLine));
             }
             else
             {
-                snowStarts[i] = world.GetTile(_rand.NextInt(0, world.GetLength()), _rand.NextInt(northSnowLine, world.GetHeight()));
+                snowStarts[i] = world.GetTile(_random.NextInt(0, world.GetLength()), _random.NextInt(northSnowLine, world.GetHeight()));
             }
         }
 
         for (int i = 0; i < numSnowStarts; i++)
         {
-            walkers[i] = new WorldGenWalker(world, snowStarts[i],"biome", 1, 5, _rand);
+            walkers[i] = new WorldGenWalker(world, snowStarts[i],"biome", 1, 5, _random);
         }
 
         while (currentSnowCoverage < totalSnowCoverage)
@@ -598,22 +598,22 @@ public class WorldGenerator : MonoBehaviour
     private void DetermineTerrain(World world)
     {
         // Determine Mountain Ranges
-        int randomX = _rand.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
-        int randomY = _rand.NextInt(0, world.GetHeight());
-        WorldGenWalker[] walkers = new WorldGenWalker[_rand.NextInt(3, 6)];
+        int randomX = _random.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
+        int randomY = _random.NextInt(0, world.GetHeight());
+        WorldGenWalker[] walkers = new WorldGenWalker[_random.NextInt(3, 6)];
         
         int mountainSize = 0;
         int desiredMountainSize;
         for (int i = 0; i < walkers.Length; i++)
         {
-            randomX = _rand.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
-            randomY = _rand.NextInt(0, world.GetHeight());
-            walkers[i] = new WorldGenWalker(world, world.GetTile(randomX, randomY), "terrain", 0, 2, _rand);
+            randomX = _random.NextInt(world.GetLength()/4, world.GetLength() * 3/4);
+            randomY = _random.NextInt(0, world.GetHeight());
+            walkers[i] = new WorldGenWalker(world, world.GetTile(randomX, randomY), "terrain", 0, 2, _random);
             Debug.Log("x = " + randomX + ", y =" + randomY);
         }
         foreach (WorldGenWalker walker in walkers)
         {
-            if (_rand.NextInt(0, 2) == 0)
+            if (_random.NextInt(0, 2) == 0)
             {
                 walker.tooFarUp = true;
             }
@@ -621,16 +621,16 @@ public class WorldGenerator : MonoBehaviour
             {
                 walker.tooFarDown = true;
             }
-            if (_rand.NextInt(0, 3) ==  0)
+            if (_random.NextInt(0, 3) ==  0)
             {
                 walker.tooFarLeft = true;
             }
-            else if (_rand.NextInt(0, 3) == 1)
+            else if (_random.NextInt(0, 3) == 1)
             {
                 walker.tooFarRight = true;
             }
 
-            desiredMountainSize = _rand.NextInt(100, 150);//random numbers, can be adjusted
+            desiredMountainSize = _random.NextInt(100, 150);//random numbers, can be adjusted
             while (mountainSize < desiredMountainSize)
             {
                 if (walker.Move())
@@ -699,7 +699,7 @@ public class WorldGenerator : MonoBehaviour
                     }
                 }
 
-                if (_rand.NextInt(0, 100) < 0 + coastalFactor)
+                if (_random.NextInt(0, 100) < 0 + coastalFactor)
                 {
                     mountain.SetTerrain(0);
                 }
@@ -717,7 +717,7 @@ public class WorldGenerator : MonoBehaviour
                         world.GetTile(x, y).GetBiome() != 7)
                     {
                         // If next int is less than 15
-                        if (_rand.NextInt(0, 100) < 15)
+                        if (_random.NextInt(0, 100) < 15)
                         {
                             // Maker it hills
                             world.GetTile(x, y).SetTerrain(1);
@@ -735,7 +735,7 @@ public class WorldGenerator : MonoBehaviour
                     if (neighbor is not null && neighbor.GetTerrain() == 0 && neighbor.GetBiome() != 6 &&
                         neighbor.GetBiome() != 7)
                     {
-                        if (_rand.NextInt(0, 100) < 15)
+                        if (_random.NextInt(0, 100) < 15)
                         {
                             neighbor.SetTerrain(1);
                         }
@@ -748,24 +748,189 @@ public class WorldGenerator : MonoBehaviour
     /* Determine Rivers - From Mountains to Coast  */ 
     private void DetermineRivers(World world)
     {
-        void SetRiverEdges(List<GameTile> riverPath)
+        // Empty List where we will store the Tiles to start rivers from.
+        List<GameTile> riverStartLocations = new List<GameTile>();
+        
+        /* Determines the GameTiles (locations) where to start rivers.  */
+        for (int x = 0; x < world.GetLength(); x++)
         {
-            // Iterate through each consecutive pair of tiles in the river path
-            for (int i = 0; i < riverPath.Count - 1; i++)
+            for (int y = 0; y < world.GetHeight(); y++)
             {
-                GameTile currentTile = riverPath[i];
-                GameTile nextTile = riverPath[i + 1];
+                GameTile currTile = world.GetTile(x, y);
 
-                // Find the shared edge between the current and next tile
-                int currentTileEdgeIndex = GetSharedEdgeIndex(currentTile, nextTile);
-                int nextTileEdgeIndex = (currentTileEdgeIndex + 3) % 6;  // Opposite edge index
-
-                // Set the river edge for both the current and next tiles
-                currentTile.[currentTileEdgeIndex] = true;
-                nextTile.riverEdges[nextTileEdgeIndex] = true;
+                if (currTile.GetXPos() > world.GetLength() * .10 && currTile.GetXPos() < world.GetLength() * .90)
+                {
+                    if (currTile.GetYPos() > world.GetHeight() * .10 && currTile.GetYPos() < world.GetHeight() * .90)
+                    {
+                        // 1 / 10 chance if it's a Mountain.
+                        if (currTile.GetTerrain() == 2)
+                        {
+                            if (_random.NextInt(0, 10) == 0)
+                            {
+                                //riverStartLocations.Add(currTile);
+                            }
+                        }
+                    }
+                }
             }
         }
         
+        // For testing
+        riverStartLocations.Add(world.GetTile(25, 25));
+        riverStartLocations.Add(world.GetTile(50, 25));
+        
+        
+        // Call everything together to build rivers and then set their edges.
+        foreach (GameTile river in riverStartLocations)
+        {
+            SetRiverEdges(FormRiver(river));
+        }
+        
+        /* Returns a List(Path) of Tiles to create a River */
+        List<GameTile> FormRiver(GameTile start)
+        {
+            List<GameTile> tileList = new List<GameTile>();
+            
+            int riverLength = _random.NextInt(8, 15);
+            int currentLength = 0;
+            int prevEdge = _random.NextInt(0, 6);
+            int nextEdge;
+            int[] possibleNeighbors = new int[3];
+            
+            // Set it's edge on.
+            start.SetTerrain(prevEdge);
+            // Add the initial Tile to the List
+            tileList.Add(start);
+
+            // Determine the edge for the river to expand to (it should always be adjacent to the previous edge)
+            if (prevEdge == 0)
+            {
+                possibleNeighbors[0] = 5;
+                possibleNeighbors[1] = 0;
+                possibleNeighbors[2] = 1;
+            } else if (prevEdge == 5)
+            {
+                possibleNeighbors[0] = 4;
+                possibleNeighbors[1] = 5;
+                possibleNeighbors[2] = 0;
+            }
+            else
+            {
+                possibleNeighbors[0] = prevEdge - 1;
+                possibleNeighbors[1] = prevEdge;
+                possibleNeighbors[2] = prevEdge + 1;
+            }
+            
+            GameTile currTile = start;
+            // Until we reach the river's lenght, keep adding tiles to the List to make river.
+            for (int i = 0; i < riverLength; i++)
+            {
+                // Determine a new random edge within the right parameters
+                nextEdge = possibleNeighbors[_random.NextInt(possibleNeighbors.Length)];
+
+                GameTile nextTile = currTile.GetNeighbors()[nextEdge];
+
+                // If the next Tile is Coast or Ocean, return List and end river path.
+                if (nextTile is null || nextTile.GetBiome() == 6 || nextTile.GetBiome() == 7)
+                {
+                    return tileList;
+                }
+                
+                // Add it to the list
+                tileList.Add(currTile.GetNeighbors()[nextEdge]);
+                // Set the current Tile's river Adjacency to true.
+                currTile.SetRiverAdjacency(true);
+                // Update currTile to the next neighbor
+                currTile = currTile.GetNeighbors()[nextEdge];
+            }
+            
+            // Return a List (path) of Tiles for the river.
+            return tileList;
+        }
+        
+        /* Takes a List (Path) of Tiles and sets the edges in order to create a River. */
+        void SetRiverEdges(List<GameTile> riverPath)
+        {
+            for (int i = 0; i < riverPath.Count; i++)
+            {
+                GameTile currentTile = riverPath[i];
+
+                // Handle first tile
+                if (i == 0)
+                {
+                    GameTile nextTile = riverPath[i + 1];
+                    int nextTileEdgeIndex = GetSharedEdgeIndex(currentTile, nextTile);
+                    currentTile.SetRiverEdge(nextTileEdgeIndex, true);
+                }
+                // Handle last tile
+                else if (i == riverPath.Count - 1)
+                {
+                    GameTile previousTile = riverPath[i - 1];
+                    int prevTileEdgeIndex = GetSharedEdgeIndex(currentTile, previousTile);
+                    currentTile.SetRiverEdge(prevTileEdgeIndex, true);
+                }
+                // Handle middle tiles
+                else
+                {
+                    GameTile previousTile = riverPath[i - 1];
+                    GameTile nextTile = riverPath[i + 1];
+            
+                    int prevTileEdgeIndex = GetSharedEdgeIndex(currentTile, previousTile);
+                    int nextTileEdgeIndex = GetSharedEdgeIndex(currentTile, nextTile);
+            
+                    // Set both the edge to the previous and next tile
+                    currentTile.SetRiverEdge(prevTileEdgeIndex, true);
+                    currentTile.SetRiverEdge(nextTileEdgeIndex, true);
+                    
+                    // Now connect the shared edges insided the tile
+                    ConnectInternalEdges(currentTile, prevTileEdgeIndex, nextTileEdgeIndex);
+                }
+            }
+        }
+        
+        // Determines the shared edge between two tiles
+        int GetSharedEdgeIndex(GameTile currentTile, GameTile nextTile)
+        {
+            // Iterate over the neighbors array to find the shared edge
+            for (int i = 0; i < 6; i++)
+            {
+                if (currentTile.GetNeighbors()[i] == nextTile)
+                {
+                    return i;
+                }
+            }
+
+            // Return -1 if no shared edge is found (this should not happen if the path is valid)
+            return -1;
+        }
+        
+        // Sets the River Edges in a hexagon to true from startEdge to endEdge.
+        void ConnectInternalEdges(GameTile tile, int startEdge, int endEdge)
+        {
+            // Clockwise or coutnerlockwise logic
+            int clockwiseDistance = (endEdge - startEdge + 6) % 6;
+            int counterClockwiseDistance = (startEdge - endEdge + 6) % 6;
+            
+            // Decide which direction to connect the edges - random 50% chance
+            if (_random.NextInt(0, 2) == 0)
+            {
+                // Set Clockwise edges
+                for (int i = 1; i < clockwiseDistance; i++)
+                {
+                    int edgeToSet = (startEdge + i) % 6;
+                    tile.SetRiverEdge(edgeToSet, true);
+                }
+            }
+            else
+            {
+                // Set Counter-clockwise edges
+                for (int i = 1; i < counterClockwiseDistance; i++)
+                {
+                    int edgeToSet = (startEdge - i + 6) % 6;
+                    tile.SetRiverEdge(edgeToSet, true);
+                }
+            }
+        }
     }
     
     /* Determine the features on Tiles. */

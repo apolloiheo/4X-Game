@@ -82,7 +82,8 @@ public class GameTile
         _unit = null;
         _settlement = null;
         _mc = CalculateMovementCost();
-        _riverAdj = CalculateRiverAdjacency();
+        _riverEdges = CalculateRiverAdjacency();
+        _riverAdjacent = false;
         _yields = CalculateYields();
     }
     
@@ -97,7 +98,8 @@ public class GameTile
         _neighbors = new GameTile[TileEdges];
         _unit = unit;
         _settlement = settlement;
-        _riverAdj = CalculateRiverAdjacency();
+        _riverEdges = CalculateRiverAdjacency();
+        _riverAdjacent = false;
         _mc = CalculateMovementCost();
         _yields = CalculateYields();
     }

@@ -78,8 +78,8 @@ public class Test : MonoBehaviour
             for (int y = 0; y < world.GetHeight(); y++)
             {
                 // Grid can be switched, check if Height is Width
-                float tileHeight = .8f;
-                float tileWidth = .7f;
+                float tileHeight = 1f;
+                float tileWidth = 1f;
                 float edge = 4f;
                 
                 if (x == 99 && y == 49)

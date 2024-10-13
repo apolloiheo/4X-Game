@@ -9,13 +9,13 @@ using Random = Unity.Mathematics.Random;
 public class WorldGenerator : MonoBehaviour
 {
     private int _continents;
-    [FormerlySerializedAs("_rand")] public Random _random;
+    public Random _random;
     
     /* Returns a fully generated game world. */
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(1231231);
+        _random = new Random(565656565);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -776,15 +776,16 @@ public class WorldGenerator : MonoBehaviour
         }
         
         // For testing
-        riverStartLocations.Add(world.GetTile(25, 25));
         riverStartLocations.Add(world.GetTile(50, 25));
-        
         
         // Call everything together to build rivers and then set their edges.
         foreach (GameTile river in riverStartLocations)
         {
             SetRiverEdges(FormRiver(river));
         }
+        
+        // Clear extra rivers that are not necessary
+        ClearTShapedRiverIntersections(world);
         
         /* Returns a List(Path) of Tiles to create a River */
         List<GameTile> FormRiver(GameTile start)
@@ -801,30 +802,30 @@ public class WorldGenerator : MonoBehaviour
             start.SetTerrain(prevEdge);
             // Add the initial Tile to the List
             tileList.Add(start);
-
-            // Determine the edge for the river to expand to (it should always be adjacent to the previous edge)
-            if (prevEdge == 0)
-            {
-                possibleNeighbors[0] = 5;
-                possibleNeighbors[1] = 0;
-                possibleNeighbors[2] = 1;
-            } else if (prevEdge == 5)
-            {
-                possibleNeighbors[0] = 4;
-                possibleNeighbors[1] = 5;
-                possibleNeighbors[2] = 0;
-            }
-            else
-            {
-                possibleNeighbors[0] = prevEdge - 1;
-                possibleNeighbors[1] = prevEdge;
-                possibleNeighbors[2] = prevEdge + 1;
-            }
             
             GameTile currTile = start;
             // Until we reach the river's lenght, keep adding tiles to the List to make river.
             for (int i = 0; i < riverLength; i++)
             {
+                // Determine the edge for the river to expand to (it should always be adjacent to the previous edge)
+                if (prevEdge == 0)
+                {
+                    possibleNeighbors[0] = 5;
+                    possibleNeighbors[1] = 0;
+                    possibleNeighbors[2] = 1;
+                } else if (prevEdge == 5)
+                {
+                    possibleNeighbors[0] = 4;
+                    possibleNeighbors[1] = 5;
+                    possibleNeighbors[2] = 0;
+                }
+                else
+                {
+                    possibleNeighbors[0] = prevEdge - 1;
+                    possibleNeighbors[1] = prevEdge;
+                    possibleNeighbors[2] = prevEdge + 1;
+                }
+                
                 // Determine a new random edge within the right parameters
                 nextEdge = possibleNeighbors[_random.NextInt(possibleNeighbors.Length)];
 
@@ -842,6 +843,8 @@ public class WorldGenerator : MonoBehaviour
                 currTile.SetRiverAdjacency(true);
                 // Update currTile to the next neighbor
                 currTile = currTile.GetNeighbors()[nextEdge];
+                // Update what the previous edge was.
+                prevEdge = nextEdge;
             }
             
             // Return a List (path) of Tiles for the river.
@@ -879,8 +882,8 @@ public class WorldGenerator : MonoBehaviour
                     int nextTileEdgeIndex = GetSharedEdgeIndex(currentTile, nextTile);
             
                     // Set both the edge to the previous and next tile
-                    currentTile.SetRiverEdge(prevTileEdgeIndex, true);
-                    currentTile.SetRiverEdge(nextTileEdgeIndex, true);
+                    /*currentTile.SetRiverEdge(prevTileEdgeIndex, true);
+                    currentTile.SetRiverEdge(nextTileEdgeIndex, true);*/
                     
                     // Now connect the shared edges insided the tile
                     ConnectInternalEdges(currentTile, prevTileEdgeIndex, nextTileEdgeIndex);
@@ -910,24 +913,125 @@ public class WorldGenerator : MonoBehaviour
             // Clockwise or coutnerlockwise logic
             int clockwiseDistance = (endEdge - startEdge + 6) % 6;
             int counterClockwiseDistance = (startEdge - endEdge + 6) % 6;
+            int edgeStartIndex = 0;
             
             // Decide which direction to connect the edges - random 50% chance
             if (_random.NextInt(0, 2) == 0)
             {
-                // Set Clockwise edges
-                for (int i = 1; i < clockwiseDistance; i++)
+                if (clockwiseDistance < counterClockwiseDistance)
                 {
-                    int edgeToSet = (startEdge + i) % 6;
-                    tile.SetRiverEdge(edgeToSet, true);
+                    
+                    // Set Clockwise edges
+                    for (int i = edgeStartIndex; i <= clockwiseDistance; i++)
+                    {
+                    
+                        int edgeToSet = (startEdge + i) % 6;
+                        tile.SetRiverEdge(edgeToSet, true);
+                    }
+                }
+                else if (clockwiseDistance > counterClockwiseDistance)
+                {
+                    // Set Clockwise edges
+                    for (int i = edgeStartIndex; i < clockwiseDistance; i++)
+                    {
+                    
+                        int edgeToSet = (startEdge + i) % 6;
+                        tile.SetRiverEdge(edgeToSet, true);
+                    }
+                }
+                else
+                {
+                    // Set Clockwise edges
+                    for (int i = edgeStartIndex; i < clockwiseDistance; i++)
+                    {
+                    
+                        int edgeToSet = (startEdge + i) % 6;
+                        tile.SetRiverEdge(edgeToSet, true);
+                    }
                 }
             }
             else
             {
-                // Set Counter-clockwise edges
-                for (int i = 1; i < counterClockwiseDistance; i++)
+                if (counterClockwiseDistance < clockwiseDistance)
                 {
-                    int edgeToSet = (startEdge - i + 6) % 6;
-                    tile.SetRiverEdge(edgeToSet, true);
+                      
+                    // Set Counter-clockwise edges
+                    for (int i = edgeStartIndex; i < counterClockwiseDistance; i++)
+                    {
+                        int edgeToSet = (startEdge - i + 6) % 6;
+                        tile.SetRiverEdge(edgeToSet, true);
+                    }
+                }
+                else if (counterClockwiseDistance > clockwiseDistance)
+                {
+                    // Set Counter-clockwise edges
+                    for (int i = edgeStartIndex; i < counterClockwiseDistance; i++)
+                    {
+                        int edgeToSet = (startEdge - i + 6) % 6;
+                        tile.SetRiverEdge(edgeToSet, true);
+                    }
+                } else 
+                {
+                    // Set Counter-clockwise edges
+                    for (int i = edgeStartIndex; i < counterClockwiseDistance; i++)
+                    {
+                        int edgeToSet = (startEdge - i + 6) % 6;
+                        tile.SetRiverEdge(edgeToSet, true);
+                    }
+                }
+            }
+        }
+        
+        /* Does a final scan over every river and makes sure there are no needless T shaped river segments. */
+        void ClearTShapedRiverIntersections(World world)
+        {
+            // Scan the world
+            for (int x = 0; x < world.GetLength(); x++)
+            {
+                for (int y = 0; y < world.GetHeight(); y++)
+                {
+                    GameTile currTile = world.GetTile(x, y);
+
+                    // If a Tile has River adjacency
+                    if (currTile.GetRiverAdjacency())
+                    {
+                        // For each of its neighbors
+                        foreach (GameTile neighbor in currTile.GetNeighbors())
+                        {
+                            // If they have river adjacency
+                            if (neighbor.GetRiverAdjacency())
+                            {
+                                // Set to true by default.
+                                bool sameEdges = true;
+                                
+                                List<int> edgesSetToTrue = new List<int>();
+                                // Add all the current Tile's river edges set to True to a list.
+                                for (int index = 0; index < 6; index++)
+                                {
+                                    if (currTile.GetRiverEdge(index))
+                                    {
+                                        edgesSetToTrue.Add(index);
+                                    }
+                                }
+                                
+                                // If neighbor has those same edges set to true as well
+                                foreach (int edge in edgesSetToTrue)
+                                {
+                                    if (!neighbor.GetRiverEdge(edge))
+                                    {
+                                        sameEdges = false;
+                                    }
+                                }
+
+                                if (sameEdges)
+                                {
+                                    // Deactivate their shared edge on both Tile's ends.
+                                    currTile.SetRiverEdge(GetSharedEdgeIndex(currTile, neighbor), false);
+                                    neighbor.SetRiverEdge(GetSharedEdgeIndex(neighbor, currTile), false);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

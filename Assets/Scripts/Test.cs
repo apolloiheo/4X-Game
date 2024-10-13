@@ -202,6 +202,10 @@ public class Test : MonoBehaviour
 
                 if (currTile.GetRiverAdjacency())
                 {
+                    /*tilemap.SetTile(new Vector3Int(y, x, 0), tile);
+                    tile.color = Color.blue;*/
+                    
+                    
                     for (int index = 0; index < 6; index++)
                     {
                         if (currTile.GetRiverEdge(index))

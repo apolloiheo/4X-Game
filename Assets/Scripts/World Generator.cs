@@ -15,7 +15,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(46454778);
+        _random = new Random(1234566);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -788,6 +788,10 @@ public class WorldGenerator : MonoBehaviour
         // Clear extra rivers that are not necessary
         ClearTShapedRiverIntersections(world);
         ClearTShapedRiverIntersections(world);
+        ClearTShapedRiverIntersections(world);
+        
+        // Make sure Rivers end at Coast
+        EndRiversAtCoasts(world);
         
         
         /* Returns a List(Path) of Tiles to create a River */
@@ -802,7 +806,7 @@ public class WorldGenerator : MonoBehaviour
             int[] possibleNeighbors = new int[3];
             
             // Set it's edge on.
-            start.SetTerrain(prevEdge);
+            start.SetRiverEdge(prevEdge, true);
             // Add the initial Tile to the List
             tileList.Add(start);
             
@@ -849,8 +853,8 @@ public class WorldGenerator : MonoBehaviour
 
                 GameTile nextTile = currTile.GetNeighbors()[nextEdge];
 
-                // If the next Tile is Coast or Ocean, return List and end river path.
-                if (nextTile is null || nextTile.GetBiome() == 6 || nextTile.GetBiome() == 7)
+                // If the next Tile is null, return List and end river path.
+                if (nextTile is null)
                 {
                     return tileList;
                 }
@@ -859,10 +863,22 @@ public class WorldGenerator : MonoBehaviour
                 tileList.Add(currTile.GetNeighbors()[nextEdge]);
                 // Set the current Tile's river Adjacency to true.
                 currTile.SetRiverAdjacency(true);
+                
+                // Check if we are currently adjacent to a Coast.
+                foreach (GameTile neighbor in currTile.GetNeighbors())
+                {
+                    // If so
+                    if (neighbor.GetBiome() == 6)
+                    {
+                        // End the River
+                        return tileList;
+                    }
+                }
+                
                 // Update currTile to the next neighbor
                 currTile = currTile.GetNeighbors()[nextEdge];
-                // Update what the previous edge was.
                 
+                // Update what the direction of previous edge was.
                 if (nextEdge == 0 && prevEdge == 5)
                 {
                     wentLeft = true;
@@ -1070,7 +1086,35 @@ public class WorldGenerator : MonoBehaviour
                 }
             }
         }
+
+        void EndRiversAtCoasts(World world)
+        {
+            // Scan the world
+            for (int x = 0; x < world.GetLength(); x++)
+            {
+                for (int y = 0; y < world.GetHeight(); y++)
+                {
+                    GameTile currTile = world.GetTile(x, y);
+
+                    if (currTile.GetRiverAdjacency())
+                    {
+                        int index = 0;
+                        foreach (GameTile neighbor in currTile.GetNeighbors())
+                        {
+                            if (neighbor.GetBiome() == 6)
+                            {
+                                currTile.SetRiverEdge(index, false);
+                            }
+                            index++;
+                        }
+
+                        
+                    }
+                }
+            }
+        }
     }
+    
     
     /* Determine the features on Tiles. */
     private void DetermineFeatures(World world)

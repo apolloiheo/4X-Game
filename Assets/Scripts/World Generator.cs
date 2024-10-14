@@ -16,7 +16,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(1111111);
+        _random = new Random(444444);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -114,7 +114,7 @@ public class WorldGenerator : MonoBehaviour
 
                 // Set important factors for this world gen 
                 currentWorldCoverage = 2; // How many Tiles have been turned to land so far.
-                probabilityThreshold = 35; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
+                probabilityThreshold = 25; // Base percentage of likelihood to NOT place Tile. (is increased by many factors)
                 consecutiveFailures = 0; // Keeps track of how many times the procedure has failed to place a Tile. (Makes it more likely to succeed if it failed a lot)
                 failureFactor = 12; // The probability factor power of each consecutive failure.
 
@@ -128,8 +128,8 @@ public class WorldGenerator : MonoBehaviour
                 }
                 
                 // Turn both continent starting points to land.
-                world.ModifyTileBiome(continentStart1, 0);
-                world.ModifyTileBiome(continentStart2, 0);
+                world.ModifyTileBiome(continentStart1, 1);
+                world.ModifyTileBiome(continentStart2, 1);
                 
                 // The percentage of land coverage that the first continent will take before switching to building the second.
                 float continentSwitch = _random.NextFloat((float)0.4, (float)0.6);
@@ -750,29 +750,35 @@ public class WorldGenerator : MonoBehaviour
     private void DetermineRivers(World world)
     {
         HashSet<GameTile> scannedTiles = new HashSet<GameTile>();
+
+        
         
         // Empty List where we will store the Tiles to start rivers from.
         List<GameTile> riverStartLocations = new List<GameTile>();
         
+        foreach (GameTile start in DetermineTilesWithinLandDistance(7))
+        {
+            SetRiverEdges(FormRiver(start, _random.NextInt(10, 15)));
+        }
 
         foreach (GameTile start in DetermineTilesWithinLandDistance(5))
         {
-            riverStartLocations.Add(start);
+            SetRiverEdges(FormRiver(start, _random.NextInt(7, 12)));
         }
 
         foreach (GameTile start in DetermineTilesWithinLandDistance(4))
         {
-            riverStartLocations.Add(start);
+            SetRiverEdges(FormRiver(start, _random.NextInt(7, 9)));
         }
         
         foreach (GameTile start in DetermineTilesWithinLandDistance(3))
         {
-            riverStartLocations.Add(start);
+            SetRiverEdges(FormRiver(start, _random.NextInt(5, 9)));
         }
 
         foreach (GameTile start in DetermineTilesWithinLandDistance(2))
         {
-            riverStartLocations.Add(start);
+            SetRiverEdges(FormRiver(start, _random.NextInt(3, 7)));
         }
 
         List<GameTile> DetermineTilesWithinLandDistance(int maxDistance)
@@ -848,16 +854,6 @@ public class WorldGenerator : MonoBehaviour
             return true;
         }
         
-        // For testing
-        /*riverStartLocations.Add(world.GetTile(50, 25));
-        riverStartLocations.Add(world.GetTile(10, 20));*/
-        
-        // Call everything together to build rivers and then set their edges.
-        foreach (GameTile river in riverStartLocations)
-        {
-            SetRiverEdges(FormRiver(river));
-        }
-        
         // Clear extra rivers that are not necessary
         ClearTShapedRiverIntersections(world);
         ClearTShapedRiverIntersections(world);
@@ -868,11 +864,10 @@ public class WorldGenerator : MonoBehaviour
         
         
         /* Returns a List(Path) of Tiles to create a River */
-        List<GameTile> FormRiver(GameTile start)
+        List<GameTile> FormRiver(GameTile start, int riverLength)
         {
             List<GameTile> tileList = new List<GameTile>();
             
-            int riverLength = _random.NextInt(8, 15);
             int currentLength = 0;
             int prevEdge = _random.NextInt(0, 6);
             int nextEdge;
@@ -940,15 +935,26 @@ public class WorldGenerator : MonoBehaviour
                 // Check if we are currently adjacent to a Coast.
                 foreach (GameTile neighbor in currTile.GetNeighbors())
                 {
-                    // If so
-                    if (neighbor.GetBiome() == 6 || neighbor.GetBiome() == 7)
-                    { 
+                    if (neighbor is not null)
+                    {
+                        // If so
+                        if (neighbor.GetBiome() == 6 || neighbor.GetBiome() == 7)
+                        { 
+                            // Deactivate previous edge on this tile.
+                            currTile.SetRiverEdge(prevEdge, false);
+                        
+                            // End the River
+                            return tileList;
+                        }
+                    }
+                    else
+                    {
                         // Deactivate previous edge on this tile.
                         currTile.SetRiverEdge(prevEdge, false);
                         
-                        // End the River
                         return tileList;
                     }
+                    
                 }
                 
                 // Update currTile to the next neighbor
@@ -981,6 +987,11 @@ public class WorldGenerator : MonoBehaviour
         /* Takes a List (Path) of Tiles and sets the edges in order to create a River. */
         void SetRiverEdges(List<GameTile> riverPath)
         {
+            if (riverPath.Count == 1)
+            {
+                return;
+            }
+            
             for (int i = 0; i < riverPath.Count; i++)
             {
                 GameTile currentTile = riverPath[i];
@@ -1043,7 +1054,7 @@ public class WorldGenerator : MonoBehaviour
             int edgeStartIndex = 0;
             
             // Decide which direction to connect the edges - random 50% chance
-            if (_random.NextInt(0, 2) == 0)
+            if (_random.NextInt(0, 3) > 0)
             {
                 if (clockwiseDistance < counterClockwiseDistance)
                 {
@@ -1126,7 +1137,7 @@ public class WorldGenerator : MonoBehaviour
                         foreach (GameTile neighbor in currTile.GetNeighbors())
                         {
                             // If they have river adjacency
-                            if (neighbor.GetRiverAdjacency())
+                            if (neighbor is not null && neighbor.GetRiverAdjacency())
                             {
                                 // Set to true by default.
                                 bool sameEdges = true;
@@ -1179,12 +1190,12 @@ public class WorldGenerator : MonoBehaviour
                         int index = 0;
                         int edgeAdjacentToCoast = 0;
                         // Figure out where each edge is at
+                        
                         foreach (GameTile neighbor in currTile.GetNeighbors())
                         {
                             // if Neighbor is Coast
-                            if (neighbor.GetBiome() == 6)
+                            if (neighbor is not null && neighbor.GetBiome() == 6)
                             {
-                                
                                 // Set to true
                                 isAdjacentToCoat = true;
                                 // EdgeAdjacentToCoast

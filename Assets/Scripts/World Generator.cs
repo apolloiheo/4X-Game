@@ -864,7 +864,7 @@ public class WorldGenerator : MonoBehaviour
         ClearTShapedRiverIntersections(world);
         
         // Make sure Rivers end at Coast
-        EndRiversAtCoasts(world);
+        FixEdgesAtCoasts(world);
         
         
         /* Returns a List(Path) of Tiles to create a River */
@@ -1163,7 +1163,8 @@ public class WorldGenerator : MonoBehaviour
             }
         }
 
-        void EndRiversAtCoasts(World world)
+        /* Corrects any river segments past coasts. */
+        void FixEdgesAtCoasts(World world)
         {
             // Scan the world
             for (int x = 0; x < world.GetLength(); x++)
@@ -1177,7 +1178,7 @@ public class WorldGenerator : MonoBehaviour
                     if (currTile.GetRiverAdjacency())
                     {
                         int index = 0;
-                        int edgeAdjacentToCoast = 0;
+                        int edgeAdjacentToCoast;
                         // Figure out where each edge is at
                         foreach (GameTile neighbor in currTile.GetNeighbors())
                         {

@@ -37,7 +37,7 @@ public class Test : MonoBehaviour
 
     private void TestWorldGeneration()
     {
-        World gameWorld = new WorldGenerator().GenerateWorld(100, 50,1);
+        World gameWorld = new WorldGenerator().GenerateWorld(100, 50,2);
         //World gameWorld = new WorldGenerator().GenerateWorld(100, 50, 2);
 
         DrawTilemap(gameWorld);

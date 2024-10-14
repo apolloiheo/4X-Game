@@ -15,7 +15,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(1234566);
+        _random = new Random(1111111);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -765,9 +765,9 @@ public class WorldGenerator : MonoBehaviour
                         // 1 / 10 chance if it's a Mountain.
                         if (currTile.GetTerrain() == 2)
                         {
-                            if (_random.NextInt(0, 10) == 0)
+                            if (_random.NextInt(0, 8) == 0)
                             {
-                                //riverStartLocations.Add(currTile);
+                                riverStartLocations.Add(currTile);
                             }
                         }
                     }
@@ -776,8 +776,8 @@ public class WorldGenerator : MonoBehaviour
         }
         
         // For testing
-        riverStartLocations.Add(world.GetTile(50, 25));
-        riverStartLocations.Add(world.GetTile(10, 20));
+        /*riverStartLocations.Add(world.GetTile(50, 25));
+        riverStartLocations.Add(world.GetTile(10, 20));*/
         
         // Call everything together to build rivers and then set their edges.
         foreach (GameTile river in riverStartLocations)
@@ -868,8 +868,11 @@ public class WorldGenerator : MonoBehaviour
                 foreach (GameTile neighbor in currTile.GetNeighbors())
                 {
                     // If so
-                    if (neighbor.GetBiome() == 6)
-                    {
+                    if (neighbor.GetBiome() == 6 || neighbor.GetBiome() == 7)
+                    { 
+                        // Deactivate previous edge on this tile.
+                        currTile.SetRiverEdge(prevEdge, false);
+                        
                         // End the River
                         return tileList;
                     }
@@ -1095,21 +1098,74 @@ public class WorldGenerator : MonoBehaviour
                 for (int y = 0; y < world.GetHeight(); y++)
                 {
                     GameTile currTile = world.GetTile(x, y);
+                    bool isAdjacentToCoat = false;
 
+                    // If a Tile has River Adjacency
                     if (currTile.GetRiverAdjacency())
                     {
                         int index = 0;
+                        int edgeAdjacentToCoast = 0;
+                        // Figure out where each edge is at
                         foreach (GameTile neighbor in currTile.GetNeighbors())
                         {
+                            // if Neighbor is Coast
                             if (neighbor.GetBiome() == 6)
                             {
-                                currTile.SetRiverEdge(index, false);
+                                
+                                // Set to true
+                                isAdjacentToCoat = true;
+                                // EdgeAdjacentToCoast
+                                edgeAdjacentToCoast = index;
+                                // Set it to False
+                                currTile.SetRiverEdge(edgeAdjacentToCoast, false);
                             }
                             index++;
                         }
 
-                        
+                        if (isAdjacentToCoat)
+                        {
+                            // Check through the Tile's river edges
+                            for (int i = 0; i < 6; i++)
+                            {
+                                // If this edge is Set to True.
+                                if (currTile.GetRiverEdge(i))
+                                {
+                                    // If this edge is 5 and the Tile towards this edge is not in the River Path
+                                    if (i == 5 && !currTile.GetNeighbors()[5].GetRiverAdjacency())
+                                    {
+                                        // If Both it's neighboring edges don't lead to a Tile on the River Path
+                                        if (!currTile.GetNeighbors()[4].GetRiverAdjacency() && !currTile.GetNeighbors()[0].GetRiverAdjacency())
+                                        {
+                                            // Then set the isolated river edge to false.
+                                            currTile.SetRiverEdge(5, false);
+                                        }
+                                    } 
+                                    // If this edge is 0 and the Tile towards this edge is not in the River Path
+                                    else if (i == 0 && !currTile.GetNeighbors()[0].GetRiverAdjacency())
+                                    {
+                                        // If Both it's neighboring edges don't lead to a Tile on the River Path
+                                        if (!currTile.GetNeighbors()[5].GetRiverAdjacency() && !currTile.GetNeighbors()[1].GetRiverAdjacency())
+                                        {
+                                            // Then set the isolated river edge to false.
+                                            currTile.SetRiverEdge(0, false);
+                                        }
+                                    }
+                                    // If any other number and the Tile towards this edge is not in the River Path
+                                    else if (!currTile.GetNeighbors()[i].GetRiverAdjacency())
+                                    {
+                                        // If Both it's neighboring edges don't lead to a Tile on the River Path
+                                        if (!currTile.GetNeighbors()[i - 1].GetRiverAdjacency() && !currTile.GetNeighbors()[i + 1].GetRiverAdjacency())
+                                        {
+                                            // Then set the isolated river edge to false.
+                                            currTile.SetRiverEdge(i, false);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
+                    
+                    
                 }
             }
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Serialization;
@@ -748,31 +749,103 @@ public class WorldGenerator : MonoBehaviour
     /* Determine Rivers - From Mountains to Coast  */ 
     private void DetermineRivers(World world)
     {
+        HashSet<GameTile> scannedTiles = new HashSet<GameTile>();
+        
         // Empty List where we will store the Tiles to start rivers from.
         List<GameTile> riverStartLocations = new List<GameTile>();
         
-        /* Determines the GameTiles (locations) where to start rivers.  */
-        for (int x = 0; x < world.GetLength(); x++)
-        {
-            for (int y = 0; y < world.GetHeight(); y++)
-            {
-                GameTile currTile = world.GetTile(x, y);
 
-                if (currTile.GetXPos() > world.GetLength() * .10 && currTile.GetXPos() < world.GetLength() * .90)
+        foreach (GameTile start in DetermineTilesWithinLandDistance(5))
+        {
+            riverStartLocations.Add(start);
+        }
+
+        foreach (GameTile start in DetermineTilesWithinLandDistance(4))
+        {
+            riverStartLocations.Add(start);
+        }
+        
+        foreach (GameTile start in DetermineTilesWithinLandDistance(3))
+        {
+            riverStartLocations.Add(start);
+        }
+
+        foreach (GameTile start in DetermineTilesWithinLandDistance(2))
+        {
+            riverStartLocations.Add(start);
+        }
+
+        List<GameTile> DetermineTilesWithinLandDistance(int maxDistance)
+        {
+            List<GameTile> validTiles = new List<GameTile>();
+
+            for (int x = 0; x < world.GetLength(); x++)
+            {
+                for (int y = 0; y < world.GetHeight(); y++)
                 {
-                    if (currTile.GetYPos() > world.GetHeight() * .10 && currTile.GetYPos() < world.GetHeight() * .90)
+                    GameTile currTile = world.GetTile(x, y);
+
+                    if (scannedTiles.Contains(currTile)) continue;
+                    
+                    if (IsSurroundedByLand(currTile, maxDistance))
                     {
-                        // 1 / 10 chance if it's a Mountain.
-                        if (currTile.GetTerrain() == 2)
-                        {
-                            if (_random.NextInt(0, 8) == 0)
-                            {
-                                riverStartLocations.Add(currTile);
-                            }
-                        }
+                        validTiles.Add(currTile);
                     }
                 }
             }
+            return validTiles;
+        }
+
+        bool IsSurroundedByLand(GameTile tile, int maxDistance)
+        {
+            HashSet<GameTile> visited = new HashSet<GameTile>();
+            Queue<(GameTile tile, int distance)> queue = new Queue<(GameTile tile, int distance)>();
+            queue.Enqueue((tile, 0));
+            visited.Add(tile);
+            
+            List<GameTile> localTilesScanned = new List<GameTile>();
+
+            while (queue.Count > 0)
+            {
+                var (currentTile, distance) = queue.Dequeue();
+                
+                // If we've reached max distance, stop checking further neighbors
+                if (distance > maxDistance) continue;
+
+                // If the current tile has already been scanned, stop
+                if (scannedTiles.Contains(currentTile))
+                {
+                    return false; // This tile intersects with a previous valid tile's radius
+                }
+                
+                // If the current tile is not land, return false
+                if (!currentTile.IsLand())
+                {
+                    return false;
+                }
+                
+                // Add to local list of tiles being scanned for this search
+                localTilesScanned.Add(currentTile);
+                
+                //Enqueue the neighbors to continue exploring within the distance limit.
+                GameTile[] neighbors = currentTile.GetNeighbors();
+                foreach (GameTile neighbor in neighbors)
+                {
+                    if (neighbor is not null && !visited.Contains(neighbor))
+                    {
+                        visited.Add(neighbor);
+                        queue.Enqueue((neighbor, distance + 1));
+                    }
+                }
+            }
+
+            foreach (GameTile gameTile in localTilesScanned)
+            {
+                scannedTiles.Add(gameTile);
+            }
+            
+            // If all tiles within the distance are land, return true
+            return true;
         }
         
         // For testing

@@ -62,18 +62,18 @@ public class Test : MonoBehaviour
                 GameTile currTile = world.GetTile(x, y);
                 
                 // Grid can be switched, check if Height is Width
-                float tileHeight = 1f;
+                double tileHeight = 0.9555f;
                 float tileWidth = 1f;
                 float edge = 4f;
 
                 
                 square.transform.position =
-                    new Vector3(x * .75f * tileWidth, y * tileHeight + (tileHeight / 2) * (x % 2));
+                    new Vector3(x * .75f * tileWidth, (float)(y * tileHeight + (tileHeight / 2) * (x % 2)));
 
 
 
                 float bigX = tileWidth * x * .75f;
-                float bigY = y * tileHeight + (tileHeight / 2) * (x % 2);
+                float bigY = (float)(y * tileHeight + (tileHeight / 2) * (x % 2));
 
                 square.transform.position = new Vector3(
                     (float)(bigX + Math.Pow(-1f, Math.Pow(0f, (5f - edge) * (4f - edge))) *
@@ -202,8 +202,8 @@ public class Test : MonoBehaviour
 
                 if (currTile.GetRiverAdjacency())
                 {
-                    tilemap.SetTile(new Vector3Int(y, x, 0), tile);
-                    tile.color = Color.white;
+                    /*tilemap.SetTile(new Vector3Int(y, x, 0), tile);
+                    tile.color = Color.white;*/
                     
                     for (int index = 0; index < 6; index++)
                     {
@@ -220,10 +220,10 @@ public class Test : MonoBehaviour
 
                             if (index == 1 || index == 4)
                             {
-                                riverRotation = Quaternion.Euler(0f, 0f, -65f);
+                                riverRotation = Quaternion.Euler(0f, 0f, -63f);
                             } else if (index == 5 || index == 2)
                             {
-                                riverRotation = Quaternion.Euler(0f, 0f, 65f);
+                                riverRotation = Quaternion.Euler(0f, 0f, 63f);
                             }
                             else
                             {

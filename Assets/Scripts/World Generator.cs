@@ -750,8 +750,6 @@ public class WorldGenerator : MonoBehaviour
     private void DetermineRivers(World world)
     {
         HashSet<GameTile> scannedTiles = new HashSet<GameTile>();
-
-        
         
         // Empty List where we will store the Tiles to start rivers from.
         List<GameTile> riverStartLocations = new List<GameTile>();
@@ -1018,10 +1016,6 @@ public class WorldGenerator : MonoBehaviour
             
                     int prevTileEdgeIndex = GetSharedEdgeIndex(currentTile, previousTile);
                     int nextTileEdgeIndex = GetSharedEdgeIndex(currentTile, nextTile);
-            
-                    // Set both the edge to the previous and next tile
-                    /*currentTile.SetRiverEdge(prevTileEdgeIndex, true);
-                    currentTile.SetRiverEdge(nextTileEdgeIndex, true);*/
                     
                     // Now connect the shared edges insided the tile
                     ConnectInternalEdges(currentTile, prevTileEdgeIndex, nextTileEdgeIndex);

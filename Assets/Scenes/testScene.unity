@@ -255,8 +255,8 @@ MonoBehaviour:
   tile: {fileID: 11400000, guid: 6dc6f9350229dc44fba6e7e57417cb10, type: 2}
   riverSegment: {fileID: 7700684974192715068, guid: 5ee1d19087010834ea13908e3fde1750, type: 3}
   prairieTile: {fileID: 11400000, guid: 27b1ce3b55e8ee448ba52b1f59f01dac, type: 2}
-  grassTile: {fileID: 11400000, guid: 5d6fdced9a2d03b4cbbda0662b653f01, type: 2}
-  tundraTile: {fileID: 11400000, guid: 20e151a3a4a2bca4c9c93530edfa784f, type: 2}
+  grassTile: {fileID: 11400000, guid: 199f0a7142903de44bb71ce1edda0ebf, type: 2}
+  tundraTile: {fileID: 11400000, guid: 25b740eec3e06434c89d432169b8ec84, type: 2}
   desertTile: {fileID: 11400000, guid: 2a03dea880a66a742843883a7aee3862, type: 2}
   oceanTile: {fileID: 11400000, guid: 2ce6c4fc643286247bb8b2c4915f5de3, type: 2}
   coastTile: {fileID: 11400000, guid: 7b8d4326a3f00584da0867ed0e40b1db, type: 2}
@@ -1108,7 +1108,7 @@ Grid:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 698498138}
   m_Enabled: 1
-  m_CellSize: {x: 1, y: 1, z: 1}
+  m_CellSize: {x: 0.9555, y: 1, z: 1}
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 1
   m_CellSwizzle: 2
@@ -1967,7 +1967,7 @@ TilemapRenderer:
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
-  m_Mode: 1
+  m_Mode: 0
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
 --- !u!1839735485 &1457386395
@@ -1989,7 +1989,15 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 0
     m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   m_TileSpriteArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 0
     m_Data: {fileID: 0}
   - m_RefCount: 0
@@ -2003,28 +2011,28 @@ Tilemap:
     m_Data:
       e00: 0
       e01: 0
-      e02: 2.4395087e-19
-      e03: 2.4395087e-19
+      e02: 4.5010147
+      e03: 4.5010147
       e10: 0
       e11: 0
-      e12: 8.25e-43
-      e13: 8.25e-43
-      e20: 16467184
-      e21: 9.366742e+28
-      e22: -8.981425e-29
-      e23: -3.09317e-40
-      e30: 4.5904e-41
-      e31: 8.3e-43
-      e32: 8.25e-43
-      e33: 8.28e-43
+      e12: 5.04e-43
+      e13: 5.04e-43
+      e20: -1.2970082e+10
+      e21: -6681104
+      e22: -7.905273e-29
+      e23: -2.3896e-40
+      e30: 4.5905e-41
+      e31: 5.07e-43
+      e32: 5.04e-43
+      e33: 5.07e-43
   m_TileColorArray:
   - m_RefCount: 0
-    m_Data: {r: 1.3755e-41, g: 1.3755e-41, b: 1.3755e-41, a: 1.3755e-41}
+    m_Data: {r: 3.4946e-41, g: 3.4946e-41, b: 3.4946e-41, a: 3.4946e-41}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: 0, y: -3, z: 0}
-  m_Size: {x: 26, y: 19, z: 1}
+  m_Size: {x: 37, y: 22, z: 1}
   m_TileAnchor: {x: 0, y: 0, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:

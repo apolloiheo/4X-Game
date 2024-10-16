@@ -42,9 +42,7 @@ public class WorldGenerator : MonoBehaviour
     /* Determine the area of Continents proportional to world size.
         - Put basic Plains tiles around the ContinentStartPoints
         - Randomly expand tiles around it to form continent. 
-        - Stop when it reaches a % of world coverage.
-     */
-    
+        - Stop when it reaches a % of world coverage.  */
     private void DetermineLand(World world)
     {
         // Different Procedures given different numbers of continents
@@ -457,7 +455,7 @@ public class WorldGenerator : MonoBehaviour
             }
         }
         
-        CleanUpTiles(world);
+        CorrectBiomes(world);
         
         // Add Coast Tiles
         for (int x = 0; x < world.GetLength(); x++)
@@ -477,10 +475,8 @@ public class WorldGenerator : MonoBehaviour
             }
         }
         
-    }
-
-    /* Removes Snow, Tundra, and corrects Tile positions.  */
-    public void CleanUpTiles(World world)
+        /* This method is meant to be a scan to correct Biome placings.  */
+    void CorrectBiomes(World world)
     {
         int totalLand = 0;
         int totalPlains = 0;
@@ -592,6 +588,8 @@ public class WorldGenerator : MonoBehaviour
             }
         }
         
+        
+    }
         
     }
 
@@ -860,6 +858,9 @@ public class WorldGenerator : MonoBehaviour
         // Make sure Rivers end at Coast
         FixEdgesAtCoasts(world);
         
+        // Set FreshWaterAccess to true for all Tiles adjacent to River.
+        AssignRemainingFreshWaterAccess(world);
+        
         
         /* Returns a List(Path) of Tiles to create a River */
         List<GameTile> FormRiver(GameTile start, int riverLength)
@@ -928,7 +929,7 @@ public class WorldGenerator : MonoBehaviour
                 // Add it to the list
                 tileList.Add(currTile.GetNeighbors()[nextEdge]);
                 // Set the current Tile's river Adjacency to true.
-                currTile.SetRiverAdjacency(true);
+                currTile.SetFreshWaterAccess(true);
                 
                 // Check if we are currently adjacent to a Coast.
                 foreach (GameTile neighbor in currTile.GetNeighbors())
@@ -1125,13 +1126,13 @@ public class WorldGenerator : MonoBehaviour
                     GameTile currTile = world.GetTile(x, y);
 
                     // If a Tile has River adjacency
-                    if (currTile.GetRiverAdjacency())
+                    if (currTile.GetFreshWaterAccess())
                     {
                         // For each of its neighbors
                         foreach (GameTile neighbor in currTile.GetNeighbors())
                         {
                             // If they have river adjacency
-                            if (neighbor is not null && neighbor.GetRiverAdjacency())
+                            if (neighbor is not null && neighbor.GetFreshWaterAccess())
                             {
                                 // Set to true by default.
                                 bool sameEdges = true;
@@ -1180,7 +1181,7 @@ public class WorldGenerator : MonoBehaviour
                     bool isAdjacentToCoat = false;
 
                     // If a Tile has River Adjacency
-                    if (currTile.GetRiverAdjacency())
+                    if (currTile.GetFreshWaterAccess())
                     {
                         int index = 0;
                         int edgeAdjacentToCoast;
@@ -1210,30 +1211,30 @@ public class WorldGenerator : MonoBehaviour
                                 if (currTile.GetRiverEdge(i))
                                 {
                                     // If this edge is 5 and the Tile towards this edge is not in the River Path
-                                    if (i == 5 && !currTile.GetNeighbors()[5].GetRiverAdjacency())
+                                    if (i == 5 && !currTile.GetNeighbors()[5].GetFreshWaterAccess())
                                     {
                                         // If Both it's neighboring edges don't lead to a Tile on the River Path
-                                        if (!currTile.GetNeighbors()[4].GetRiverAdjacency() && !currTile.GetNeighbors()[0].GetRiverAdjacency())
+                                        if (!currTile.GetNeighbors()[4].GetFreshWaterAccess() && !currTile.GetNeighbors()[0].GetFreshWaterAccess())
                                         {
                                             // Then set the isolated river edge to false.
                                             currTile.SetRiverEdge(5, false);
                                         }
                                     } 
                                     // If this edge is 0 and the Tile towards this edge is not in the River Path
-                                    else if (i == 0 && !currTile.GetNeighbors()[0].GetRiverAdjacency())
+                                    else if (i == 0 && !currTile.GetNeighbors()[0].GetFreshWaterAccess())
                                     {
                                         // If Both it's neighboring edges don't lead to a Tile on the River Path
-                                        if (!currTile.GetNeighbors()[5].GetRiverAdjacency() && !currTile.GetNeighbors()[1].GetRiverAdjacency())
+                                        if (!currTile.GetNeighbors()[5].GetFreshWaterAccess() && !currTile.GetNeighbors()[1].GetFreshWaterAccess())
                                         {
                                             // Then set the isolated river edge to false.
                                             currTile.SetRiverEdge(0, false);
                                         }
                                     }
                                     // If any other number and the Tile towards this edge is not in the River Path
-                                    else if (!currTile.GetNeighbors()[i].GetRiverAdjacency())
+                                    else if (!currTile.GetNeighbors()[i].GetFreshWaterAccess())
                                     {
                                         // If Both it's neighboring edges don't lead to a Tile on the River Path
-                                        if (!currTile.GetNeighbors()[i - 1].GetRiverAdjacency() && !currTile.GetNeighbors()[i + 1].GetRiverAdjacency())
+                                        if (!currTile.GetNeighbors()[i - 1].GetFreshWaterAccess() && !currTile.GetNeighbors()[i + 1].GetFreshWaterAccess())
                                         {
                                             // Then set the isolated river edge to false.
                                             currTile.SetRiverEdge(i, false);
@@ -1245,6 +1246,52 @@ public class WorldGenerator : MonoBehaviour
                     }
                     
                     
+                }
+            }
+        }
+
+        /* Makes sure that all Tile's adjacent to River's have Fresh Water Access set to True.  */
+        void AssignRemainingFreshWaterAccess(World world)
+        {
+            for (int x = 0; x < world.GetLength(); x++)
+            {
+                for (int y = 0; y < world.GetHeight(); y++)
+                {
+                    GameTile currTile = world.GetTile(x, y);
+                    
+                    if (currTile.GetFreshWaterAccess())
+                    {
+                        int edge = 0; // Keep track of which neighbor
+                        foreach (GameTile neighbor in currTile.GetNeighbors())
+                        {
+                            if (neighbor is not null && currTile.GetRiverEdge(edge) && neighbor.IsLand())
+                            {
+                                // Set the opposing edge to true
+                                currTile.GetNeighbors()[edge].SetRiverEdge((edge + 3) % 6, true);
+                                // Set the neighbor's fresh water access to true.
+                                currTile.GetNeighbors()[edge].SetFreshWaterAccess(true);
+                            }
+                            edge++;
+                        }
+
+                        // Check if the Tile has river edges.
+                        bool hasRiverEdges = false;
+                        for (int i = 0; i < 6; i++)
+                        {
+                            if (currTile.GetRiverEdge(i))
+                            {
+                                hasRiverEdges = true;
+                                break;
+                            }
+                        }
+                        
+                        // If it doesn't 
+                        if (!hasRiverEdges)
+                        {
+                            // Remove it's fresh water access
+                            currTile.SetFreshWaterAccess(false);
+                        }
+                    }
                 }
             }
         }

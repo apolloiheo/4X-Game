@@ -200,10 +200,10 @@ public class Test : MonoBehaviour
                     //tile.color = new Color32(20, 102, 184, 255);
                 }
 
-                if (currTile.GetRiverAdjacency())
+                if (currTile.GetFreshWaterAccess())
                 {
-                    /*tilemap.SetTile(new Vector3Int(y, x, 0), tile);
-                    tile.color = Color.white;*/
+                    tilemap.SetTile(new Vector3Int(y, x, 0), tile);
+                    tile.color = Color.white;
                     
                     for (int index = 0; index < 6; index++)
                     {

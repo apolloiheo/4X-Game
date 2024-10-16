@@ -50,28 +50,15 @@ public class GameTile
     // Instance Attributes
     private int _xPos; // The Tile's X Position on a 2D Array
     private int _yPos; // The Tile's Y Position on a 2D Array
-
-    private int
-        _biome; // The base layer of a Tile (Plains: 1, Grassland: 2, Tundra: 3, Desert: 4, Snow: 5, Coast: 6, Ocean: 7)
-
+    private int _biome; // The base layer of a Tile (Plains: 1, Grassland: 2, Tundra: 3, Desert: 4, Snow: 5, Coast: 6, Ocean: 7)
     private int _terrain; // The topography of a Tile (Flat: 0, Hill: 1, Mountain: 2)
-
-    private int
-        _feature; // The natural feature of a Tile (None: 0, Woods: 1, Floodplains: 2, Marsh: 3, Rainforest: 4, Oasis: 5)
-
-    private int
-        _resource; // The resource on this Tile. Could be a specific Bonus, Luxury, Strategic Resource, or no Resource. CHECK ID INDEX ABOVE^
-
+    private int _feature; // The natural feature of a Tile (None: 0, Woods: 1, Floodplains: 2, Marsh: 3, Rainforest: 4, Oasis: 5)
+    private int _resource; // The resource on this Tile. Could be a specific Bonus, Luxury, Strategic Resource, or no Resource. CHECK ID INDEX ABOVE^
     private int _improvement; // The Tile Improvement on this Tile or 0 for No Improvement. CHECK ID INDEX ABOVE^
     private int _mc; // Movement cost - the amount of Movement Points a Unit must spend to move unto that Tile.
-
-    private GameTile[]
-        _neighbors; // Adjacent Tiles to these tiles. Index corresponds to Edge assuming flat top/bottom hexagons. Flat Top is 0, Flat Bottom is 3, Right sides are 1,2, Left Sides are 3,4.
-
-    private bool[]
-        _riverEdges; // Are the Tile edges Adjacent to a river? -> [0,1,2,3,4,5] Represent edges on a hexagon starting from the Top moving clockwise.
-
-    private bool _riverAdjacent; // Is the Tile adjacent to a river?
+    private GameTile[] _neighbors; // Adjacent Tiles to these tiles. Index corresponds to Edge assuming flat top/bottom hexagons. Flat Top is 0, Flat Bottom is 3, Right sides are 1,2, Left Sides are 3,4.
+    private bool[] _riverEdges; // Are the Tile edges Adjacent to a river? -> [0,1,2,3,4,5] Represent edges on a hexagon starting from the Top moving clockwise.
+    private bool _freshWaterAccess; // Is the Tile adjacent to a river?
     private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile). 
     private Settlement _settlement; // The Settlement on this Tile. May be null (no Settlement on Tile).
     private int[] _yields; // An int array of a Tile's Yields. [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4]
@@ -96,7 +83,7 @@ public class GameTile
         _settlement = null;
         _mc = CalculateMovementCost();
         _riverEdges = CalculateRiverAdjacency();
-        _riverAdjacent = false;
+        _freshWaterAccess = false;
         _yields = CalculateYields();
     }
 
@@ -113,7 +100,7 @@ public class GameTile
         _unit = unit;
         _settlement = settlement;
         _riverEdges = CalculateRiverAdjacency();
-        _riverAdjacent = false;
+        _freshWaterAccess = false;
         _mc = CalculateMovementCost();
         _yields = CalculateYields();
     }
@@ -386,9 +373,9 @@ public class GameTile
         _riverEdges[edge] = value;
     }
 
-    public void SetRiverAdjacency(bool value)
+    public void SetFreshWaterAccess(bool value)
     {
-        _riverAdjacent = value;
+        _freshWaterAccess = value;
     }
 
     public void SetUnit(Unit unit)
@@ -452,9 +439,9 @@ public class GameTile
         return _riverEdges[edge];
     }
 
-    public bool GetRiverAdjacency()
+    public bool GetFreshWaterAccess()
     {
-        return _riverAdjacent;
+        return _freshWaterAccess;
     }
 
     public int GetMovementCost()

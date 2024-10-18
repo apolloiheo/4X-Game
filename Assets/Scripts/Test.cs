@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class Test : MonoBehaviour
 {
     public GameObject square;
-    public Tilemap tilemap;
+    public Tilemap baseTilemap;
+    public Tilemap terrainTilemap;
+    public Tilemap featureTilemap;
     public Tile tile;
     public GameObject riverSegment;
     public Tile prairieTile;
@@ -23,11 +26,7 @@ public class Test : MonoBehaviour
     public Tile tundraHillsTile;
     public Tile desertHillsTile;
     public Tile snowHillsTile;
-    public Tile prairieMountainsTile;
-    public Tile grassMountainsTile;
-    public Tile tundraMountainsTile;
-    public Tile desertMountainsTile;
-    public Tile snowMountainsTile;
+    public Tile mountain;
 
     // Start is called before the first frame update
     void Start()
@@ -47,13 +46,13 @@ public class Test : MonoBehaviour
     public void DrawTilemap(World world)
     {
 
-        List<GameTile> path = new List<GameTile>();
+        /*List<GameTile> path = new List<GameTile>();
         List<Tuple<GameTile, int>> list = Pathfinder.AStarWithLimit(world.GetTile(16, 15), world.GetTile(3, 16), 15);
 
         foreach (Tuple<GameTile, int> t in list)
         {
             path.Add(t.Item1);
-        }
+        }*/
 
         for (int x = 0; x < world.GetLength(); x++)
         {
@@ -62,7 +61,7 @@ public class Test : MonoBehaviour
                 GameTile currTile = world.GetTile(x, y);
                 
                 // Grid can be switched, check if Height is Width
-                double tileHeight = 0.9555f;
+                double tileHeight = 0.97f;
                 float tileWidth = 1f;
                 float edge = 4f;
 
@@ -84,122 +83,105 @@ public class Test : MonoBehaviour
                 
 
                 // Plains
-                if (world.GetTile(x, y).GetBiome() == 1)
+                if (currTile.GetBiome() == 1)
                 {
                     // Hills
-                    if (world.GetTile(x, y).GetTerrain() == 1)
+                    if (currTile.GetTerrain() == 1)
                     {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), prairieHillsTile);
-                    }
-                    // Mountain
-                    else if (world.GetTile(x, y).GetTerrain() == 2)
-                    {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), prairieMountainsTile);
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), prairieHillsTile);
                     }
                     // Flat 
                     else
                     {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), prairieTile);
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), prairieTile);
                     }
+                    
 
                     //tile.color = new Color32(145, 158, 11, 255);
 
                 }
                 // Grassland
-                else if (world.GetTile(x, y).GetBiome() == 2)
+                else if (currTile.GetBiome() == 2)
                 {
                     // Hills
-                    if (world.GetTile(x, y).GetTerrain() == 1)
+                    if (currTile.GetTerrain() == 1)
                     {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), grassHillsTile);
-                    }
-                    // Mountain
-                    else if (world.GetTile(x, y).GetTerrain() == 2)
-                    {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), grassMountainsTile);
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), grassHillsTile);
                     }
                     // Flat 
                     else
                     {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), grassTile);
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), grassTile);
                     }
 
                     //tile.color = new Color32(92, 128, 82, 255);
                 }
                 // Tundra
-                else if (world.GetTile(x, y).GetBiome() == 3)
+                else if (currTile.GetBiome() == 3)
                 {
                     // Hills
-                    if (world.GetTile(x, y).GetTerrain() == 1)
+                    if (currTile.GetTerrain() == 1)
                     {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), tundraHillsTile);
-                    }
-                    // Mountain
-                    else if (world.GetTile(x, y).GetTerrain() == 2)
-                    {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), tundraMountainsTile);
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), tundraHillsTile);
                     }
                     // Flat 
                     else
                     {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), tundraTile);
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), tundraTile);
                     }
 
                     //tile.color = new Color32(144, 158, 141, 255);
                 }
                 // Desert
-                else if (world.GetTile(x, y).GetBiome() == 4)
+                else if (currTile.GetBiome() == 4)
                 {
                     // Hills
-                    if (world.GetTile(x, y).GetTerrain() == 1)
+                    if (currTile.GetTerrain() == 1)
                     {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), desertHillsTile);
-                    }
-                    // Mountain
-                    else if (world.GetTile(x, y).GetTerrain() == 2)
-                    {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), desertMountainsTile);
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), desertHillsTile);
                     }
                     // Flat 
                     else
                     {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), desertTile);
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), desertTile);
                     }
 
                     //tile.color = new Color32(255, 217, 112, 255);
                 }
                 // Snow
-                else if (world.GetTile(x, y).GetBiome() == 5)
+                else if (currTile.GetBiome() == 5)
                 {
                     // Hills
                     if (world.GetTile(x, y).GetTerrain() == 1)
                     {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), snowHillsTile);
-                    }
-                    // Mountain
-                    else if (world.GetTile(x, y).GetTerrain() == 2)
-                    {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), snowMountainsTile);
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), snowHillsTile);
                     }
                     // Flat 
                     else
                     {
-                        tilemap.SetTile(new Vector3Int(y, x, 0), snowTile);
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), snowTile);
                     }
 
                     //tile.color = Color.white;
                 }
-                else if (world.GetTile(x, y).GetBiome() == 6)
+                else if (currTile.GetBiome() == 6)
                 {
-                    tilemap.SetTile(new Vector3Int(y, x, 0), coastTile);
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), coastTile);
                     //tile.color = new Color32(110, 187, 255, 255);
                 }
-                else if (world.GetTile(x, y).GetBiome() == 7)
+                else if (currTile.GetBiome() == 7)
                 {
-                    tilemap.SetTile(new Vector3Int(y, x, 0), oceanTile);
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), oceanTile);
                     //tile.color = new Color32(20, 102, 184, 255);
                 }
+                
+                // Mountains
+                if (currTile.GetTerrain() == 2)
+                {
+                    terrainTilemap.SetTile(new Vector3Int(y, x, 0), mountain);
+                }
 
+                // Render Rivers
                 if (currTile.GetFreshWaterAccess())
                 {
                     // For testing FreshWaterAccess
@@ -210,33 +192,33 @@ public class Test : MonoBehaviour
                     {
                         if (currTile.GetRiverEdge(index))
                         {
-                            // Formula for River Position
+                            // Instiate Vector3 for Position at Formula for River Position
                             Vector3 riverPosition = new Vector3((float)(bigX + Math.Pow(-1f, Math.Pow(0f, (5f - index) * (4f - index))) *
                                 Math.Pow(0f, Math.Pow(0f, index % 3f)) * tileWidth * 3 / 8),
                             (float)(bigY + Math.Pow(-1f, Math.Pow(0f, Math.Abs((index - 2f) * (index - 3f) * (index - 4f)))) *
                                 (tileHeight / 4f + tileHeight / 4f * Math.Abs(Math.Pow(0f, Math.Pow(0f, index % 3f)) - 1f))),
                             0f);
-                            
+                            // Declare riverRotation variable
                             Quaternion riverRotation;
 
                             if (index == 1 || index == 4)
                             {
+                                // Set the rotation of the river based on it's edge
                                 riverRotation = Quaternion.Euler(0f, 0f, -63f);
                             } else if (index == 5 || index == 2)
                             {
+                                // Set the rotation of the river based on it's edge
                                 riverRotation = Quaternion.Euler(0f, 0f, 63f);
                             }
                             else
                             {
+                                // Set the rotation of the river based on it's edge
                                 riverRotation = Quaternion.Euler(0f, 0f, 0f);
                             }
-                            
                             Instantiate(riverSegment, riverPosition, riverRotation );
                         }
                     }
                 }
-                
-
             }
         }
     }

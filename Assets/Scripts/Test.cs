@@ -75,7 +75,6 @@ public class Test : MonoBehaviour
                     0f);*/
 
                 /* Render Base Tiles */
-                
                 // Plains
                 if (currTile.GetBiome() == 1)
                 {

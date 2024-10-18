@@ -16,7 +16,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(444444);
+        _random = new Random(8080888);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -653,18 +653,38 @@ public class WorldGenerator : MonoBehaviour
             {
                 for (int y = 0; y < world.GetHeight(); y++)
                 {
-                    if (world.GetTile(x, y).GetTerrain() == 2)
+                    GameTile currtile = world.GetTile(x, y);
+                    // If Tile has a Moutain
+                    if (currtile.GetTerrain() == 2)
                     {
                         mountains.Add(world.GetTile(x, y));
 
-                        if (world.GetTile(x, y).GetBiome() == 6 || world.GetTile(x, y).GetBiome() == 7)
+                        // If Tile is Coast or Ocean
+                        if (currtile.GetBiome() == 6 || currtile.GetBiome() == 7)
                         {
-                            world.GetTile(x,y).SetTerrain(0);
+                            // Remove mountain
+                            currtile.SetTerrain(0);
+                        }
+                        
+                        // If Tile is Desert
+                        if (currtile.GetBiome() == 4)
+                        {
+                            // Randomly set the Tile to either Flat or Hills
+                            currtile.SetTerrain(_random.NextInt(0, 2));
+                            
+                            // If a neighbor is not null, is land, and is not desert
+                            foreach (GameTile neighbor in currtile.GetNeighbors())
+                            {
+                                if (neighbor is not null && neighbor.IsLand() && neighbor.GetBiome() != 4)
+                                {
+                                    // Put a mountain next to it.
+                                    neighbor.SetTerrain(2);
+                                }
+                            }
                         }
                     }
                 }
             }
-            
             
             // For all mountains in world
             foreach (GameTile mountain in mountains)

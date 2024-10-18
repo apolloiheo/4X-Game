@@ -56,7 +56,7 @@ public class Test : MonoBehaviour
                 GameTile currTile = world.GetTile(x, y);
                 
                 // Grid can be switched, check if Height is Width
-                double tileHeight = 0.97f;
+                double tileHeight = 0.95f;
                 float tileWidth = 1f;
                 float edge = 4f;
                 

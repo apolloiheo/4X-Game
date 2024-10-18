@@ -8,7 +8,6 @@ using UnityEngine.Tilemaps;
 
 public class Test : MonoBehaviour
 {
-    public GameObject square;
     public Tilemap baseTilemap;
     public Tilemap terrainTilemap;
     public Tilemap featureTilemap;

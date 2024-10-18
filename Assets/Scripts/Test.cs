@@ -26,6 +26,11 @@ public class Test : MonoBehaviour
     public Tile tundraHillsTile;
     public Tile desertHillsTile;
     public Tile snowHillsTile;
+    public Tile woodsTile;
+    public Tile floodplainsTile;
+    public Tile marshTile;
+    public Tile rainforestTile;
+    public Tile oasisTile;
     public Tile mountain;
 
     // Start is called before the first frame update
@@ -45,15 +50,6 @@ public class Test : MonoBehaviour
 
     public void DrawTilemap(World world)
     {
-
-        /*List<GameTile> path = new List<GameTile>();
-        List<Tuple<GameTile, int>> list = Pathfinder.AStarWithLimit(world.GetTile(16, 15), world.GetTile(3, 16), 15);
-
-        foreach (Tuple<GameTile, int> t in list)
-        {
-            path.Add(t.Item1);
-        }*/
-
         for (int x = 0; x < world.GetLength(); x++)
         {
             for (int y = 0; y < world.GetHeight(); y++)
@@ -64,24 +60,23 @@ public class Test : MonoBehaviour
                 double tileHeight = 0.97f;
                 float tileWidth = 1f;
                 float edge = 4f;
-
                 
-                square.transform.position =
-                    new Vector3(x * .75f * tileWidth, (float)(y * tileHeight + (tileHeight / 2) * (x % 2)));
-
-
-
+                // Tile Position Variables - Jason knows how they work don't ask me.
                 float bigX = tileWidth * x * .75f;
                 float bigY = (float)(y * tileHeight + (tileHeight / 2) * (x % 2));
-
+                
+                /*square.transform.position =
+                    new Vector3(x * .75f * tileWidth, (float)(y * tileHeight + (tileHeight / 2) * (x % 2)));
+                
                 square.transform.position = new Vector3(
                     (float)(bigX + Math.Pow(-1f, Math.Pow(0f, (5f - edge) * (4f - edge))) *
                         Math.Pow(0f, Math.Pow(0f, edge % 3f)) * tileWidth * 3 / 8),
                     (float)(bigY + Math.Pow(-1f, Math.Pow(0f, Math.Abs((edge - 2f) * (edge - 3f) * (edge - 4f)))) *
                         (tileHeight / 4f + tileHeight / 4f * Math.Abs(Math.Pow(0f, Math.Pow(0f, edge % 3f)) - 1f))),
-                    0f);
-                
+                    0f);*/
 
+                /* Render Base Tiles */
+                
                 // Plains
                 if (currTile.GetBiome() == 1)
                 {
@@ -175,29 +170,38 @@ public class Test : MonoBehaviour
                     //tile.color = new Color32(20, 102, 184, 255);
                 }
                 
+                
+                /* Render Terrain */
                 // Mountains
                 if (currTile.GetTerrain() == 2)
                 {
                     terrainTilemap.SetTile(new Vector3Int(y, x, 0), mountain);
                 }
+                
 
-                // Render Rivers
+                /* Render Rivers */
                 if (currTile.GetFreshWaterAccess())
                 {
                     // For testing FreshWaterAccess
                     /*tilemap.SetTile(new Vector3Int(y, x, 0), tile);
                     tile.color = Color.white;*/
-                    
+
                     for (int index = 0; index < 6; index++)
                     {
                         if (currTile.GetRiverEdge(index))
                         {
                             // Instiate Vector3 for Position at Formula for River Position
-                            Vector3 riverPosition = new Vector3((float)(bigX + Math.Pow(-1f, Math.Pow(0f, (5f - index) * (4f - index))) *
-                                Math.Pow(0f, Math.Pow(0f, index % 3f)) * tileWidth * 3 / 8),
-                            (float)(bigY + Math.Pow(-1f, Math.Pow(0f, Math.Abs((index - 2f) * (index - 3f) * (index - 4f)))) *
-                                (tileHeight / 4f + tileHeight / 4f * Math.Abs(Math.Pow(0f, Math.Pow(0f, index % 3f)) - 1f))),
-                            0f);
+                            Vector3 riverPosition = new Vector3((float)(bigX +
+                                                                        Math.Pow(-1f,
+                                                                            Math.Pow(0f,
+                                                                                (5f - index) * (4f - index))) *
+                                                                        Math.Pow(0f, Math.Pow(0f, index % 3f)) *
+                                                                        tileWidth * 3 / 8),
+                                (float)(bigY + Math.Pow(-1f,
+                                        Math.Pow(0f, Math.Abs((index - 2f) * (index - 3f) * (index - 4f)))) *
+                                    (tileHeight / 4f + tileHeight / 4f *
+                                        Math.Abs(Math.Pow(0f, Math.Pow(0f, index % 3f)) - 1f))),
+                                0f);
                             // Declare riverRotation variable
                             Quaternion riverRotation;
 
@@ -205,7 +209,8 @@ public class Test : MonoBehaviour
                             {
                                 // Set the rotation of the river based on it's edge
                                 riverRotation = Quaternion.Euler(0f, 0f, -63f);
-                            } else if (index == 5 || index == 2)
+                            }
+                            else if (index == 5 || index == 2)
                             {
                                 // Set the rotation of the river based on it's edge
                                 riverRotation = Quaternion.Euler(0f, 0f, 63f);
@@ -215,9 +220,28 @@ public class Test : MonoBehaviour
                                 // Set the rotation of the river based on it's edge
                                 riverRotation = Quaternion.Euler(0f, 0f, 0f);
                             }
-                            Instantiate(riverSegment, riverPosition, riverRotation );
+
+                            Instantiate(riverSegment, riverPosition, riverRotation);
                         }
                     }
+                }
+                
+                /* Render Features */
+                if (currTile.GetFeature() == 1)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), woodsTile);
+                } else if (currTile.GetFeature() == 2)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), floodplainsTile);
+                } else if (currTile.GetFeature() == 3)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), marshTile);
+                } else if (currTile.GetFeature() == 4)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), rainforestTile);
+                } else if (currTile.GetFeature() == 5)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), oasisTile);
                 }
             }
         }

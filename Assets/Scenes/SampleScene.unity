@@ -268,6 +268,11 @@ MonoBehaviour:
   tundraHillsTile: {fileID: 11400000, guid: d5762e35721d6c7409c338a3982d7331, type: 2}
   desertHillsTile: {fileID: 11400000, guid: 23b6a5d231c68bb448e6753d6e3b444d, type: 2}
   snowHillsTile: {fileID: 11400000, guid: 8fe21d25c58f4844fb68b11ba293e5d7, type: 2}
+  woodsTile: {fileID: 11400000, guid: 7bf481a80da13274a885d345b5637b36, type: 2}
+  rainforestTile: {fileID: 11400000, guid: d808d8c5d6ffc224d82969bdf11c041d, type: 2}
+  floodplainsTile: {fileID: 11400000, guid: 7972f8e666fe0504d990e66a70710d47, type: 2}
+  marshTile: {fileID: 11400000, guid: 60b5e8bc972ae234bad2fa1199acf425, type: 2}
+  oasisTile: {fileID: 11400000, guid: 052447c804702a6458d014fcc7e9bb86, type: 2}
   mountain: {fileID: 11400000, guid: 45ff8b2c159ce8241a5df6055779047d, type: 2}
 --- !u!1 &212763784
 GameObject:

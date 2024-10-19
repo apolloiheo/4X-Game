@@ -16,7 +16,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(8080888);
+        _random = new Random(163867345);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -273,7 +273,6 @@ public class WorldGenerator : MonoBehaviour
         DetermineBiomes(world);
     }
     
-
     /* Determine Biomes on landmasses and on Coasts */
     private void DetermineBiomes(World world)
     {
@@ -1317,11 +1316,233 @@ public class WorldGenerator : MonoBehaviour
         }
     }
     
-    
     /* Determine the features on Tiles. */
     private void DetermineFeatures(World world)
     {
+        DetermineWoods();
+        DetermineFloodPlains();
+        DetermineMarshes();
+        DetermineRainforest();
+        DetermineOasis();
         
+        void DetermineWoods()
+        {
+            Queue<GameTile> woodsQueue = new Queue<GameTile>();
+            
+            SpreadAFewRandomWoods();
+            
+            void SpreadAFewRandomWoods() 
+            {
+                for (int x = 0; x < world.GetLength(); x++)
+                {
+                    for (int y = 0; y < world.GetHeight(); y++)
+                    {
+                        GameTile currTile = world.GetTile(x, y);
+                        
+                        // If it is Land, and it is not Snow, and it is not Desert, and it doesn't have a Mountain
+                        if (currTile.IsLand() && currTile.GetBiome() != 5 && currTile.GetBiome() != 4 &&
+                            currTile.GetTerrain() != 2)
+                        {
+                            int probability = _random.NextInt(0, 100);
+
+                            // 10% chance 
+                            if (probability < 15)
+                            {
+                                // Add a Woods
+                                currTile.SetFeature(1);
+                                // Add it to our Queue
+                                woodsQueue.Enqueue(currTile);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Small chance to spread to nearby Woods
+            while (woodsQueue.Count > 0)
+            {
+                GameTile currTile = woodsQueue.Dequeue();
+
+                foreach (GameTile neighbor in currTile.GetNeighbors())
+                {
+                    // If neighbor is not null, if it is land, if it is not a Mountain, if it is not Snow or Desert
+                    if (neighbor is not null && neighbor.IsLand() && neighbor.GetTerrain() != 2 &&
+                        neighbor.GetBiome() != 5 && neighbor.GetBiome() != 4)
+                    {
+                        int probability = _random.NextInt(0, 100);
+                        // 15% chance.
+                        if (probability < 50)
+                        {
+                            currTile.SetFeature(1);
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+        void DetermineFloodPlains()
+        {
+            Queue<GameTile> floodPlainsQueue = new Queue<GameTile>();
+            
+            PlaceAFewFloodplains();
+            
+            void PlaceAFewFloodplains()
+            {
+                
+                
+                for (int x = 0; x < world.GetLength(); x++)
+                {
+                    for (int y = 0; y < world.GetHeight(); y++)
+                    {
+                        GameTile currTile = world.GetTile(x, y);
+
+                        // If the Tile is adjacent to River, if it's Desert, and if it's Flat
+                        if (currTile.GetFreshWaterAccess() && currTile.GetBiome() == 4 && currTile.GetTerrain() == 0)
+                        {
+                            // Set it to Foodplains
+                            currTile.SetFeature(2);
+                        } 
+                        // If the Tile is adjacent to River, if it's Plains or Grassland, and if it's Flat
+                        else if (currTile.GetFreshWaterAccess() &&
+                                 (currTile.GetBiome() == 1 || currTile.GetBiome() == 2) && currTile.GetTerrain() == 0)
+                        {
+
+                            bool isAdjacentToAnotherFloodplain = false;
+                            foreach (GameTile neighbor in currTile.GetNeighbors())
+                            {
+                                if (neighbor is not null && neighbor.GetFeature() == 2)
+                                {
+                                    isAdjacentToAnotherFloodplain = true;
+                                }
+                            }
+
+                            if (!isAdjacentToAnotherFloodplain)
+                            {
+                                int probability = _random.NextInt(0, 100);
+                                // 80% chance
+                                if (probability < 10)
+                                {
+                                    // Set it to Floodplains
+                                    currTile.SetFeature(2);
+                                    // Add it to Floodplains Queue
+                                    floodPlainsQueue.Enqueue(currTile);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            while (floodPlainsQueue.Count > 0)
+            {
+                GameTile currTile = floodPlainsQueue.Dequeue();
+
+                foreach (GameTile neighbor in currTile.GetNeighbors())
+                {
+                    // If neighbor is not null, if its land, if it's next to a river, if it's plains or grassland, and if its flat.
+                    if (neighbor is not null && neighbor.GetFreshWaterAccess() && neighbor.IsLand() &&
+                        (neighbor.GetBiome() == 2 || neighbor.GetBiome() == 1) && neighbor.GetTerrain() == 0 )
+                    {
+                        int probability = _random.NextInt(0, 100);
+                        // 50% Chance to spread to neighbor
+                        if (probability < 50)
+                        {
+                            neighbor.SetFeature(2);
+                        }
+                    }
+                }
+            }
+        }
+
+        void DetermineMarshes()
+        {
+            for (int x = 0; x < world.GetLength(); x++)
+            {
+                for (int y = 0; y < world.GetHeight(); y++)
+                {
+                    GameTile currTile = world.GetTile(x, y);
+
+                    // If the Tile is Grassland and Flat.
+                    if (currTile.GetBiome() == 2 && currTile.GetTerrain() == 0 && !currTile.GetFreshWaterAccess())
+                    {
+                        int probability = _random.NextInt(0, 100);
+
+                        // 5% Chance
+                        if (probability < 5)
+                        {
+                            // Set it to Marsh
+                            currTile.SetFeature(3);
+                        }
+                    }
+                }
+            }
+        }
+
+        void DetermineRainforest()
+        {
+            for (int x = 0; x < world.GetLength(); x++)
+            {
+                for (int y = 0; y < world.GetHeight(); y++)
+                {
+                    GameTile currTile = world.GetTile(x, y);
+
+                    if (currTile.GetBiome() == 1 && currTile.GetTerrain() != 2 && !currTile.GetFreshWaterAccess())
+                    {
+                        int probability = _random.NextInt(0, 100);
+                        
+                        // If it's right on the Ecuator
+                        if (y < world.GetHeight() * .525 && y > world.GetHeight() * .475)
+                        {
+                            // 80% Chance
+                            if (probability < 80)
+                            {
+                                currTile.SetFeature(4);
+                            }
+                        }
+                        else
+                        {
+                            // Chance decreases relative to distance to equator
+                            int distanceToEquator = Math.Abs(y - (world.GetHeight() / 2));
+                            // Multiply each distance by this.
+                            int distanceFactor = distanceToEquator * 5;
+                            if (probability + distanceFactor < 60)
+                            {
+                                currTile.SetFeature(4);
+                            }
+                        }
+                        
+                        
+                        
+                        
+                        
+                    }
+                }
+            }
+        }
+
+        void DetermineOasis()
+        {
+            for (int x = 0; x < world.GetLength(); x++)
+            {
+                for (int y = 0; y < world.GetHeight(); y++)
+                {
+                    GameTile currTile = world.GetTile(x, y);
+
+                    // If it's Desert, if It's Flat, and if it's not on a River.
+                    if (currTile.GetBiome() == 4 && currTile.GetTerrain() == 0 && !currTile.GetFreshWaterAccess())
+                    {
+                        int probability = _random.NextInt(0, 100);
+
+                        // 15% Chance to Spawn Oasis
+                        if (probability < 15)
+                        {
+                            currTile.SetFeature(5);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /* Determine the Resources and Resource spread across the game world.  */

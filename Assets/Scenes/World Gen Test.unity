@@ -122,6 +122,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &13444305
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 13444306}
+  m_Layer: 0
+  m_Name: Rivers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &13444306
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13444305}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 27.428345, y: 33.226555, z: -2.719557}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &136323991
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,6 +201,7 @@ MonoBehaviour:
   terrainTilemap: {fileID: 1324199414}
   featureTilemap: {fileID: 1199226734}
   tile: {fileID: 11400000, guid: 6dc6f9350229dc44fba6e7e57417cb10, type: 2}
+  rivers: {fileID: 13444305}
   riverSegment: {fileID: 7700684974192715068, guid: 5ee1d19087010834ea13908e3fde1750, type: 3}
   prairieTile: {fileID: 11400000, guid: 27b1ce3b55e8ee448ba52b1f59f01dac, type: 2}
   grassTile: {fileID: 11400000, guid: 199f0a7142903de44bb71ce1edda0ebf, type: 2}
@@ -297,7 +329,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 25.045935
+  orthographic size: 26.765175
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -322,7 +354,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 39.3, y: 25.6, z: -10}
+  m_LocalPosition: {x: 37.02, y: 25.6, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -799,3 +831,4 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 136323993}
   - {fileID: 449170748}
+  - {fileID: 13444306}

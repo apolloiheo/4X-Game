@@ -12,6 +12,7 @@ public class Test : MonoBehaviour
     public Tilemap terrainTilemap;
     public Tilemap featureTilemap;
     public Tile tile;
+    public GameObject rivers;
     public GameObject riverSegment;
     public Tile prairieTile;
     public Tile grassTile;
@@ -218,8 +219,11 @@ public class Test : MonoBehaviour
                                 // Set the rotation of the river based on it's edge
                                 riverRotation = Quaternion.Euler(0f, 0f, 0f);
                             }
-
-                            Instantiate(riverSegment, riverPosition, riverRotation);
+                            
+                            // Instantiate as part of the Rivers obj in order to not clog up hierarchy
+                            GameObject riverPiece = Instantiate(riverSegment, riverPosition, riverRotation);
+                            riverPiece.transform.SetParent(rivers.transform);
+                            
                         }
                     }
                 }

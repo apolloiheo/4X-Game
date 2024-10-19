@@ -16,7 +16,7 @@ public class WorldGenerator : MonoBehaviour
     public World GenerateWorld(int length, int height, int continents)
     {
         _random.InitState();
-        _random = new Random(163867345);
+        _random = new Random(4646446);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);
@@ -25,7 +25,7 @@ public class WorldGenerator : MonoBehaviour
         DetermineLand(world);
         DetermineBiomes(world);
         DetermineTerrain(world);
-        DetermineRivers(world);
+        DetermineRiversAndLakes(world);
         DetermineFeatures(world);
         DetermineResources(world);
 
@@ -488,18 +488,20 @@ public class WorldGenerator : MonoBehaviour
         {
             for (int y = 0; y < world.GetHeight(); y++)
             {
-                if (world.GetTile(x, y).GetBiome() != 6 || world.GetTile(x, y).GetBiome() != 7)
+                GameTile currTile = world.GetTile(x, y);
+                
+                if (currTile.IsLand())
                 {
                     totalLand++;
                 }
 
-                if (world.GetTile(x, y).GetBiome() == 1)
+                if (currTile.GetBiome() == 1)
                 {
                     totalPlains++;
-                } else if (world.GetTile(x, y).GetBiome() == 2)
+                } else if (currTile.GetBiome() == 2)
                 {
                     totalGrass++;
-                } else if (world.GetTile(x, y).GetBiome() == 4)
+                } else if (currTile.GetBiome() == 4)
                 {
                     totalDesert++;
                 }
@@ -659,7 +661,7 @@ public class WorldGenerator : MonoBehaviour
                         mountains.Add(world.GetTile(x, y));
 
                         // If Tile is Coast or Ocean
-                        if (currtile.GetBiome() == 6 || currtile.GetBiome() == 7)
+                        if (!currtile.IsLand())
                         {
                             // Remove mountain
                             currtile.SetTerrain(0);
@@ -763,8 +765,8 @@ public class WorldGenerator : MonoBehaviour
         }
     }
     
-    /* Determine Rivers - From Mountains to Coast  */ 
-    private void DetermineRivers(World world)
+    /* Determine Rivers & Lakes - From Mountains to Coast  */ 
+    private void DetermineRiversAndLakes(World world)
     {
         HashSet<GameTile> scannedTiles = new HashSet<GameTile>();
         
@@ -870,12 +872,12 @@ public class WorldGenerator : MonoBehaviour
         }
         
         // Clear extra rivers that are not necessary
-        ClearTShapedRiverIntersections(world);
-        ClearTShapedRiverIntersections(world);
-        ClearTShapedRiverIntersections(world);
+        ClearTShapedRiverIntersections();
+        ClearTShapedRiverIntersections();
+        ClearTShapedRiverIntersections();
         
         // Make sure Rivers end at Coast
-        FixEdgesAtCoasts(world);
+        FixEdgesAtCoasts();
         
         // Set FreshWaterAccess to true for all Tiles adjacent to River.
         AssignRemainingFreshWaterAccess(world);
@@ -1135,7 +1137,7 @@ public class WorldGenerator : MonoBehaviour
         }
         
         /* Does a final scan over every river and makes sure there are no needless T shaped river segments. */
-        void ClearTShapedRiverIntersections(World world)
+        void ClearTShapedRiverIntersections()
         {
             // Scan the world
             for (int x = 0; x < world.GetLength(); x++)
@@ -1189,7 +1191,7 @@ public class WorldGenerator : MonoBehaviour
         }
 
         /* Corrects any river segments past coasts. */
-        void FixEdgesAtCoasts(World world)
+        void FixEdgesAtCoasts()
         {
             // Scan the world
             for (int x = 0; x < world.GetLength(); x++)
@@ -1268,6 +1270,12 @@ public class WorldGenerator : MonoBehaviour
                 }
             }
         }
+        
+        /* Determine Lakes */
+        void DetermineLakes()
+        {
+            
+        }
 
         /* Makes sure that all Tile's adjacent to River's have Fresh Water Access set to True.  */
         void AssignRemainingFreshWaterAccess(World world)
@@ -1309,6 +1317,34 @@ public class WorldGenerator : MonoBehaviour
                         {
                             // Remove it's fresh water access
                             currTile.SetFreshWaterAccess(false);
+                        }
+                    }
+                    // If it's an inland Coast tile
+                    else if (currTile.GetBiome() == 6)
+                    {
+                        bool isSurrounderByLand = true;
+
+                        foreach (GameTile neighbor in currTile.GetNeighbors())
+                        {
+                            if (neighbor is not null && !neighbor.IsLand())
+                            {
+                                isSurrounderByLand = false;
+                            }
+                        }
+
+                        if (isSurrounderByLand)
+                        {
+                            // Set it to Lake
+                            currTile.SetBiome(8);
+
+                            // Give all of it's neighbor that are land fresh water access
+                            foreach (GameTile neighbor in currTile.GetNeighbors())
+                            {
+                                if (neighbor is not null && neighbor.IsLand())
+                                {
+                                    neighbor.SetFreshWaterAccess(true);
+                                }
+                            }
                         }
                     }
                 }

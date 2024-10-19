@@ -15,6 +15,7 @@ public class GameTile
             5. Snow
             6. Coast
             7. Ocean
+            8. Lake
 
         Terrain ID:
             0. Flat
@@ -312,7 +313,7 @@ public class GameTile
 
     public bool IsLand()
     {
-        if (_biome == 6 || _biome == 7)
+        if (_biome == 6 || _biome == 7 || _biome == 8)
         {
             return false;
         }

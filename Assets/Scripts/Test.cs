@@ -21,6 +21,7 @@ public class Test : MonoBehaviour
     public Tile oceanTile;
     public Tile coastTile;
     public Tile snowTile;
+    [FormerlySerializedAs("lakeTike")] public Tile lakeTile;
     public Tile prairieHillsTile;
     public Tile grassHillsTile;
     public Tile tundraHillsTile;
@@ -41,7 +42,7 @@ public class Test : MonoBehaviour
 
     private void TestWorldGeneration()
     {
-        World gameWorld = new WorldGenerator().GenerateWorld(100, 50,2);
+        World gameWorld = new WorldGenerator().GenerateWorld(76, 37,2);
         //World gameWorld = new WorldGenerator().GenerateWorld(100, 50, 2);
 
         DrawTilemap(gameWorld);
@@ -167,6 +168,9 @@ public class Test : MonoBehaviour
                 {
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), oceanTile);
                     //tile.color = new Color32(20, 102, 184, 255);
+                } else if (currTile.GetBiome() == 8)
+                {
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), lakeTile);
                 }
                 
                 
@@ -182,7 +186,7 @@ public class Test : MonoBehaviour
                 if (currTile.GetFreshWaterAccess())
                 {
                     // For testing FreshWaterAccess
-                    /*tilemap.SetTile(new Vector3Int(y, x, 0), tile);
+                    /*baseTilemap.SetTile(new Vector3Int(y, x, 0), tile);
                     tile.color = Color.white;*/
 
                     for (int index = 0; index < 6; index++)

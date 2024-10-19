@@ -210,6 +210,7 @@ MonoBehaviour:
   oceanTile: {fileID: 11400000, guid: 2ce6c4fc643286247bb8b2c4915f5de3, type: 2}
   coastTile: {fileID: 11400000, guid: 7b8d4326a3f00584da0867ed0e40b1db, type: 2}
   snowTile: {fileID: 11400000, guid: 801de112595f9e24e8a05a150c9eebd4, type: 2}
+  lakeTile: {fileID: 11400000, guid: 476895a79033a684880e07131f346e8f, type: 2}
   prairieHillsTile: {fileID: 11400000, guid: e7c50492582db4a4db16f003067171a8, type: 2}
   grassHillsTile: {fileID: 11400000, guid: 99f10817582e4154ea344c1ba79e4890, type: 2}
   tundraHillsTile: {fileID: 11400000, guid: d5762e35721d6c7409c338a3982d7331, type: 2}
@@ -433,7 +434,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 3
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -585,7 +586,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 4
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16

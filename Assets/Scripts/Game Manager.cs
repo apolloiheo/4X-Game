@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
 
         // End the turn (invokes all functions associated with this event)
         OnTurnEnd?.Invoke(this, EventArgs.Empty);
+        
+        Debug.Log("new Turn");
 
     }
 

@@ -7,11 +7,29 @@ public class Director : MonoBehaviour
 {
     public Sprite sprite;
     public Canvas canvas;
-
+    public Camera playerCamera;
 
     public void Start()
     {
-        canvas.enabled = false;
+        playerCamera.transform.position = new Vector3(15, 14, -10);
+    }
+
+
+    public void Update()
+    {
+        if (Input.GetKey(KeyCode.A))
+        {
+            playerCamera.transform.Translate(Vector3.left * Time.deltaTime);
+        } else if (Input.GetKey(KeyCode.D))
+        {
+            playerCamera.transform.Translate(Vector3.right * Time.deltaTime);
+        } else if (Input.GetKey(KeyCode.W))
+        {
+            playerCamera.transform.Translate(Vector3.up * Time.deltaTime);
+        } else if (Input.GetKey(KeyCode.S))
+        {
+            playerCamera.transform.Translate(Vector3.down * Time.deltaTime);
+        }
     }
 
 

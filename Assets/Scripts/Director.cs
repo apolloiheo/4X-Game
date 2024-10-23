@@ -2,21 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class Director : MonoBehaviour
 {
-    // Obj References
+    [Header("Game Manager")] 
     public GameManager gm;
-    
-    // Tilemaps
+    [Header("Tilemaps")]
     public Tilemap baseTilemap;
     public Tilemap terrainTilemap;
     public Tilemap featureTilemap;
-    // Tiles
+    [Header("Flat Tiles")]
     public Tile tile;
-    public GameObject rivers;
-    public GameObject riverSegment;
     public Tile prairieTile;
     public Tile grassTile;
     public Tile tundraTile;
@@ -24,18 +22,24 @@ public class Director : MonoBehaviour
     public Tile oceanTile;
     public Tile coastTile;
     public Tile snowTile;
-     public Tile lakeTile;
+    public Tile lakeTile;
+    [Header("Hills Tiles")]
     public Tile prairieHillsTile;
     public Tile grassHillsTile;
     public Tile tundraHillsTile;
     public Tile desertHillsTile;
     public Tile snowHillsTile;
+    [Header("Features")]
     public Tile woodsTile;
     public Tile floodplainsTile;
     public Tile marshTile;
     public Tile rainforestTile;
     public Tile oasisTile;
+    [Header("Terrain")]
     public Tile mountain;
+    [Header("Rivers")]
+    public GameObject riversParent;
+    public GameObject riverSegment;
 
     // Start is called before the first frame update
     void Start()
@@ -219,7 +223,7 @@ public class Director : MonoBehaviour
                             
                             // Instantiate as part of the Rivers obj in order to not clog up hierarchy
                             GameObject riverPiece = Instantiate(riverSegment, riverPosition, riverRotation);
-                            riverPiece.transform.SetParent(rivers.transform);
+                            riverPiece.transform.SetParent(riversParent.transform);
                             
                         }
                     }

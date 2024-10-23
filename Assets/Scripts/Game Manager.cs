@@ -7,8 +7,8 @@ using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
-
-   public Game game;
+    [HideInInspector] 
+    public Game game;
 
    public void Awake()
    {

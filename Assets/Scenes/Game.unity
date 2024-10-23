@@ -946,8 +946,6 @@ MonoBehaviour:
   terrainTilemap: {fileID: 111856324}
   featureTilemap: {fileID: 1529647187}
   tile: {fileID: 11400000, guid: 6dc6f9350229dc44fba6e7e57417cb10, type: 2}
-  rivers: {fileID: 1540924628}
-  riverSegment: {fileID: 7700684974192715068, guid: 5ee1d19087010834ea13908e3fde1750, type: 3}
   prairieTile: {fileID: 11400000, guid: 27b1ce3b55e8ee448ba52b1f59f01dac, type: 2}
   grassTile: {fileID: 11400000, guid: 199f0a7142903de44bb71ce1edda0ebf, type: 2}
   tundraTile: {fileID: 11400000, guid: 25b740eec3e06434c89d432169b8ec84, type: 2}
@@ -967,6 +965,8 @@ MonoBehaviour:
   rainforestTile: {fileID: 11400000, guid: d808d8c5d6ffc224d82969bdf11c041d, type: 2}
   oasisTile: {fileID: 11400000, guid: 052447c804702a6458d014fcc7e9bb86, type: 2}
   mountain: {fileID: 11400000, guid: 45ff8b2c159ce8241a5df6055779047d, type: 2}
+  riversParent: {fileID: 1540924628}
+  riverSegment: {fileID: 7700684974192715068, guid: 5ee1d19087010834ea13908e3fde1750, type: 3}
 --- !u!4 &141217325
 Transform:
   m_ObjectHideFlags: 0
@@ -1503,7 +1503,7 @@ GameObject:
   - component: {fileID: 414876456}
   - component: {fileID: 414876455}
   m_Layer: 5
-  m_Name: GUI Canvas Template #1
+  m_Name: GUI Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

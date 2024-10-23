@@ -1,49 +1,47 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
 
-    // Property to handle the GameManager instance
-    public static GameManager Instance { get; private set; }
+   public Game game;
 
-    public event EventHandler OnTurnEnd;
+   public void Awake()
+   {
+       if (game == null)
+       {
+           game = new Game();
+       }
 
-    private int _gameTurns; // The number of turns so far.
-    private Civilization[] _civilization; // All Civilizations (players and NPC)
+       game.world = NewWorld(1231231);
+       game.civilizations = DetermineCivilizations();
+   }
 
-    private void Awake()
-    {
-        // Set GameManager instance to this object
-        if (Instance != null)
-        {
-            Debug.LogError("More than one GameManager instance");
-        }
-        Instance = this;
-    }
+   public void EndTurn()
+   {
+       game.gameTurn++;
+   }
+   
+   List<Civilization> DetermineCivilizations()
+   {
+       return null;
+   }
 
-    public void StartGame()
-    {
-        
-    }
 
-    public void NewTurn()
-    {
-        ++_gameTurns;
+   World NewWorld(uint seed)
+   {
+     WorldGenerator worldGen = new WorldGenerator();
 
-        // End the turn (invokes all functions associated with this event)
-        OnTurnEnd?.Invoke(this, EventArgs.Empty);
-        
-        Debug.Log("new Turn");
+     return worldGen.GenerateWorld(100, 50, 2, seed);
+   }
 
-    }
-
-    public void EndGame()
-    {
-
-    }
+   public World GetWorld()
+   {
+       return game.world;
+   }
     
 }

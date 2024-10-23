@@ -13,10 +13,10 @@ public class WorldGenerator : MonoBehaviour
     public Random _random;
     
     /* Returns a fully generated game world. */
-    public World GenerateWorld(int length, int height, int continents)
+    public World GenerateWorld(int length, int height, int continents, uint seed)
     {
         _random.InitState();
-        _random = new Random(4646446);
+        _random = new Random(seed);
         _continents = continents;
         World world = new World(length, height);
         world.FillEmptyWorld(7);

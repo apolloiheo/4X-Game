@@ -28,12 +28,6 @@ public class Settlement : MonoBehaviour
     private const int Culture = 3;
     private const int Science = 4;
 
-    private void Start()
-    {
-        // Listen to GameManager OnTurnEnd event
-        GameManager.Instance.OnTurnEnd += Instance_OnTurnEnd;
-    }
-
     // End the turn
     private void Instance_OnTurnEnd(object sender, System.EventArgs e)
     {

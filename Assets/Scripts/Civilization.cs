@@ -9,6 +9,7 @@ public class Civilization : MonoBehaviour
     
     // Civilization Traits
     private TechnologyTree _technology; // ** WIP - Technology tree for each Civilization
+    private TechnologyTree _currentTechnology;
     private Tree _cultureTree; // ** WIP - Cultural tree for each Civilization
     
     // Yields
@@ -17,22 +18,85 @@ public class Civilization : MonoBehaviour
     private int _culturePt; // A Civilization's culture generation per turn.
     private int _culture; // A Civilization's current culture (accumulated across turns and spent on culture skills).
     private int _sciencePt; // A Civilization's science generation per turn.
+    
     // Property
     private List<Settlement> _settlements; // A List of the Settlements this Civilization owns.
     private List<Unit> _units; // A List of the Units this Civilization owns.
     
     // Constant
-    private const int Gold = 2;
-    private const int Culture = 3;
-    private const int Science = 4;
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    private const int Gold = 3;
+    private const int Culture = 4;
+    private const int Science = 5;
 
+    public void OnTurnEnded()
+    {
+        // Units
+        UpdateUnits();
+        // Settlements
+        UpdateSettlements();
+        // Civilization-wide Yields
+        UpdateYields();
+        // Yields Per Turn -> Total Yields + Technology Progress
+        AddUpYields();
+        
+        void UpdateUnits()
+        {
+            if (_units is not null)
+            {
+                foreach (Unit unit in _units)
+                {
+                    unit.OnTurnEnd();
+                }
+            }
+        }
+
+        void UpdateSettlements()
+        {
+            if (_settlements is not null)
+            {
+                foreach (Settlement settlement in _settlements)
+                {
+                    settlement.OnTurnEnd();
+                }
+            }
+        }
+
+        void AddUpYields()
+        {
+            _gold += _goldPt;
+            _culture += _culturePt;
+            _currentTechnology.AddToProgress(_sciencePt);
+        }
+    }
+    
+    public void UpdateYields()
+    {
+        if (_settlements is not null)
+        {
+            _goldPt = 0;
+            _culturePt = 0;
+            _sciencePt = 0;
+            
+            foreach (Settlement settlement in _settlements)
+            {
+                // Update each Settlement's Yields first 
+                settlement.UpdateYields();
+
+                // Add up all Civilization-wide yields from all Settlements
+                _goldPt += settlement.GetYieldsPt()[Gold];
+                _culturePt += settlement.GetYieldsPt()[Culture];
+                _sciencePt += settlement.GetYieldsPt()[Science];
+            }
+        }
+    }
+
+    public void BuyTile(GameTile tile)
+    {
+        // To be implemented
+    }
+
+    public void ManageTiles()
+    {
+        // To be implemented
+    }
 }

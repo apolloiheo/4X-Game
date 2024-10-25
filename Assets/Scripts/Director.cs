@@ -13,6 +13,7 @@ public class Director : MonoBehaviour
     public Tilemap baseTilemap;
     public Tilemap terrainTilemap;
     public Tilemap featureTilemap;
+    public Tilemap unitTilemap;
     [Header("Flat Tiles")]
     public Tile tile;
     public Tile prairieTile;
@@ -40,38 +41,40 @@ public class Director : MonoBehaviour
     [Header("Rivers")]
     public GameObject riversParent;
     public GameObject riverSegment;
+    [Header("Settlements")] 
+    public Tile village;
+    [Header("Units")] 
+    public Tile warrior;
+    
 
     // Start is called before the first frame update
     void Start()
     {
-        RenderWorld();
+        RenderGame();
     }
 
-    private void RenderWorld()
+    private void RenderGame()
     {
         World gameWorld = gm.GetWorld();
-
-        DrawTilemaps(gameWorld);
-        gameWorld.SetTileAdjacency();
+        RenderTilemaps(gameWorld);
+        RenderSettlementUI(gameWorld);
     }
 
-    public void DrawTilemaps(World world)
+    void RenderTilemaps(World world)
     {
+        // Grid Dimensions
+        double tileHeight = 0.95f;
+        double tileWidth = 1f;
+        
         for (int x = 0; x < world.GetLength(); x++)
         {
             for (int y = 0; y < world.GetHeight(); y++)
             {
                 GameTile currTile = world.GetTile(x, y);
                 
-                // Grid can be switched, check if Height is Width
-                double tileHeight = 0.95f;
-                float tileWidth = 1f;
-                float edge = 4f;
-                
                 // Tile Position Variables - Jason knows how they work don't ask me.
-                float bigX = tileWidth * x * .75f;
-                float bigY = (float)(y * tileHeight + (tileHeight / 2) * (x % 2));
-                
+                double bigX = tileWidth * x * .75f;
+                double bigY = (float)(y * tileHeight + (tileHeight / 2) * (x % 2));
 
                 /* Render Base Tiles */
                 // Plains
@@ -156,20 +159,23 @@ public class Director : MonoBehaviour
 
                     //tile.color = Color.white;
                 }
+                // Coast
                 else if (currTile.GetBiome() == 6)
                 {
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), coastTile);
                     //tile.color = new Color32(110, 187, 255, 255);
                 }
+                // Ocean
                 else if (currTile.GetBiome() == 7)
                 {
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), oceanTile);
                     //tile.color = new Color32(20, 102, 184, 255);
-                } else if (currTile.GetBiome() == 8)
+                } 
+                // Lake
+                else if (currTile.GetBiome() == 8)
                 {
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), lakeTile);
                 }
-                
                 
                 /* Render Terrain */
                 // Mountains
@@ -178,7 +184,6 @@ public class Director : MonoBehaviour
                     terrainTilemap.SetTile(new Vector3Int(y, x, 0), mountain);
                 }
                 
-
                 /* Render Rivers */
                 if (currTile.GetFreshWaterAccess())
                 {
@@ -230,25 +235,63 @@ public class Director : MonoBehaviour
                 }
                 
                 /* Render Features */
+                // Woods
                 if (currTile.GetFeature() == 1)
                 {
                     featureTilemap.SetTile(new Vector3Int(y, x, 0), woodsTile);
-                } else if (currTile.GetFeature() == 2)
+                } 
+                // Floodplains
+                else if (currTile.GetFeature() == 2)
                 {
                     featureTilemap.SetTile(new Vector3Int(y, x, 0), floodplainsTile);
-                } else if (currTile.GetFeature() == 3)
+                } 
+                // Marshes
+                else if (currTile.GetFeature() == 3)
                 {
                     featureTilemap.SetTile(new Vector3Int(y, x, 0), marshTile);
-                } else if (currTile.GetFeature() == 4)
+                } 
+                // Rainforest
+                else if (currTile.GetFeature() == 4)
                 {
                     featureTilemap.SetTile(new Vector3Int(y, x, 0), rainforestTile);
-                } else if (currTile.GetFeature() == 5)
+                } 
+                // Oasis
+                else if (currTile.GetFeature() == 5)
                 {
                     featureTilemap.SetTile(new Vector3Int(y, x, 0), oasisTile);
+                }
+                
+                /* Render Settlements */
+                if (currTile.GetSettlement() is not null)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), village);
                 }
             }
         }
     }
 
+    void RenderSettlementUI(World world)
+    {
+        // Grid Dimensions
+        double tileHeight = 0.95f;
+        double tileWidth = 1f;
+        
+        for (int x = 0; x < world.GetLength(); x++)
+        {
+            for (int y = 0; y < world.GetHeight(); y++)
+            {
+                // Tile Position Variables - Jason knows how they work don't ask me.
+                double bigX = tileWidth * x * .75f;
+                double bigY = (float)(y * tileHeight + (tileHeight / 2) * (x % 2));
+                
+                GameTile currTile = world.GetTile(x, y);
 
+                if (currTile.GetSettlement() is not null)
+                {
+                    
+                }
+                
+            }
+        }
+    }
 }

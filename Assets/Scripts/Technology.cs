@@ -21,26 +21,27 @@ public class Technology : MonoBehaviour
             // Complete research
             Complete();
         }
+        
+        void Complete()
+        {
+            // Complete research
+            _researched = true;
+            _tree.ResearchTechnology(this);
+        }
     }
-
-    private void Complete()
-    {
-        // Complete research
-        _researched = true;
-        _tree.ResearchTechnology(this);
-    }
-
+    
     public List<Technology> GetSuccessors()
     {
         return _successors;
     }
 
+    // Return true if this has been researched
     public bool IsResearched()
     {
         return _researched;
     }
 
-    // Check if this technology is researchable
+    // Return true is this can be researched
     public bool IsResearchable()
     {
         // If any dependencies are not researched, return false

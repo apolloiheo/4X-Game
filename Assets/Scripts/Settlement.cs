@@ -1,10 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Settlement : MonoBehaviour
 {
-    
     // Instance Variables
     private string _name; // The name the player set for the Settlement.
     private Civilization _civilization; // Owner
@@ -18,7 +16,7 @@ public class Settlement : MonoBehaviour
     private List<CityProject> _projects;
     private CityProject _currentCityProject;
     private GameTile _gameTile;
-    private int _Tier; // Settlement tier. 0 = Village, 1 = Town, 2 = City
+    private int _tier; // Settlement tier. 1 = Village, 2 = Town, 3 = City
     
     // Constants
     private const int FoodSurplusRequirement = 15;
@@ -27,32 +25,6 @@ public class Settlement : MonoBehaviour
     private const int Gold = 2;
     private const int Culture = 3;
     private const int Science = 4;
-
-    // End the turn
-    private void Instance_OnTurnEnd(object sender, System.EventArgs e)
-    {
-        // Update Settlement Yields
-        CalculateYields();
-
-        // Update Settlement Tier
-        CalculateTier();
-
-        // Add current Production per turn to the City Project's progress
-        _currentCityProject.AddToProgress(_yieldsPt[Production]);
-
-        // Updated Growth
-        _foodSurplus += _yieldsPt[Food] - (_population * 2);
-
-        // Check if Settlement will grow
-        if (_foodSurplus >= FoodSurplusRequirement)
-        {
-            // If so, 50% of remaining food surplus is carried over.
-            _foodSurplus = (_foodSurplus - FoodSurplusRequirement) / 2 ;
-            
-            // Increase population
-            _population += 1;
-        }
-    }
 
     /* New Settlement Constructor - for Gameplay */
     public Settlement(string name, Civilization civilization, GameTile gameTile)
@@ -65,25 +37,67 @@ public class Settlement : MonoBehaviour
         _workedTiles.Add(gameTile);
         _projects = new List<CityProject>();
         _population = 1;
-        _Tier = 0;
-        CalculateYields();
-    }
-
-    /* Adds all adjacent Tiles to territory */
-    private List<GameTile> StartingTerritory(GameTile gameTile)
-    {
-        List<GameTile> territory = new List<GameTile>();
-        territory.Add(gameTile);
-
-        foreach (GameTile t in gameTile.GetNeighbors())
+        _tier = 1;
+        
+        /* Adds all adjacent Tiles to territory */
+        List<GameTile> StartingTerritory(GameTile gameTile)
         {
-            territory.Add(t);
+            List<GameTile> territory = new List<GameTile>();
+            territory.Add(gameTile);
+
+            foreach (GameTile t in gameTile.GetNeighbors())
+            {
+                territory.Add(t);
+            }
+            return territory;
         }
-        return territory;
+    }
+    
+    // End the turn
+    public void OnTurnEnd()
+    {
+        // Update Settlement Production
+        ProgressCityProject();
+        
+        // Update Settlement Growth
+        ProgressFoodSurplus();
+        
+        // Update Settlement Yields
+        UpdateYields();
+
+        // Update Settlement Tier
+        UpdateTier();
+        
+        void ProgressCityProject()
+        {
+            // Add current Production per turn to the City Project's progress
+            _currentCityProject.AddToProgress(_yieldsPt[Production]);
+        }
+
+        void ProgressFoodSurplus()
+        {
+            // Updated Growth
+            _foodSurplus += _yieldsPt[Food] - (_population * 2);
+            
+            // Check if Settlement will grow
+            if (_foodSurplus >= FoodSurplusRequirement)
+            {
+                // If so, 50% of remaining food surplus is carried over.
+                _foodSurplus = (_foodSurplus - FoodSurplusRequirement) / 2 ;
+            
+                // Increase population
+                _population += 1;
+            }
+        }
+
+        void UpdateCivilizationYields()
+        {
+            
+        }
     }
 
     /* Calculate a Settlement's yields per turn by summing  */
-    public void CalculateYields()
+    public void UpdateYields()
     {
         // Reset Yields
         _yieldsPt = new int[5];
@@ -108,25 +122,20 @@ public class Settlement : MonoBehaviour
     }
 
     /* Calculate a settlement's tier */
-    private void CalculateTier()
+    private void UpdateTier()
     {
         if (_population <= 3)
         {
-            _Tier = 0;
+            _tier = 0;
         }
         else if (_population <= 7)
         {
-            _Tier = 1;
+            _tier = 1;
         }
         else
         {
-            _Tier = 2;
+            _tier = 2;
         }
-    }
-
-    private void CalculateFoodSurplus()
-    {
-        
     }
 
     /* Add a city project to settlement */
@@ -197,14 +206,14 @@ public class Settlement : MonoBehaviour
         return _currentCityProject;
     }
     
-    public GameTile GetGameTile()
+    public GameTile GetTile()
     {
         return _gameTile;
     }
     
     public int GetTier()
     {
-        return _Tier;
+        return _tier;
     }
 
 }

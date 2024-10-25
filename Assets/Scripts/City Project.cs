@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CityProject : MonoBehaviour
+[System.Serializable]
+public class CityProject
 {
     private int _projectName;
     private int _cost;

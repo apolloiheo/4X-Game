@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Promotion : MonoBehaviour
+[System.Serializable]
+public class Promotion 
 {
     // Start is called before the first frame update
     void Start()

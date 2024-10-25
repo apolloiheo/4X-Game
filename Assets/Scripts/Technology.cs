@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Technology : MonoBehaviour
+[System.Serializable]
+public class Technology 
 {
     // private Civilization _civilization; // Owner
     private TechnologyTree _tree;

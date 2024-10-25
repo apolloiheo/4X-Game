@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
-public class Game : MonoBehaviour
+[System.Serializable]
+public class Game 
 {
     public World world;
     public List<Civilization> civilizations;

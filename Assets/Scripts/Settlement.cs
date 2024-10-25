@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Settlement : MonoBehaviour
+[System.Serializable]
+public class Settlement 
 {
     // Instance Variables
     private string _name; // The name the player set for the Settlement.
@@ -96,7 +97,7 @@ public class Settlement : MonoBehaviour
         }
     }
 
-    /* Calculate a Settlement's yields per turn by summing  */
+    /* Called frequently to make sure Settlement updates yields in GUI */
     public void UpdateYields()
     {
         // Reset Yields

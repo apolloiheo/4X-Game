@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[Serializable]
 public class World
 {
     // Instance Attributes

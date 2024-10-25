@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Civilization : MonoBehaviour
+[System.Serializable]
+public class Civilization 
 {
     // NPC or Player
     private bool IsNPC;
@@ -32,10 +33,13 @@ public class Civilization : MonoBehaviour
     {
         // Units
         UpdateUnits();
+        
         // Settlements
         UpdateSettlements();
-        // Civilization-wide Yields
+        
+        // Confirm that current Yields are up to date
         UpdateYields();
+        
         // Yields Per Turn -> Total Yields + Technology Progress
         AddUpYields();
         
@@ -69,6 +73,7 @@ public class Civilization : MonoBehaviour
         }
     }
     
+    /* Called frequently to ensure Civilization displays the proper yields in GUI */
     public void UpdateYields()
     {
         if (_settlements is not null)

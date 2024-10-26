@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
@@ -57,6 +58,8 @@ public class Director : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gm = FindObjectOfType<GameManager>();
+        
         RenderGame();
         
         _needsDirection = true;
@@ -64,7 +67,7 @@ public class Director : MonoBehaviour
 
     private void RenderGame()
     {
-        World gameWorld = gm.GetWorld();
+        World gameWorld = gm.game.world;
         RenderTilemaps(gameWorld);
         RenderSettlementUI(gameWorld);
         

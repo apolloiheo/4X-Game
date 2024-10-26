@@ -1,29 +1,16 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using File = UnityEngine.Windows.File;
 
 public class GameManager : MonoBehaviour, IDataService
-{
+{ 
     [HideInInspector] 
     public Game game;
-
-   public void Awake()
-   {
-       if (game == null)
-       {
-           game = new Game();
-       }
-
-       game.world = NewWorld(1231231);
-       game.civilizations = DetermineCivilizations();
-       
-       VillageTest();
-       
-       
-   }
-
-   public void EndTurn()
+    public void EndTurn()
    {
        game.gameTurn++;
 
@@ -35,34 +22,15 @@ public class GameManager : MonoBehaviour, IDataService
            }
        }
    }
-   
-   List<Civilization> DetermineCivilizations()
-   {
-       return null;
-   }
-
-   public void VillageTest()
-   {
-       World world = game.world;
-       GameTile testTile = world.GetTile(20, 20);
-       Civilization testCivilization = new Civilization();
-       Settlement village = new Settlement("Berkeley", testCivilization, testTile);
-       testTile.SetSettlement(village);
-   }
-
-   World NewWorld(uint seed)
-   {
-     WorldGenerator worldGen = new WorldGenerator();
-
-     return worldGen.GenerateWorld(100, 50, 2, seed);
-   }
-
-   public World GetWorld()
-   {
-       return game.world;
-   }
-
-   public void SaveData<T>(string relativePath, T data, bool encrypted)
+    
+    public void NewGame(uint worldSeed)
+    {
+        game = new Game();
+        game.world = new WorldGenerator().GenerateWorld(100,50,2,worldSeed);
+        SceneManager.LoadScene(1);
+    }
+    
+    public void SaveData<T>(string relativePath, T data, bool encrypted)
    {
        // File Path
        string path = Application.persistentDataPath + relativePath;
@@ -83,8 +51,7 @@ public class GameManager : MonoBehaviour, IDataService
        //Write File
        File.WriteAllBytes(path, jsonBytes);
    }
-
-   public T LoadData<T>(string relativePath, bool encrypted)
+    public T LoadData<T>(string relativePath, bool encrypted)
    {
        string path = Application.persistentDataPath + relativePath;
        
@@ -94,4 +61,6 @@ public class GameManager : MonoBehaviour, IDataService
        
        return JsonConvert.DeserializeObject<T>(jsonData);
    }
+
+    
 }

@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class MenuHandler : MonoBehaviour
@@ -49,15 +45,17 @@ public class MenuHandler : MonoBehaviour
         newGameCanvas.SetActive(false);
         loadGameCanvas.SetActive(true);
         
+        PopulateSaveList();
+        
         void PopulateSaveList()
         {
-            string[] files = Directory.GetFiles(Application.persistentDataPath, "*.save");
+            string[] files = Directory.GetFiles(Application.persistentDataPath, "*.json");
 
             foreach (string filePath in files)
             {
                 GameObject saveButton = Instantiate(saveButtonPrefab, saveListContainer);
                 string filename = Path.GetFileNameWithoutExtension(filePath);
-                saveButton.GetComponentInChildren<Text>().text = filename;
+                saveButton.GetComponentInChildren<TMP_Text>().text = filename;
             
                 saveButton.GetComponent<Button>().onClick.AddListener(() => LoadSelectedSave(filePath));
             }
@@ -65,7 +63,7 @@ public class MenuHandler : MonoBehaviour
         
         void LoadSelectedSave(string filePath)
         {
-        
+            gameManager.LoadGame(filePath);
         }
     }
 

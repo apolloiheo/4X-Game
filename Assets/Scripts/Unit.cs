@@ -1,27 +1,42 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
 public class Unit
 {
     // Instance Properties
+    [JsonProperty]
     private string _name; // The Unit's name.
+    [JsonProperty]
     private int _health; // A Unit's current Health Points (Default of 100)
+    [JsonProperty]
     private int _movementPoints; // A Unit's current Movement Points per turn.
+    [JsonProperty]
     private int _currentMovementPoints; // A Unit's remaining movement points this turn.
+    [JsonProperty]
     private int _combatStrength; // A Unit's base Combat Strength Stat - used to determine Attack Damage and Defense Damage.
+    [JsonProperty]
     private int _supplies; // A Unit's current Supplies stat - Determines how many turns it can stay out of your territory before taking damage.
+    [JsonProperty]
     private int _attackRange; // The range of Tiles a Unit can attack from. (Melee: 0, Ranged: 1 - X).
+    [JsonProperty]
     private int _experience; // A Unit's current XP. Needs X amount for a Promotion.
+    [JsonProperty]
     private bool _hasOrder; // Determines whether a Unit has already been given an order for this turn.
+    [JsonProperty]
     private bool _exhausted; // Determines if a Unit still has moves to make this turn.
+    [JsonProperty]
     private bool _fortified; // Determines if a Unit was ordered to Fortify this turn.
+    [JsonProperty]
     private List<Promotion> _promotions; // Unlocked Promotions
     
     // References
+    [JsonProperty]
     private GameTile _gameTile; //The Tile this Unit is on. 
+    [JsonProperty]
     private Civilization _civilization; // The Civilization that owns this Unit.
 
     // Constants

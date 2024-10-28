@@ -2,15 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-[Serializable]
+[System.Serializable]
 public class World
 {
     // Instance Attributes
+    [JsonProperty]
     private int _length;
+    [JsonProperty]
     private int _height;
+    [JsonProperty]
     private GameTile[,] _world; // 2D Array of Tiles
     
     // Constants

@@ -1,22 +1,36 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
 public class Settlement 
 {
     // Instance Variables
+    [JsonProperty]
     private string _name; // The name the player set for the Settlement.
+    [JsonProperty]
     private Civilization _civilization; // Owner
+    [JsonProperty]
     private List<GameTile> _territory; // Tiles a Settlement controls.
+    [JsonProperty]
     private List<GameTile> _workedTiles; // Tiles in Territory that are being worked by a Population
+    [JsonProperty]
     private int[] _yieldsPt; // [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4] YieldsPT -> Yields Per Turn
+    [JsonProperty]
     private int _population; // The size of Settlement and the units you can assign to Tiles
+    [JsonProperty]
     private int _foodSurplus; // The buildup of extra food needed to grow a Settlement.
+    [JsonProperty]
     private int _combatStrength;
+    [JsonProperty]
     private List<Building> _buildings;
+    [JsonProperty]
     private List<CityProject> _projects;
+    [JsonProperty]
     private CityProject _currentCityProject;
+    [JsonProperty]
     private GameTile _gameTile;
+    [JsonProperty]
     private int _tier; // Settlement tier. 1 = Village, 2 = Town, 3 = City
     
     // Constants

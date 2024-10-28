@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class Director : MonoBehaviour
@@ -52,8 +48,6 @@ public class Director : MonoBehaviour
     
     // Instance Attributes
     private bool _needsDirection;
-    
-    
 
     // Start is called before the first frame update
     void Start()
@@ -63,6 +57,14 @@ public class Director : MonoBehaviour
         RenderGame();
         
         _needsDirection = true;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            gm.SaveGame();
+        }
     }
 
     private void RenderGame()
@@ -306,6 +308,5 @@ public class Director : MonoBehaviour
             }
         }
     }
-    
-    
+
 }

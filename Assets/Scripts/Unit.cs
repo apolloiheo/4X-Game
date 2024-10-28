@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
-public class Unit
+public class Unit : ISerialization
 {
     // Instance Properties
     [JsonProperty]
@@ -250,5 +250,16 @@ public class Unit
     {
         return _gameTile;
     }
-    
+
+    public void StageForSerialization()
+    {
+        // Remove _tile
+        
+        // Remove _civiliziation
+    }
+
+    public void RestoreAfterDeserialization()
+    {
+        throw new NotImplementedException();
+    }
 }

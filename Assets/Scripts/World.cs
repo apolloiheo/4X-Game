@@ -7,7 +7,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 [System.Serializable]
-public class World
+public class World : ISerialization
 {
     // Instance Attributes
     [JsonProperty]
@@ -138,6 +138,18 @@ public class World
         }
     }
 
+    public void StageForSerialization()
+    {
+        // Remove Tile adjacencies
+        
+        
+    }
+
+    public void RestoreAfterDeserialization()
+    {
+        throw new NotImplementedException();
+    }
+
     /* Print the world to console. (Bad way to test but will do for now) */
     public void PrintWorld()
     {
@@ -210,7 +222,6 @@ public class World
     }
     
     // Tile Modification Methods
-
     public void ModifyTile(String tileProperty, Point point, int value)
     {
         if (tileProperty == "biome")

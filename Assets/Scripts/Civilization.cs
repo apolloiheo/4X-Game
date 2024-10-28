@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
-public class Civilization 
+public class Civilization : ISerialization
 {
     [JsonProperty]
     // NPC or Player
@@ -115,5 +115,15 @@ public class Civilization
     public void ManageTiles()
     {
         // To be implemented
+    }
+    
+    public void StageForSerialization()
+    {
+        
+    }
+
+    public void RestoreAfterDeserialization()
+    {
+        throw new System.NotImplementedException();
     }
 }

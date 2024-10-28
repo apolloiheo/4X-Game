@@ -1,6 +1,10 @@
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using UnityEngine;
+
 [System.Serializable]
-public class GameTile
+public class GameTile : ISerialization
 {
     /*ID INDEX
         Biomes ID:
@@ -45,8 +49,11 @@ public class GameTile
     */
 
     // Instance Attributes
+    [JsonProperty]
     private int _xPos; // The Tile's X Position on a 2D Array
+    [JsonProperty]
     private int _yPos; // The Tile's Y Position on a 2D Array
+    [JsonProperty]
     private int _biome; // The base layer of a Tile (Plains: 1, Grassland: 2, Tundra: 3, Desert: 4, Snow: 5, Coast: 6, Ocean: 7)
     private int _terrain; // The topography of a Tile (Flat: 0, Hill: 1, Mountain: 2)
     private int _feature; // The natural feature of a Tile (None: 0, Woods: 1, Floodplains: 2, Marsh: 3, Rainforest: 4, Oasis: 5)
@@ -306,7 +313,6 @@ public class GameTile
     }
 
     // Comparison Methods
-
     public bool IsLand()
     {
         if (_biome == 6 || _biome == 7 || _biome == 8)
@@ -316,8 +322,6 @@ public class GameTile
 
         return true;
     }
-
-
 
     // Setter Methods
     public void SetXPos(int xPos)
@@ -459,5 +463,19 @@ public class GameTile
     public int[] GetYields()
     {
         return _yields;
+    }
+
+    public void StageForSerialization()
+    {
+        // Remove _neighbors
+        
+        // Remove _settlement
+        
+        // Remove _unit
+    }
+
+    public void RestoreAfterDeserialization()
+    {
+        throw new System.NotImplementedException();
     }
 }

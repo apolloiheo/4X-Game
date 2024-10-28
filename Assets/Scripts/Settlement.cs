@@ -3,12 +3,12 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
-public class Settlement 
+public class Settlement : ISerialization
 {
     // Instance Variables
     [JsonProperty]
     private string _name; // The name the player set for the Settlement.
-    [JsonProperty]
+    
     private Civilization _civilization; // Owner
     [JsonProperty]
     private List<GameTile> _territory; // Tiles a Settlement controls.
@@ -231,6 +231,21 @@ public class Settlement
         return _tier;
     }
 
+    public void StageForSerialization()
+    {
+        // Remove territory - maybe store territory as Tile coordinates and not Tiles themselves
+        // 
+        // 
+        
+        //
+        
+        throw new System.NotImplementedException();
+    }
+
+    public void RestoreAfterDeserialization()
+    {
+        throw new System.NotImplementedException();
+    }
 }
     
     

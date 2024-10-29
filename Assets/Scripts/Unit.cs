@@ -35,9 +35,9 @@ public class Unit : ISerialization
     
     // References
     [JsonProperty]
-    private GameTile _gameTile; //The Tile this Unit is on. 
+    public GameTile _gameTile; //The Tile this Unit is on. 
     [JsonProperty]
-    private Civilization _civilization; // The Civilization that owns this Unit.
+    public Civilization _civilization; // The Civilization that owns this Unit.
 
     // Constants
     private const int Zero = 0;
@@ -254,11 +254,14 @@ public class Unit : ISerialization
     public void StageForSerialization()
     {
         // Remove _tile
+        _gameTile = null;
         
+        _civilization = null;
+
         // Remove _civiliziation
     }
 
-    public void RestoreAfterDeserialization()
+    public void RestoreAfterDeserialization(Game game)
     {
         throw new NotImplementedException();
     }

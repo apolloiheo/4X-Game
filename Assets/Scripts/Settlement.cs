@@ -8,12 +8,6 @@ public class Settlement : ISerialization
     // Instance Variables
     [JsonProperty]
     private string _name; // The name the player set for the Settlement.
-    
-    private Civilization _civilization; // Owner
-    [JsonProperty]
-    private List<GameTile> _territory; // Tiles a Settlement controls.
-    [JsonProperty]
-    private List<GameTile> _workedTiles; // Tiles in Territory that are being worked by a Population
     [JsonProperty]
     private int[] _yieldsPt; // [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4] YieldsPT -> Yields Per Turn
     [JsonProperty]
@@ -29,9 +23,14 @@ public class Settlement : ISerialization
     [JsonProperty]
     private CityProject _currentCityProject;
     [JsonProperty]
-    private GameTile _gameTile;
-    [JsonProperty]
     private int _tier; // Settlement tier. 1 = Village, 2 = Town, 3 = City
+    
+    public Civilization _civilization; // Owner
+    public GameTile _gameTile;
+    private List<GameTile> _territory; // Tiles a Settlement controls.
+    private List<GameTile> _workedTiles; // Tiles in Territory that are being worked by a Population
+    
+    
     
     // Constants
     private const int FoodSurplusRequirement = 15;
@@ -164,7 +163,8 @@ public class Settlement : ISerialization
     {
         _currentCityProject = _projects[index];
     }
-
+    
+    
     // Getter Methods
     public int[] GetYieldsPt()
     {
@@ -235,14 +235,16 @@ public class Settlement : ISerialization
     {
         // Remove territory - maybe store territory as Tile coordinates and not Tiles themselves
         // 
-        // 
         
-        //
-        
+        _civilization = null;
+
+        _workedTiles = null;
+
+        _territory = null;
         throw new System.NotImplementedException();
     }
 
-    public void RestoreAfterDeserialization()
+    public void RestoreAfterDeserialization(Game game)
     {
         throw new System.NotImplementedException();
     }

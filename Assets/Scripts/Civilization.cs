@@ -119,10 +119,20 @@ public class Civilization : ISerialization
     
     public void StageForSerialization()
     {
-        
+        foreach (Settlement settlement in _settlements)
+        {
+            settlement.StageForSerialization();
+        }
+
+        foreach (Unit unit in _units)
+        {
+            unit.StageForSerialization();
+        }
+
+        _technology = null;
     }
 
-    public void RestoreAfterDeserialization()
+    public void RestoreAfterDeserialization(Game game)
     {
         throw new System.NotImplementedException();
     }

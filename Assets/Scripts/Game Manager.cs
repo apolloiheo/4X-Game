@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     {
         if (!savedGame)
         {
+            game.StageForSerialization();
             string fileRelativePath = "saveFile.json";
             SaveData(fileRelativePath, game, false);
             savedGame = true;

@@ -55,16 +55,27 @@ public class GameTile : ISerialization
     private int _yPos; // The Tile's Y Position on a 2D Array
     [JsonProperty]
     private int _biome; // The base layer of a Tile (Plains: 1, Grassland: 2, Tundra: 3, Desert: 4, Snow: 5, Coast: 6, Ocean: 7)
+    [JsonProperty]
     private int _terrain; // The topography of a Tile (Flat: 0, Hill: 1, Mountain: 2)
+    [JsonProperty]
     private int _feature; // The natural feature of a Tile (None: 0, Woods: 1, Floodplains: 2, Marsh: 3, Rainforest: 4, Oasis: 5)
+    [JsonProperty]
     private int _resource; // The resource on this Tile. Could be a specific Bonus, Luxury, Strategic Resource, or no Resource. CHECK ID INDEX ABOVE^
+    [JsonProperty]
     private int _improvement; // The Tile Improvement on this Tile or 0 for No Improvement. CHECK ID INDEX ABOVE^
+    [JsonProperty]
     private int _mc; // Movement cost - the amount of Movement Points a Unit must spend to move unto that Tile.
+    [JsonProperty]
     private GameTile[] _neighbors; // Adjacent Tiles to these tiles. Index corresponds to Edge assuming flat top/bottom hexagons. Flat Top is 0, Flat Bottom is 3, Right sides are 1,2, Left Sides are 3,4.
+    [JsonProperty]
     private bool[] _riverEdges; // Are the Tile edges Adjacent to a river? -> [0,1,2,3,4,5] Represent edges on a hexagon starting from the Top moving clockwise.
+    [JsonProperty]
     private bool _freshWaterAccess; // Is the Tile adjacent to a river?
+    [JsonProperty]
     private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile). 
+    [JsonProperty]
     private Settlement _settlement; // The Settlement on this Tile. May be null (no Settlement on Tile).
+    [JsonProperty]
     private int[] _yields; // An int array of a Tile's Yields. [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4]
 
     // Constants
@@ -467,15 +478,19 @@ public class GameTile : ISerialization
 
     public void StageForSerialization()
     {
-        // Remove _neighbors
-        
-        // Remove _settlement
-        
-        // Remove _unit
+        _neighbors = null;
+
+        // Settlement's and Unit's can stay on Tiles (this will be the one place they are serialized)
     }
 
-    public void RestoreAfterDeserialization()
+    public void RestoreAfterDeserialization(Game game)
     {
-        throw new System.NotImplementedException();
+        // Give the Settlement on this Tile a reference to that Tile it is on (this)
+        _settlement._gameTile = this;
+
+        // Give the Unit on this Tile that a reference to the Tile it is on (this)
+        _unit._gameTile = this;
+        
+        // _neighbors will be handled by world.SetTileAdjacency
     }
 }

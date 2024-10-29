@@ -141,11 +141,16 @@ public class World : ISerialization
     public void StageForSerialization()
     {
         // Remove Tile adjacencies
-        
-        
+        for (int x = 0; x < _length; x++)
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                _world[x, y].StageForSerialization();
+            }
+        }
     }
 
-    public void RestoreAfterDeserialization()
+    public void RestoreAfterDeserialization(Game game)
     {
         throw new NotImplementedException();
     }

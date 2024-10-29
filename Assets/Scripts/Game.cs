@@ -22,14 +22,21 @@ public class Game : ISerialization
 
     public void StageForSerialization()
     {
+        // World
         world.StageForSerialization();
-        foreach (Civilization civilization in civilizations)
+        
+        // Civilizations
+
+        if (civilizations != null)
         {
-            
+            foreach (Civilization civilization in civilizations)
+            {
+                civilization.StageForSerialization();
+            }
         }
     }
 
-    public void RestoreAfterDeserialization()
+    public void RestoreAfterDeserialization(Game game)
     {
         
     }

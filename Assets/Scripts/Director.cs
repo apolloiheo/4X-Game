@@ -1,23 +1,28 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 public class Director : MonoBehaviour
 {
     // Serialized Variables
-    [Header("Game Manager")] public GameManager gm;
+    [Header("Game Manager")] 
+    public GameManager gm;
     [Header("Canvases")] 
     public GameObject menuCanvas;
     public GameObject guiCanvas;
     public GameObject saveCanvas;
     public TMP_InputField saveIF;
-    [Header("Owner")] public Civilization Civilization;
-    [Header("Tilemaps")] public Tilemap baseTilemap;
+    [Header("Owner")] 
+    public Civilization Civilization;
+    [Header("Tilemaps")] 
+    public Tilemap baseTilemap;
     public Tilemap terrainTilemap;
     public Tilemap featureTilemap;
     public Tilemap unitTilemap;
-    [Header("Flat Tiles")] public Tile tile;
+    [Header("Flat Tiles")] 
+    public Tile tile;
     public Tile prairieTile;
     public Tile grassTile;
     public Tile tundraTile;
@@ -26,21 +31,27 @@ public class Director : MonoBehaviour
     public Tile coastTile;
     public Tile snowTile;
     public Tile lakeTile;
-    [Header("Hills Tiles")] public Tile prairieHillsTile;
+    [Header("Hills Tiles")]
+    public Tile prairieHillsTile;
     public Tile grassHillsTile;
     public Tile tundraHillsTile;
     public Tile desertHillsTile;
     public Tile snowHillsTile;
-    [Header("Features")] public Tile woodsTile;
+    [Header("Features")] 
+    public Tile woodsTile;
     public Tile floodplainsTile;
     public Tile marshTile;
     public Tile rainforestTile;
     public Tile oasisTile;
-    [Header("Terrain")] public Tile mountain;
-    [Header("Rivers")] public GameObject riversParent;
+    [Header("Terrain")] 
+    public Tile mountain;
+    [Header("Rivers")] 
+    public GameObject riversParent;
     public GameObject riverSegment;
-    [Header("Settlements")] public Tile village;
-    [Header("Units")] public Tile warrior;
+    [Header("Settlements")] 
+    public Tile village;
+    [Header("Units")] 
+    public Tile warrior;
 
     // Instance Attributes
     private bool _needsDirection;
@@ -314,6 +325,11 @@ public class Director : MonoBehaviour
     public void SendSaveToGM()
     {
         gm.SaveGame(saveIF.text);
+    }
+
+    public void QuitToMainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 
 

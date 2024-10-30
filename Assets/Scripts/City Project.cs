@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
 public class CityProject
 {
+    [JsonProperty]
     private int _projectName;
+    [JsonProperty]
     private int _cost;
+    [JsonProperty]
     private int _currentProductionProgress;
 
     public CityProject(int name, int cost)
@@ -15,8 +19,7 @@ public class CityProject
         _cost = cost;
         _currentProductionProgress = 0;
     }
-
-
+    
     public void AddToProgress(int production)
     {
         _currentProductionProgress += production;

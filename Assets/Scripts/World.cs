@@ -2,15 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-[Serializable]
-public class World
+[System.Serializable]
+public class World : ISerialization
 {
     // Instance Attributes
+    [JsonProperty]
     private int _length;
+    [JsonProperty]
     private int _height;
+    [JsonProperty]
     private GameTile[,] _world; // 2D Array of Tiles
     
     // Constants
@@ -134,6 +138,24 @@ public class World
         }
     }
 
+    public void StageForSerialization()
+    {
+        // Remove Tile adjacencies
+        for (int x = 0; x < _length; x++)
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                _world[x, y].StageForSerialization();
+            }
+        }
+    }
+
+    public void RestoreAfterDeserialization(Game game)
+    {
+        // Set GameTile neighbor properties back to normal.
+        game.world.SetTileAdjacency();
+    }
+
     /* Print the world to console. (Bad way to test but will do for now) */
     public void PrintWorld()
     {
@@ -206,7 +228,6 @@ public class World
     }
     
     // Tile Modification Methods
-
     public void ModifyTile(String tileProperty, Point point, int value)
     {
         if (tileProperty == "biome")

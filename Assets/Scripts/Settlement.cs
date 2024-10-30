@@ -1,23 +1,41 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
-public class Settlement 
+public class Settlement : ISerialization
 {
-    // Instance Variables
+    // Serializable Instance Variables
+    [JsonProperty]
     private string _name; // The name the player set for the Settlement.
-    private Civilization _civilization; // Owner
-    private List<GameTile> _territory; // Tiles a Settlement controls.
-    private List<GameTile> _workedTiles; // Tiles in Territory that are being worked by a Population
+    [JsonProperty]
     private int[] _yieldsPt; // [Food, Production, Gold, Culture, Science] -> [0,1,2,3,4] YieldsPT -> Yields Per Turn
+    [JsonProperty]
     private int _population; // The size of Settlement and the units you can assign to Tiles
+    [JsonProperty]
     private int _foodSurplus; // The buildup of extra food needed to grow a Settlement.
+    [JsonProperty]
     private int _combatStrength;
+    [JsonProperty]
     private List<Building> _buildings;
+    [JsonProperty]
     private List<CityProject> _projects;
+    [JsonProperty]
     private CityProject _currentCityProject;
-    private GameTile _gameTile;
+    [JsonProperty]
     private int _tier; // Settlement tier. 1 = Village, 2 = Town, 3 = City
+    [JsonProperty]
+    public Point[] _territoryPoints;
+    [JsonProperty]
+    public Point[] _workedTilesPoints;
+    [JsonProperty]
+    public Point _settlementPoint;
+    
+    // Circular Instance References
+    public Civilization _civilization; // Owner
+    public GameTile _gameTile;
+    public List<GameTile> _territory; // Tiles a Settlement controls.
+    public List<GameTile> _workedTiles; // Tiles in Territory that are being worked by a Population
     
     // Constants
     private const int FoodSurplusRequirement = 15;
@@ -150,7 +168,8 @@ public class Settlement
     {
         _currentCityProject = _projects[index];
     }
-
+    
+    
     // Getter Methods
     public int[] GetYieldsPt()
     {
@@ -217,6 +236,83 @@ public class Settlement
         return _tier;
     }
 
+    public void StageForSerialization()
+    {
+        // Civilization will restore this for each settlement.
+        _civilization = null;
+        
+        StageSettlementTile();
+        StageTerritoryTiles();
+        StageWorkedTiles();
+        
+        // Store the Settlement's Tile
+        void StageSettlementTile()
+        {
+            _settlementPoint = new Point(_gameTile.GetXPos(), _gameTile.GetYPos());
+            _gameTile = null;
+        }
+        // Transfer all _territory Tiles into an array of Points for serialization
+        void StageTerritoryTiles()
+        {
+            if (_territory is not null)
+            {
+                _territoryPoints = new Point[_territory.Count];
+                int index = 0;
+                foreach (GameTile t in _territory)
+                {
+                    _territoryPoints[index] = new Point(t.GetXPos(), t.GetYPos());
+                    index++;
+                }
+                _territory = null;
+            }    
+        }
+        // Transfer _workedTiles List into an array of Points for serialization
+        void StageWorkedTiles()
+        {
+            if (_workedTiles is not null)
+            {
+                _workedTilesPoints = new Point[_workedTiles.Count];
+                int index = 0;
+                foreach (GameTile t in _workedTiles)
+                {
+                    _workedTilesPoints[index] = new Point(t.GetXPos(), t.GetYPos());
+                    index++;
+                }
+                _workedTiles = null;
+            }
+        }
+        
+    }
+
+    public void RestoreAfterDeserialization(Game game)
+    {
+        RestoreSettlementTile();
+        RestoreTerritory();
+        RestoreWorkedTiles();
+
+        // Restore GameTile Reference to Settlement (Settlement Location)
+        void RestoreSettlementTile()
+        {
+            _gameTile = game.world.GetTile(_settlementPoint);
+            _gameTile.SetSettlement(this);
+        }
+        // Restore Territory Tile References to Settlement
+        void RestoreTerritory()
+        {
+            foreach (Point point in _territoryPoints)
+            {
+                _territory.Add(game.world.GetTile(point));
+            }
+        }
+        // Restore Worked Tile References to Settlement
+        void RestoreWorkedTiles()
+        {
+            foreach (Point point in _workedTilesPoints)
+            {
+                _workedTiles.Add(game.world.GetTile(point));
+            }
+        }
+    }
 }
     
     

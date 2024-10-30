@@ -1,27 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
-public class Civilization 
+public class Civilization : ISerialization
 {
     // NPC or Player
+    [JsonProperty]
     private bool IsNPC;
     
     // Civilization Traits
+    [JsonProperty]
     private TechnologyTree _technology; // ** WIP - Technology tree for each Civilization
-    private TechnologyTree _currentTechnology;
+    [JsonProperty]
     private Tree _cultureTree; // ** WIP - Cultural tree for each Civilization
     
     // Yields
+    [JsonProperty]
     private int _goldPt; // A Civilization's Gold income per turn.
+    [JsonProperty]
     private int _gold; // A Civilization's current gold (accumulated across turns and spent to buy Units/Buildings).
+    [JsonProperty]
     private int _culturePt; // A Civilization's culture generation per turn.
+    [JsonProperty]
     private int _culture; // A Civilization's current culture (accumulated across turns and spent on culture skills).
+    [JsonProperty]
     private int _sciencePt; // A Civilization's science generation per turn.
     
     // Property
+    [JsonProperty]
     private List<Settlement> _settlements; // A List of the Settlements this Civilization owns.
+    [JsonProperty]
     private List<Unit> _units; // A List of the Units this Civilization owns.
     
     // Constant
@@ -69,7 +79,7 @@ public class Civilization
         {
             _gold += _goldPt;
             _culture += _culturePt;
-            _currentTechnology.AddToProgress(_sciencePt);
+            _technology._currentlyResearching.AddToProgress(_sciencePt);
         }
     }
     
@@ -103,5 +113,37 @@ public class Civilization
     public void ManageTiles()
     {
         // To be implemented
+    }
+    
+    public void StageForSerialization()
+    {
+        foreach (Settlement settlement in _settlements)
+        {
+            settlement.StageForSerialization();
+        }
+
+        foreach (Unit unit in _units)
+        {
+            unit.StageForSerialization();
+        }
+
+        _technology = null;
+    }
+
+    public void RestoreAfterDeserialization(Game game)
+    {
+        // Restore each Settlement's Owner Civilization 
+        foreach (Settlement settlement in _settlements)
+        {
+            settlement._civilization = this;
+            settlement.RestoreAfterDeserialization(game);
+        }
+        
+        // Restore each Unit's Owner Civilization
+        foreach (Unit unit in _units)
+        {
+            unit._civilization = this;
+            unit.RestoreAfterDeserialization(game);
+        }
     }
 }

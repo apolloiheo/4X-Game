@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using File = UnityEngine.Windows.File;
 
 public class GameManager : MonoBehaviour
 { 

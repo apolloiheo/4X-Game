@@ -38,6 +38,6 @@ public class Game : ISerialization
 
     public void RestoreAfterDeserialization(Game game)
     {
-        
+        world.RestoreAfterDeserialization(game);
     }
 }

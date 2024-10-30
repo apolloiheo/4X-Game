@@ -6,8 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class Civilization : ISerialization
 {
-    [JsonProperty]
     // NPC or Player
+    [JsonProperty]
     private bool IsNPC;
     
     // Civilization Traits
@@ -134,6 +134,18 @@ public class Civilization : ISerialization
 
     public void RestoreAfterDeserialization(Game game)
     {
-        throw new System.NotImplementedException();
+        // Restore each Settlement's Owner Civilization 
+        foreach (Settlement settlement in _settlements)
+        {
+            settlement._civilization = this;
+            settlement.RestoreAfterDeserialization(game);
+        }
+        
+        // Restore each Unit's Owner Civilization
+        foreach (Unit unit in _units)
+        {
+            unit._civilization = this;
+            unit.RestoreAfterDeserialization(game);
+        }
     }
 }

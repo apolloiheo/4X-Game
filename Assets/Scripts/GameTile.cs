@@ -478,19 +478,17 @@ public class GameTile : ISerialization
 
     public void StageForSerialization()
     {
+        // This is reset by world's set adjacency
         _neighbors = null;
 
-        // Settlement's and Unit's can stay on Tiles (this will be the one place they are serialized)
+        // Civilization's will hold Units and Settlements
+        _settlement = null;
+        _unit = null;
     }
 
     public void RestoreAfterDeserialization(Game game)
     {
-        // Give the Settlement on this Tile a reference to that Tile it is on (this)
-        _settlement._gameTile = this;
-
-        // Give the Unit on this Tile that a reference to the Tile it is on (this)
-        _unit._gameTile = this;
-        
-        // _neighbors will be handled by world.SetTileAdjacency
+        // Doesn't need to be Restored
+        // Settlements and Units will give this Tile it's reference back
     }
 }

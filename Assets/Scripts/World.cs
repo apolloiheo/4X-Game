@@ -152,7 +152,8 @@ public class World : ISerialization
 
     public void RestoreAfterDeserialization(Game game)
     {
-        throw new NotImplementedException();
+        // Set GameTile neighbor properties back to normal.
+        game.world.SetTileAdjacency();
     }
 
     /* Print the world to console. (Bad way to test but will do for now) */

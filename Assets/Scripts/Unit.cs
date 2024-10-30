@@ -32,11 +32,11 @@ public class Unit : ISerialization
     private bool _fortified; // Determines if a Unit was ordered to Fortify this turn.
     [JsonProperty]
     private List<Promotion> _promotions; // Unlocked Promotions
+    [JsonProperty]
+    public Point _position;
     
     // References
-    [JsonProperty]
     public GameTile _gameTile; //The Tile this Unit is on. 
-    [JsonProperty]
     public Civilization _civilization; // The Civilization that owns this Unit.
 
     // Constants
@@ -253,16 +253,28 @@ public class Unit : ISerialization
 
     public void StageForSerialization()
     {
-        // Remove _tile
-        _gameTile = null;
-        
-        _civilization = null;
+        StageCurrentTile();
 
-        // Remove _civiliziation
+        // Turn the current Tile into a Point (location)
+        void StageCurrentTile()
+        {
+            _position = new Point(_gameTile.GetXPos(), _gameTile.GetYPos());
+            _gameTile = null;
+        }
+        
+        // Set its owner to null (this will be restored by the Civilization)
+        _civilization = null;
     }
 
     public void RestoreAfterDeserialization(Game game)
     {
-        throw new NotImplementedException();
+        RestoreCurrentTile();
+
+        // Restore this Unit, and it's Tile's references to each other.
+        void RestoreCurrentTile()
+        {
+            _gameTile = game.world.GetTile(_position);
+            _gameTile.SetUnit(this);
+        }
     }
 }

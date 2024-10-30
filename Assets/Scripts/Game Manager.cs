@@ -93,6 +93,7 @@ public class GameManager : MonoBehaviour
         if (File.Exists(path))
         {
             game = LoadData<Game>(path, false);
+            game.RestoreAfterDeserialization(game);
             SceneManager.LoadScene(1);
         }
         else

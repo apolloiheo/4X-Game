@@ -14,8 +14,6 @@ public class Civilization : ISerialization
     [JsonProperty]
     private TechnologyTree _technology; // ** WIP - Technology tree for each Civilization
     [JsonProperty]
-    private TechnologyTree _currentTechnology;
-    [JsonProperty]
     private Tree _cultureTree; // ** WIP - Cultural tree for each Civilization
     
     // Yields
@@ -81,7 +79,7 @@ public class Civilization : ISerialization
         {
             _gold += _goldPt;
             _culture += _culturePt;
-            _currentTechnology.AddToProgress(_sciencePt);
+            _technology._currentlyResearching.AddToProgress(_sciencePt);
         }
     }
     

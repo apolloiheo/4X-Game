@@ -882,7 +882,6 @@ public class WorldGenerator : MonoBehaviour
         // Set FreshWaterAccess to true for all Tiles adjacent to River.
         AssignRemainingFreshWaterAccess(world);
         
-        
         /* Returns a List(Path) of Tiles to create a River */
         List<GameTile> FormRiver(GameTile start, int riverLength)
         {
@@ -951,6 +950,7 @@ public class WorldGenerator : MonoBehaviour
                 tileList.Add(currTile.GetNeighbors()[nextEdge]);
                 // Set the current Tile's river Adjacency to true.
                 currTile.SetFreshWaterAccess(true);
+                currTile.SetRiverAdjacency(true);
                 
                 // Check if we are currently adjacent to a Coast.
                 foreach (GameTile neighbor in currTile.GetNeighbors())
@@ -1297,6 +1297,7 @@ public class WorldGenerator : MonoBehaviour
                                 currTile.GetNeighbors()[edge].SetRiverEdge((edge + 3) % 6, true);
                                 // Set the neighbor's fresh water access to true.
                                 currTile.GetNeighbors()[edge].SetFreshWaterAccess(true);
+                                currTile.GetNeighbors()[edge].SetRiverAdjacency(true);
                             }
                             edge++;
                         }
@@ -1317,6 +1318,7 @@ public class WorldGenerator : MonoBehaviour
                         {
                             // Remove it's fresh water access
                             currTile.SetFreshWaterAccess(false);
+                            currTile.SetRiverAdjacency(false);
                         }
                     }
                     // If it's an inland Coast tile
@@ -1425,8 +1427,6 @@ public class WorldGenerator : MonoBehaviour
             
             void PlaceAFewFloodplains()
             {
-                
-                
                 for (int x = 0; x < world.GetLength(); x++)
                 {
                     for (int y = 0; y < world.GetHeight(); y++)
@@ -1434,13 +1434,13 @@ public class WorldGenerator : MonoBehaviour
                         GameTile currTile = world.GetTile(x, y);
 
                         // If the Tile is adjacent to River, if it's Desert, and if it's Flat
-                        if (currTile.GetFreshWaterAccess() && currTile.GetBiome() == 4 && currTile.GetTerrain() == 0)
+                        if (currTile.GetRiverAdjacency() && currTile.GetBiome() == 4 && currTile.GetTerrain() == 0)
                         {
                             // Set it to Foodplains
                             currTile.SetFeature(2);
                         } 
                         // If the Tile is adjacent to River, if it's Plains or Grassland, and if it's Flat
-                        else if (currTile.GetFreshWaterAccess() &&
+                        else if (currTile.GetRiverAdjacency() &&
                                  (currTile.GetBiome() == 1 || currTile.GetBiome() == 2) && currTile.GetTerrain() == 0)
                         {
 
@@ -1477,7 +1477,7 @@ public class WorldGenerator : MonoBehaviour
                 foreach (GameTile neighbor in currTile.GetNeighbors())
                 {
                     // If neighbor is not null, if its land, if it's next to a river, if it's plains or grassland, and if its flat.
-                    if (neighbor is not null && neighbor.GetFreshWaterAccess() && neighbor.IsLand() &&
+                    if (neighbor is not null && neighbor.GetRiverAdjacency() && neighbor.IsLand() &&
                         (neighbor.GetBiome() == 2 || neighbor.GetBiome() == 1) && neighbor.GetTerrain() == 0 )
                     {
                         int probability = _random.NextInt(0, 100);
@@ -1500,7 +1500,7 @@ public class WorldGenerator : MonoBehaviour
                     GameTile currTile = world.GetTile(x, y);
 
                     // If the Tile is Grassland and Flat.
-                    if (currTile.GetBiome() == 2 && currTile.GetTerrain() == 0 && !currTile.GetFreshWaterAccess())
+                    if (currTile.GetBiome() == 2 && currTile.GetTerrain() == 0 && !currTile.GetRiverAdjacency())
                     {
                         int probability = _random.NextInt(0, 100);
 
@@ -1523,7 +1523,7 @@ public class WorldGenerator : MonoBehaviour
                 {
                     GameTile currTile = world.GetTile(x, y);
 
-                    if (currTile.GetBiome() == 1 && currTile.GetTerrain() != 2 && !currTile.GetFreshWaterAccess())
+                    if (currTile.GetBiome() == 1 && currTile.GetTerrain() != 2 && !currTile.GetRiverAdjacency())
                     {
                         int probability = _random.NextInt(0, 100);
                         
@@ -1566,7 +1566,7 @@ public class WorldGenerator : MonoBehaviour
                     GameTile currTile = world.GetTile(x, y);
 
                     // If it's Desert, if It's Flat, and if it's not on a River.
-                    if (currTile.GetBiome() == 4 && currTile.GetTerrain() == 0 && !currTile.GetFreshWaterAccess())
+                    if (currTile.GetBiome() == 4 && currTile.GetTerrain() == 0 && !currTile.GetRiverAdjacency())
                     {
                         int probability = _random.NextInt(0, 100);
 

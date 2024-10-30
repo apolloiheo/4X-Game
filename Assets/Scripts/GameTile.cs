@@ -70,7 +70,9 @@ public class GameTile : ISerialization
     [JsonProperty]
     private bool[] _riverEdges; // Are the Tile edges Adjacent to a river? -> [0,1,2,3,4,5] Represent edges on a hexagon starting from the Top moving clockwise.
     [JsonProperty]
-    private bool _freshWaterAccess; // Is the Tile adjacent to a river?
+    private bool _freshWaterAccess; // Does the Tile have fresh water access?
+    [JsonProperty] 
+    private bool _riverAdjacency; // Is the Tile adjacent to a River?
     [JsonProperty]
     private Unit _unit; // The Unit on this Tile. May be null (no unit on Tile). 
     [JsonProperty]
@@ -394,6 +396,11 @@ public class GameTile : ISerialization
         _freshWaterAccess = value;
     }
 
+    public void SetRiverAdjacency(bool value)
+    {
+        _riverAdjacency = value;
+    }
+
     public void SetUnit(Unit unit)
     {
         _unit = unit;
@@ -458,6 +465,11 @@ public class GameTile : ISerialization
     public bool GetFreshWaterAccess()
     {
         return _freshWaterAccess;
+    }
+
+    public bool GetRiverAdjacency()
+    {
+        return _riverAdjacency;
     }
 
     public int GetMovementCost()

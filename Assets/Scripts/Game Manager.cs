@@ -31,14 +31,17 @@ public class GameManager : MonoBehaviour
         game.world = new WorldGenerator().GenerateWorld(100, 50, 2, worldSeed);
         SceneManager.LoadScene(1);
     }
-
-    // ReSharper disable Unity.PerformanceAnalysis
-    public void SaveGame()
+    
+    public void SaveGame(string filename)
     {
         if (!savedGame)
         {
             game.StageForSerialization();
-            string fileRelativePath = "saveFile.json";
+            if (filename == "")
+            {
+                filename = "saveFile";
+            }
+            string fileRelativePath = filename + ".json";
             SaveData(fileRelativePath, game, false);
             savedGame = true;
         }

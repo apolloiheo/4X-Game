@@ -39,5 +39,13 @@ public class Game : ISerialization
     public void RestoreAfterDeserialization(Game game)
     {
         world.RestoreAfterDeserialization(game);
+
+        if (civilizations is not null)
+        {
+            foreach (Civilization civilization in civilizations)
+            {
+                civilization.RestoreAfterDeserialization(game);
+            }
+        }
     }
 }

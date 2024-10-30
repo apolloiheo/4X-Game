@@ -377,6 +377,10 @@ public class GameTile : ISerialization
 
     public void SetNeighbor(int edge, GameTile neighbor)
     {
+        if (_neighbors is null)
+        {
+            _neighbors = new GameTile[6];
+        }
         _neighbors[edge] = neighbor;
     }
 

@@ -1,21 +1,23 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class Director : MonoBehaviour
 {
     // Serialized Variables
-    [Header("Game Manager")] 
-    public GameManager gm;
-    [Header("Owner")]
-    public Civilization Civilization;
-    [Header("Tilemaps")]
-    public Tilemap baseTilemap;
+    [Header("Game Manager")] public GameManager gm;
+    [Header("Canvases")] 
+    public GameObject menuCanvas;
+    public GameObject guiCanvas;
+    public GameObject saveCanvas;
+    public TMP_InputField saveIF;
+    [Header("Owner")] public Civilization Civilization;
+    [Header("Tilemaps")] public Tilemap baseTilemap;
     public Tilemap terrainTilemap;
     public Tilemap featureTilemap;
     public Tilemap unitTilemap;
-    [Header("Flat Tiles")]
-    public Tile tile;
+    [Header("Flat Tiles")] public Tile tile;
     public Tile prairieTile;
     public Tile grassTile;
     public Tile tundraTile;
@@ -24,28 +26,22 @@ public class Director : MonoBehaviour
     public Tile coastTile;
     public Tile snowTile;
     public Tile lakeTile;
-    [Header("Hills Tiles")]
-    public Tile prairieHillsTile;
+    [Header("Hills Tiles")] public Tile prairieHillsTile;
     public Tile grassHillsTile;
     public Tile tundraHillsTile;
     public Tile desertHillsTile;
     public Tile snowHillsTile;
-    [Header("Features")]
-    public Tile woodsTile;
+    [Header("Features")] public Tile woodsTile;
     public Tile floodplainsTile;
     public Tile marshTile;
     public Tile rainforestTile;
     public Tile oasisTile;
-    [Header("Terrain")]
-    public Tile mountain;
-    [Header("Rivers")]
-    public GameObject riversParent;
+    [Header("Terrain")] public Tile mountain;
+    [Header("Rivers")] public GameObject riversParent;
     public GameObject riverSegment;
-    [Header("Settlements")] 
-    public Tile village;
-    [Header("Units")] 
-    public Tile warrior;
-    
+    [Header("Settlements")] public Tile village;
+    [Header("Units")] public Tile warrior;
+
     // Instance Attributes
     private bool _needsDirection;
 
@@ -53,17 +49,18 @@ public class Director : MonoBehaviour
     void Start()
     {
         gm = FindObjectOfType<GameManager>();
-        
+
         RenderGame();
-        
+
         _needsDirection = true;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            gm.SaveGame();
+            menuCanvas.SetActive(!menuCanvas.activeSelf);
+            saveCanvas.SetActive(false);
         }
     }
 
@@ -72,19 +69,19 @@ public class Director : MonoBehaviour
         World gameWorld = gm.game.world;
         RenderTilemaps(gameWorld);
         RenderSettlementUI(gameWorld);
-        
+
         void RenderTilemaps(World world)
         {
             // Grid Dimensions
             double tileHeight = 0.95f;
             double tileWidth = 1f;
-            
+
             for (int x = 0; x < world.GetLength(); x++)
             {
                 for (int y = 0; y < world.GetHeight(); y++)
                 {
                     GameTile currTile = world.GetTile(x, y);
-                    
+
                     // Tile Position Variables - Jason knows how they work don't ask me.
                     double bigX = tileWidth * x * .75f;
                     double bigY = (float)(y * tileHeight + (tileHeight / 2) * (x % 2));
@@ -103,7 +100,7 @@ public class Director : MonoBehaviour
                         {
                             baseTilemap.SetTile(new Vector3Int(y, x, 0), prairieTile);
                         }
-                        
+
 
                         //tile.color = new Color32(145, 158, 11, 255);
 
@@ -183,20 +180,20 @@ public class Director : MonoBehaviour
                     {
                         baseTilemap.SetTile(new Vector3Int(y, x, 0), oceanTile);
                         //tile.color = new Color32(20, 102, 184, 255);
-                    } 
+                    }
                     // Lake
                     else if (currTile.GetBiome() == 8)
                     {
                         baseTilemap.SetTile(new Vector3Int(y, x, 0), lakeTile);
                     }
-                    
+
                     /* Render Terrain */
                     // Mountains
                     if (currTile.GetTerrain() == 2)
                     {
                         terrainTilemap.SetTile(new Vector3Int(y, x, 0), mountain);
                     }
-                    
+
                     /* Render Rivers */
                     if (currTile.GetFreshWaterAccess())
                     {
@@ -238,42 +235,42 @@ public class Director : MonoBehaviour
                                     // Set the rotation of the river based on it's edge
                                     riverRotation = Quaternion.Euler(0f, 0f, 0f);
                                 }
-                                
+
                                 // Instantiate as part of the Rivers obj in order to not clog up hierarchy
                                 GameObject riverPiece = Instantiate(riverSegment, riverPosition, riverRotation);
                                 riverPiece.transform.SetParent(riversParent.transform);
-                                
+
                             }
                         }
                     }
-                    
+
                     /* Render Features */
                     // Woods
                     if (currTile.GetFeature() == 1)
                     {
                         featureTilemap.SetTile(new Vector3Int(y, x, 0), woodsTile);
-                    } 
+                    }
                     // Floodplains
                     else if (currTile.GetFeature() == 2)
                     {
                         featureTilemap.SetTile(new Vector3Int(y, x, 0), floodplainsTile);
-                    } 
+                    }
                     // Marshes
                     else if (currTile.GetFeature() == 3)
                     {
                         featureTilemap.SetTile(new Vector3Int(y, x, 0), marshTile);
-                    } 
+                    }
                     // Rainforest
                     else if (currTile.GetFeature() == 4)
                     {
                         featureTilemap.SetTile(new Vector3Int(y, x, 0), rainforestTile);
-                    } 
+                    }
                     // Oasis
                     else if (currTile.GetFeature() == 5)
                     {
                         featureTilemap.SetTile(new Vector3Int(y, x, 0), oasisTile);
                     }
-                    
+
                     /* Render Settlements */
                     if (currTile.GetSettlement() is not null)
                     {
@@ -282,13 +279,13 @@ public class Director : MonoBehaviour
                 }
             }
         }
-        
+
         void RenderSettlementUI(World world)
         {
             // Grid Dimensions
             double tileHeight = 0.95f;
             double tileWidth = 1f;
-        
+
             for (int x = 0; x < world.GetLength(); x++)
             {
                 for (int y = 0; y < world.GetHeight(); y++)
@@ -296,17 +293,28 @@ public class Director : MonoBehaviour
                     // Tile Position Variables - Jason knows how they work don't ask me.
                     double bigX = tileWidth * x * .75f;
                     double bigY = (float)(y * tileHeight + (tileHeight / 2) * (x % 2));
-                
+
                     GameTile currTile = world.GetTile(x, y);
 
                     if (currTile.GetSettlement() is not null)
                     {
-                    
+
                     }
-                
+
                 }
             }
         }
     }
+
+    public void OpenSaveGameCanvas()
+    {
+        saveCanvas.SetActive(true);
+    }
+
+    public void SendSaveToGM()
+    {
+        gm.SaveGame(saveIF.text);
+    }
+
 
 }

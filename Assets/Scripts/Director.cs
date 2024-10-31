@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class Director : MonoBehaviour
@@ -15,7 +16,7 @@ public class Director : MonoBehaviour
     public GameObject saveCanvas;
     public TMP_InputField saveIF;
     [Header("Owner")] 
-    public Civilization Civilization;
+    public Civilization civilization;
     [Header("Tilemaps")] 
     public Tilemap baseTilemap;
     public Tilemap terrainTilemap;
@@ -60,6 +61,18 @@ public class Director : MonoBehaviour
     void Start()
     {
         gm = FindObjectOfType<GameManager>();
+
+        // If Game is Single player
+        if (gm.game.singlePlayer)
+        {
+            foreach (Civilization civ in gm.game.civilizations)
+            {
+                if (!civ.IsNPC)
+                {
+                    civilization = civ;
+                }
+            }
+        }
 
         RenderGame();
 

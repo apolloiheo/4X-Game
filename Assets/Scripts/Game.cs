@@ -7,12 +7,10 @@ using UnityEngine.TextCore.Text;
 [System.Serializable]
 public class Game : ISerialization
 {
-    [JsonProperty]
-    public World world;
-    [JsonProperty]
-    public List<Civilization> civilizations;
-    [JsonProperty]
-    public int gameTurn;
+    [JsonProperty] public World world;
+    [JsonProperty] public List<Civilization> civilizations;
+    [JsonProperty] public int gameTurn;
+    [JsonProperty] public bool singlePlayer;
 
     /* Constructor */
     public Game()

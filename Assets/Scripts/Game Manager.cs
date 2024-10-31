@@ -29,10 +29,11 @@ public class GameManager : MonoBehaviour
     {
         game = new Game();
         game.world = new WorldGenerator().GenerateWorld(100, 50, 2, worldSeed, 6);
+        game.singlePlayer = true;
         SceneManager.LoadScene(1);
     }
     
-    public void SaveGame(string filename)
+    public void SaveGame(string filename) 
     {
         if (!savedGame)
         {

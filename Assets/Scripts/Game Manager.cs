@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
     public void NewGame(uint worldSeed)
     {
         game = new Game();
-        game.world = new WorldGenerator().GenerateWorld(100, 50, 2, worldSeed);
+        game.world = new WorldGenerator().GenerateWorld(100, 50, 2, worldSeed, 6);
         SceneManager.LoadScene(1);
     }
     

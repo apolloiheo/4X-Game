@@ -16,6 +16,8 @@ public class World : ISerialization
     private int _height;
     [JsonProperty]
     private GameTile[,] _world; // 2D Array of Tiles
+    [JsonProperty]
+    public List<Point> spawnPoints;
     
     // Constants
     private const int DefaultBiomeFill = 7; // 1.Plains, 2.Grassland, 3.Tundra, 4.Desert, 5.Snow, 6.Coast, 7.Ocean

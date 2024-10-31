@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations;
@@ -13,7 +14,7 @@ public class WorldGenerator : MonoBehaviour
     public Random _random;
     
     /* Returns a fully generated game world. */
-    public World GenerateWorld(int length, int height, int continents, uint seed)
+    public World GenerateWorld(int length, int height, int continents, uint seed, int civCount)
     {
         _random.InitState();
         _random = new Random(seed);
@@ -28,6 +29,7 @@ public class WorldGenerator : MonoBehaviour
         DetermineRiversAndLakes(world);
         DetermineFeatures(world);
         DetermineResources(world);
+        DetermineSpawnPoints(world, civCount);
 
         return world;
     }
@@ -1585,5 +1587,60 @@ public class WorldGenerator : MonoBehaviour
     private void DetermineResources(World world)
     {
         
+    }
+    
+    /* Determines spawn points */
+    private void DetermineSpawnPoints(World world, int civCount)
+    {
+        List<Point> validPoints = new List<Point>();
+        List<Point> spawnPoints = new List<Point>();
+        
+        for (int x = 0; x < world.GetLength(); x++) //looking through all tiles near middle vertically
+        {
+            for (int y = world.GetHeight()/4; y < world.GetHeight() * 3/4; y++)
+            {
+                GameTile currTile = world.GetTile(x, y);
+                if (currTile.GetRiverAdjacency() && currTile.IsLand() && currTile.GetTerrain() != 2)
+                {
+                    validPoints.Add(new Point(x, y)); //adds tile if 1. next to river 2. is land 3.is not mountain
+                }
+            }
+        }
+        int randomNum = _random.NextInt(0, validPoints.Count); 
+        spawnPoints.Add(validPoints[randomNum]);//set a random first spawn
+
+        double eucDist(Point p1, Point p2) //calculates the euclidean distance between 2 points
+        {
+            int x = p2.x - p1.x;
+            int y = p2.y - p1.y;
+            return Math.Abs(Math.Sqrt(x * x + y * y));
+        }
+
+        while (civCount > spawnPoints.Count) //while there needs to be more spawns
+        {
+            double maxDist = 0; //updates every while loop
+            Point nextPoint = spawnPoints[0]; //updates every while loop, point to be added
+            foreach (Point vPoint in validPoints) //goes through all valid tiles,
+            {
+                List<double> dist = new List<double>();
+                foreach (Point sPoint in spawnPoints)
+                {
+                    dist.Add(eucDist(vPoint, sPoint)); //creates a list of distances between the current valid point
+                }                                       // and all the current spawn points
+
+                if (dist.Min() > maxDist) //if the lowest of those distances is > max dist
+                {
+                    maxDist = dist.Min(); //updates max dist
+                    nextPoint = vPoint; //updates nextpoint
+                }
+            }
+            spawnPoints.Add(nextPoint); //adds the next point that is as far from every spawn as possible
+        }
+
+        foreach (Point sPoint in spawnPoints)
+        {
+            GameTile currTile = world.GetTile(sPoint); //for all spawnpoints do something
+            
+        }
     }
 }

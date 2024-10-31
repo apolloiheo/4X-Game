@@ -1609,7 +1609,7 @@ public class WorldGenerator : MonoBehaviour
         int randomNum = _random.NextInt(0, validPoints.Count); 
         spawnPoints.Add(validPoints[randomNum]);//set a random first spawn
 
-        double eucDist(Point p1, Point p2) //calculates the euclidean distance between 2 points
+        double eucDist(Point p1, Point p2) //calculates the Euclidean distance between 2 points
         {
             int x = p2.x - p1.x;
             int y = p2.y - p1.y;

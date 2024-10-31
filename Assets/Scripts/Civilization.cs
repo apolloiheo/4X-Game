@@ -8,7 +8,7 @@ public class Civilization : ISerialization
 {
     // NPC or Player
     [JsonProperty]
-    private bool IsNPC;
+    public bool IsNPC;
     
     // Civilization Traits
     [JsonProperty]

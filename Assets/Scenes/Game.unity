@@ -1825,7 +1825,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5764131242118050114}
         m_TargetAssemblyTypeName: Director, Assembly-CSharp
-        m_MethodName: SendSaveToGM
+        m_MethodName: SendSaveToGm
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2810,7 +2810,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 1, g: 0, b: 0.933208, a: 0}
+  m_BackGroundColor: {r: 0.18867922, g: 0.18867922, b: 0.18867922, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2835,7 +2835,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 19
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -5710,6 +5710,10 @@ PrefabInstance:
       propertyPath: saveIF
       value: 
       objectReference: {fileID: 549354835}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: mainCam
+      value: 
+      objectReference: {fileID: 1297460425}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: guiCanvas
       value: 

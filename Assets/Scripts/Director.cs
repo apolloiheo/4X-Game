@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -10,6 +11,7 @@ public class Director : MonoBehaviour
     // Serialized Variables
     [Header("Game Manager")] 
     public GameManager gm;
+    [Header("Cameras")] public Camera mainCam;
     [Header("Canvases")] 
     public GameObject menuCanvas;
     public GameObject guiCanvas;
@@ -56,6 +58,19 @@ public class Director : MonoBehaviour
 
     // Instance Attributes
     private bool _needsDirection;
+    
+    // Camera Values
+    private const float dragSpeed = 10f;
+    private const float edgeScrollSpeed = 10f;
+    private const float edgeScrollThreshold = 10f;
+    private const float smoothTime = 0.5f;
+    
+    private const float zoomSpeed = 2f;
+    private const float minZoom = 2f;
+    private const float maxZoom = 15f;
+    private Vector3 dragOrign;
+    private Vector3 targetPosition;
+    private float camHeight, camWidth;
 
     // Start is called before the first frame update
     void Start()
@@ -78,7 +93,7 @@ public class Director : MonoBehaviour
 
         _needsDirection = true;
     }
-
+    // Update is called every frame
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -86,14 +101,18 @@ public class Director : MonoBehaviour
             menuCanvas.SetActive(!menuCanvas.activeSelf);
             saveCanvas.SetActive(false);
         }
+        
+        CameraControl();
     }
 
+    /* Render the Game. */
     private void RenderGame()
     {
         World gameWorld = gm.game.world;
         RenderTilemaps(gameWorld);
         RenderSettlementUI(gameWorld);
 
+        /* Renders all Tilemaps */
         void RenderTilemaps(World world)
         {
             // Grid Dimensions
@@ -303,7 +322,8 @@ public class Director : MonoBehaviour
                 }
             }
         }
-
+        
+        /* Renders Settlement UI above Settlement Tiles */
         void RenderSettlementUI(World world)
         {
             // Grid Dimensions
@@ -330,20 +350,54 @@ public class Director : MonoBehaviour
         }
     }
 
+    // Open the Save Game Menu
     public void OpenSaveGameCanvas()
     {
         saveCanvas.SetActive(true);
     }
 
-    public void SendSaveToGM()
+    // Send Save Game Command to Game
+    public void SendSaveToGm()
     {
         gm.SaveGame(saveIF.text);
     }
 
+    // Load Main Menu Scene
     public void QuitToMainMenu()
     {
         SceneManager.LoadScene(0);
     }
+
+    /* Calls all the other Camera methods. */
+    void CameraControl()
+    {
+        DragCamera();
+        HandleZoom();
+    }
+
+    /* Moves the Camera by dragging the world with Left-Click. */
+    void DragCamera()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            dragOrign = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        }
+
+        if (Input.GetMouseButton(0))
+        {
+            Vector3 difference = dragOrign - mainCam.ScreenToWorldPoint(Input.mousePosition);
+            mainCam.transform.position += difference * (dragSpeed * Time.deltaTime);
+        }
+    }
+    
+    /* Changes the size of the camera with Mouse Scroll wheel. */
+    void HandleZoom()
+    {
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        mainCam.orthographicSize -= scroll * zoomSpeed;
+        mainCam.orthographicSize = Mathf.Clamp(mainCam.orthographicSize, minZoom, maxZoom);
+    }
+
 
 
 }

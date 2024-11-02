@@ -117,33 +117,45 @@ public class Civilization : ISerialization
     
     public void StageForSerialization()
     {
-        foreach (Settlement settlement in _settlements)
+        if (_settlements is not null)
         {
-            settlement.StageForSerialization();
+            foreach (Settlement settlement in _settlements)
+            {
+                settlement.StageForSerialization();
+            }
         }
 
-        foreach (Unit unit in _units)
+        if (_units is not null)
         {
-            unit.StageForSerialization();
+            foreach (Unit unit in _units)
+            {
+                unit.StageForSerialization();
+            }
         }
-
+        
         _technology = null;
     }
 
     public void RestoreAfterDeserialization(Game game)
     {
-        // Restore each Settlement's Owner Civilization 
-        foreach (Settlement settlement in _settlements)
+        if (_settlements is not null)
         {
-            settlement._civilization = this;
-            settlement.RestoreAfterDeserialization(game);
+            // Restore each Settlement's Owner Civilization 
+            foreach (Settlement settlement in _settlements)
+            {
+                settlement._civilization = this;
+                settlement.RestoreAfterDeserialization(game);
+            }
         }
-        
-        // Restore each Unit's Owner Civilization
-        foreach (Unit unit in _units)
+
+        if (_units is not null)
         {
-            unit._civilization = this;
-            unit.RestoreAfterDeserialization(game);
+            // Restore each Unit's Owner Civilization
+            foreach (Unit unit in _units)
+            {
+                unit._civilization = this;
+                unit.RestoreAfterDeserialization(game);
+            }
         }
     }
 }

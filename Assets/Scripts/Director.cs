@@ -88,6 +88,7 @@ public class Director : MonoBehaviour
 
         _needsDirection = true;
     }
+    
     // Update is called every frame
     private void Update()
     {
@@ -394,7 +395,5 @@ public class Director : MonoBehaviour
         mainCam.orthographicSize -= scroll * zoomSpeed;
         mainCam.orthographicSize = Mathf.Clamp(mainCam.orthographicSize, minZoom, maxZoom);
     }
-
-
-
+    
 }

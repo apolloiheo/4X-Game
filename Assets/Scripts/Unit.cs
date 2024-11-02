@@ -90,8 +90,7 @@ public class Unit : ISerialization
     {
         // To be implemented
         Debug.Log("Started at" + _gameTile.GetXPos() +  _gameTile.GetYPos());
-        List<Tuple<GameTile,int>> path = Pathfinder.UnitAstar(_gameTile, target);
-        foreach (var node in path)
+        foreach (var node in Pathfinder.UnitAstar(_gameTile, target))
         {
             _gameTile.SetUnit(null);
             _gameTile = node.Item1;

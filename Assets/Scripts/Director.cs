@@ -21,7 +21,8 @@ public class Director : MonoBehaviour
     public Civilization civilization;
     [Header("Tilemaps")] 
     public Tilemap baseTilemap;
-    public Tilemap terrainTilemap;
+    public Tilemap hillsTilemap;
+    public Tilemap mountainTilemap;
     public Tilemap featureTilemap;
     public Tilemap unitTilemap;
     [Header("Flat Tiles")] 
@@ -129,49 +130,39 @@ public class Director : MonoBehaviour
                     // Plains
                     if (currTile.GetBiome() == 1)
                     {
+                        // Base Flat Tile
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), prairieTile);
+                        
                         // Hills
                         if (currTile.GetTerrain() == 1)
                         {
-                            baseTilemap.SetTile(new Vector3Int(y, x, 0), prairieHillsTile);
+                            hillsTilemap.SetTile(new Vector3Int(y, x, 0), prairieHillsTile);
                         }
-                        // Flat 
-                        else
-                        {
-                            baseTilemap.SetTile(new Vector3Int(y, x, 0), prairieTile);
-                        }
-
-
                         //tile.color = new Color32(145, 158, 11, 255);
-
                     }
                     // Grassland
                     else if (currTile.GetBiome() == 2)
                     {
+                        // Flat Tile
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), grassTile);
+                        
                         // Hills
                         if (currTile.GetTerrain() == 1)
                         {
-                            baseTilemap.SetTile(new Vector3Int(y, x, 0), grassHillsTile);
+                            hillsTilemap.SetTile(new Vector3Int(y, x, 0), grassHillsTile);
                         }
-                        // Flat 
-                        else
-                        {
-                            baseTilemap.SetTile(new Vector3Int(y, x, 0), grassTile);
-                        }
-
                         //tile.color = new Color32(92, 128, 82, 255);
                     }
                     // Tundra
                     else if (currTile.GetBiome() == 3)
                     {
+                        // Flat Tile
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), tundraTile);
+                        
                         // Hills
                         if (currTile.GetTerrain() == 1)
                         {
-                            baseTilemap.SetTile(new Vector3Int(y, x, 0), tundraHillsTile);
-                        }
-                        // Flat 
-                        else
-                        {
-                            baseTilemap.SetTile(new Vector3Int(y, x, 0), tundraTile);
+                            hillsTilemap.SetTile(new Vector3Int(y, x, 0), tundraHillsTile);
                         }
 
                         //tile.color = new Color32(144, 158, 141, 255);
@@ -179,15 +170,13 @@ public class Director : MonoBehaviour
                     // Desert
                     else if (currTile.GetBiome() == 4)
                     {
+                        // Flat Tile
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), desertTile);
+                        
                         // Hills
                         if (currTile.GetTerrain() == 1)
                         {
-                            baseTilemap.SetTile(new Vector3Int(y, x, 0), desertHillsTile);
-                        }
-                        // Flat 
-                        else
-                        {
-                            baseTilemap.SetTile(new Vector3Int(y, x, 0), desertTile);
+                            hillsTilemap.SetTile(new Vector3Int(y, x, 0), desertHillsTile);
                         }
 
                         //tile.color = new Color32(255, 217, 112, 255);
@@ -195,17 +184,14 @@ public class Director : MonoBehaviour
                     // Snow
                     else if (currTile.GetBiome() == 5)
                     {
+                        // Flat Tile
+                        baseTilemap.SetTile(new Vector3Int(y, x, 0), snowTile);
+                        
                         // Hills
                         if (world.GetTile(x, y).GetTerrain() == 1)
                         {
-                            baseTilemap.SetTile(new Vector3Int(y, x, 0), snowHillsTile);
+                            hillsTilemap.SetTile(new Vector3Int(y, x, 0), snowHillsTile);
                         }
-                        // Flat 
-                        else
-                        {
-                            baseTilemap.SetTile(new Vector3Int(y, x, 0), snowTile);
-                        }
-
                         //tile.color = Color.white;
                     }
                     // Coast
@@ -225,12 +211,11 @@ public class Director : MonoBehaviour
                     {
                         baseTilemap.SetTile(new Vector3Int(y, x, 0), lakeTile);
                     }
-
-                    /* Render Terrain */
+                    
                     // Mountains
                     if (currTile.GetTerrain() == 2)
                     {
-                        terrainTilemap.SetTile(new Vector3Int(y, x, 0), mountain);
+                        mountainTilemap.SetTile(new Vector3Int(y, x, 0), mountain);
                     }
 
                     /* Render Rivers */

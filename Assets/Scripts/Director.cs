@@ -59,18 +59,13 @@ public class Director : MonoBehaviour
     // Instance Attributes
     private bool _needsDirection;
     
-    // Camera Values
+    // Camera Constants 
     private const float dragSpeed = 10f;
-    private const float edgeScrollSpeed = 10f;
-    private const float edgeScrollThreshold = 10f;
-    private const float smoothTime = 0.5f;
-    
     private const float zoomSpeed = 2f;
     private const float minZoom = 2f;
     private const float maxZoom = 15f;
+    // Camera References
     private Vector3 dragOrign;
-    private Vector3 targetPosition;
-    private float camHeight, camWidth;
 
     // Start is called before the first frame update
     void Start()
@@ -378,11 +373,13 @@ public class Director : MonoBehaviour
     /* Moves the Camera by dragging the world with Left-Click. */
     void DragCamera()
     {
+        // When left mouse is clicked
         if (Input.GetMouseButtonDown(0))
         {
             dragOrign = mainCam.ScreenToWorldPoint(Input.mousePosition);
         }
 
+        // While left mouse is held
         if (Input.GetMouseButton(0))
         {
             Vector3 difference = dragOrign - mainCam.ScreenToWorldPoint(Input.mousePosition);

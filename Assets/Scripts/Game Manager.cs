@@ -25,11 +25,15 @@ public class GameManager : MonoBehaviour
        }
    }
     
-    public void NewGame(uint worldSeed)
+    public void NewDemoGame(uint worldSeed)
     {
         game = new Game();
-        game.world = new WorldGenerator().GenerateWorld(100, 50, 2, worldSeed, 6);
         game.singlePlayer = true;
+        Civilization player = new Civilization();
+        player.IsNPC = false;
+        game.civilizations = new List<Civilization>();
+        game.civilizations.Add(player);
+        game.world = new WorldGenerator().GenerateWorld(100, 50, 2, worldSeed, game.civilizations.Count);
         SceneManager.LoadScene(1);
     }
     

@@ -291,6 +291,11 @@ public class World : ISerialization
     {
         return _world[point.x, point.y];
     }
+
+    public List<Point> GetSpawnPoints()
+    {
+        return spawnPoints;
+    }
    
 }
 

@@ -1,7 +1,4 @@
-
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using UnityEngine;
 
 [System.Serializable]
 public class GameTile : ISerialization

@@ -1,9 +1,8 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class Director : MonoBehaviour
@@ -11,8 +10,10 @@ public class Director : MonoBehaviour
     // Serialized Variables
     [Header("Game Manager")] 
     public GameManager gm;
-    [Header("Cameras")] public Camera mainCam;
+    [Header("Cameras")] 
+    public Camera mainCam;
     [Header("Canvases")] 
+    public Canvas worldCanvas;
     public GameObject menuCanvas;
     public GameObject guiCanvas;
     public GameObject saveCanvas;
@@ -56,9 +57,13 @@ public class Director : MonoBehaviour
     public Tile village;
     [Header("Units")] 
     public Tile warrior;
+    [Header("UI Prefabs")] 
+    public GameObject settlementUI;
 
     // Instance Attributes
     private bool _needsDirection;
+
+    private Dictionary<GameTile, GameObject> settlementUIs = new Dictionary<GameTile, GameObject>();
     
     // Camera Constants 
     private const float dragSpeed = 10f;
@@ -71,6 +76,7 @@ public class Director : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Find GM objects
         gm = FindObjectOfType<GameManager>();
 
         // If Game is Single player
@@ -84,9 +90,17 @@ public class Director : MonoBehaviour
                 }
             }
         }
-
+        
+        // Place some Settlements down (for testing)
+        Test();
+        
+        // Situate the World Canvas for UI (based on tilemap size)
+        SetUpWorldCanvas();
+        
+        // Render the game (once)
         RenderGame();
 
+        // Player needs to take action -> True
         _needsDirection = true;
     }
     
@@ -100,6 +114,46 @@ public class Director : MonoBehaviour
         }
         
         CameraControl();
+    }
+    
+    // Open the Save Game Menu
+    public void OpenSaveGameCanvas()
+    {
+        saveCanvas.SetActive(true);
+    }
+
+    // Send Save Game Command to Game
+    public void SendSaveToGm()
+    {
+        gm.SaveGame(saveIF.text);
+    }
+
+    /* Resizes World Canvas to match Tilemap size (should work with different world sizes or grid/cell sizes) */
+    private void SetUpWorldCanvas()
+    {
+        // Set exact dimensions based on editor observations
+        RectTransform canvasRect = worldCanvas.GetComponent<RectTransform>();
+        canvasRect.transform.position = new Vector3(worldCanvas.transform.position.x / 2, worldCanvas.transform.position.y / 2, worldCanvas.transform.position.z);
+        canvasRect.sizeDelta = new Vector2(74.2f, 47);
+        canvasRect.pivot = new Vector2(74.2f / 2, 47f / 2);
+        
+        // float tileWidth = baseTilemap.cellSize.x;
+        // float tileHeight = baseTilemap.cellSize.y;
+        // float tileCountX = gm.game.world.GetLength();
+        // float tileCountY = gm.game.world.GetHeight();
+        //
+        // // Calculate the canvas dimensions based on tilemap size and tile dimensions
+        // float canvasWidth = tileWidth * (tileCountX * .75f + 0.25f);
+        // float canvasHeight = tileHeight * (tileCountY + 0.5f);
+        //
+        // // Adjust the RectTransform of the Canvas to match these dimensions
+        // RectTransform canvasRect = worldCanvas.GetComponent<RectTransform>();
+        // canvasRect.sizeDelta = new Vector2(canvasWidth, canvasHeight);
+        //
+        // // Position the Canvas in the center of the tilemap.
+        // float offsetX = canvasWidth / 2f;
+        // float offsetY = canvasHeight / 2f;
+        // canvasRect.position = new Vector3(offsetX, offsetY, 0);
     }
 
     /* Render the Game. */
@@ -307,41 +361,78 @@ public class Director : MonoBehaviour
         /* Renders Settlement UI above Settlement Tiles */
         void RenderSettlementUI(World world)
         {
-            // Grid Dimensions
-            double tileHeight = 0.95f;
-            double tileWidth = 1f;
-
             for (int x = 0; x < world.GetLength(); x++)
             {
                 for (int y = 0; y < world.GetHeight(); y++)
                 {
-                    // Tile Position Variables - Jason knows how they work don't ask me.
-                    double bigX = tileWidth * x * .75f;
-                    double bigY = (float)(y * tileHeight + (tileHeight / 2) * (x % 2));
-
                     GameTile currTile = world.GetTile(x, y);
 
                     if (currTile.GetSettlement() is not null)
                     {
-
+                        // If we 
+                        if (!settlementUIs.ContainsKey(currTile))
+                        {
+                            // Instantiate UI Prefab
+                            GameObject uiInstance = Instantiate(settlementUI, worldCanvas.transform);
+                            
+                            // Update the UI's fields
+                            UpdateUIFields(uiInstance, currTile.GetSettlement());
+                            
+                            // Add this UI Prefab to our active SettlementUIs
+                            settlementUIs.Add(currTile, uiInstance);
+                        
+                            // Get the tile's world position
+                            Vector3Int cellPosition = new Vector3Int(y, x, 0);
+                            Vector3 tileWorldPosition = baseTilemap.CellToWorld(cellPosition);
+                            
+                            // Make the UI Instance appear slightly above the Tile
+                            tileWorldPosition += new Vector3(0, 0.7f, 0);
+                        
+                            // Set the position of the UI element
+                            uiInstance.transform.position = tileWorldPosition;
+                        }
+                        else
+                        {
+                            // Update that Tile's yields.
+                            UpdateUIFields(settlementUIs[currTile], currTile.GetSettlement());
+                        }
                     }
-
                 }
+            }
+            
+            // Helper method to update UI fields for a given settlement
+            void UpdateUIFields(GameObject uiObject, Settlement settlement)
+            {
+                // Access TMP_Text Objs
+                TMP_Text population = uiObject.transform.Find("Population Text").GetComponent<TMP_Text>();
+                TMP_Text growth = uiObject.transform.Find("Growth Text").GetComponent<TMP_Text>();
+                TMP_Text production = uiObject.transform.Find("Production Text").GetComponent<TMP_Text>();
+                TMP_Text name = uiObject.transform.Find("Name Text").GetComponent<TMP_Text>();
+                
+                // Update the text fields with the settlement's data
+                population.text = settlement.GetPopulation().ToString();
+                growth.text = settlement.TurnsToGrow();
+                production.text = settlement.TurnsToProduce();
+                name.text = settlement.GetName();
             }
         }
     }
 
-    // Open the Save Game Menu
-    public void OpenSaveGameCanvas()
+    // Places some settlements down for testing
+    private void Test()
     {
-        saveCanvas.SetActive(true);
-    }
-
-    // Send Save Game Command to Game
-    public void SendSaveToGm()
-    {
-        gm.SaveGame(saveIF.text);
-    }
+        List<Point> spawnPoints = gm.game.world.GetSpawnPoints();
+        
+        foreach (Point start in spawnPoints)
+        {
+            // Put a Settlement at each start point
+            GameTile currTile = gm.game.world.GetTile(start);
+            
+            Settlement settlement = new Settlement("Jersey", gm.game.civilizations[0], currTile);
+            
+            currTile.SetSettlement(settlement);
+        }
+    }    
 
     // Load Main Menu Scene
     public void QuitToMainMenu()

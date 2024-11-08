@@ -2,29 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class CityProject
 {
     [JsonProperty]
-    private int _projectName;
+    public int projectName;
     [JsonProperty]
-    private int _cost;
+    public int cost;
     [JsonProperty]
-    private int _currentProductionProgress;
+    public int currentProductionProgress;
 
     public CityProject(int name, int cost)
     {
-        _projectName = name;
-        _cost = cost;
-        _currentProductionProgress = 0;
+        projectName = name;
+        this.cost = cost;
+        currentProductionProgress = 0;
     }
     
     public void AddToProgress(int production)
     {
-        _currentProductionProgress += production;
+        currentProductionProgress += production;
         
-        if (_currentProductionProgress >= _cost)
+        if (currentProductionProgress >= cost)
         {
             Complete();
         }
@@ -37,7 +38,7 @@ public class CityProject
 
     public int GetName()
     {
-        return _projectName;
+        return projectName;
     }
 
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -49,13 +50,18 @@ public class Settlement : ISerialization
     public Settlement(string name, Civilization civilization, GameTile gameTile)
     {
         _name = name;
+        _yieldsPt = new int[5];
+        _population = 1;
+        _foodSurplus = 0;
+        _combatStrength = 10;
+        _buildings = new List<Building>();
+        _projects = new List<CityProject>();
+        _currentCityProject = null;
         _gameTile = gameTile;
         _civilization = civilization;
         _territory = StartingTerritory(gameTile);
         _workedTiles = new List<GameTile>();
         _workedTiles.Add(gameTile);
-        _projects = new List<CityProject>();
-        _population = 1;
         _tier = 1;
         
         /* Adds all adjacent Tiles to territory */
@@ -296,6 +302,7 @@ public class Settlement : ISerialization
             _gameTile = game.world.GetTile(_settlementPoint);
             _gameTile.SetSettlement(this);
         }
+        
         // Restore Territory Tile References to Settlement
         void RestoreTerritory()
         {
@@ -304,6 +311,7 @@ public class Settlement : ISerialization
                 _territory.Add(game.world.GetTile(point));
             }
         }
+        
         // Restore Worked Tile References to Settlement
         void RestoreWorkedTiles()
         {
@@ -313,6 +321,41 @@ public class Settlement : ISerialization
             }
         }
     }
+
+    public int GetProduction()
+    {
+        return _yieldsPt[1];
+    }
+
+    public int GetFood()
+    {
+        return _yieldsPt[0];
+    }
+
+    // Returns a string (integer) to display the turns left to grow.
+    public string TurnsToGrow()
+    {
+        int food_surplus_per_turn = _yieldsPt[0] - (_population * 2);
+
+        if (food_surplus_per_turn <= 0)
+        {
+            return "-";
+        }
+
+        return Math.Ceiling((double)(15 - _foodSurplus / food_surplus_per_turn)).ToString();
+    }
+    
+    // Returns a string (integer) to display the turns left to produce.
+    public string TurnsToProduce()
+    {
+        if (_currentCityProject is not null)
+        {
+            return Math.Ceiling((decimal)((_currentCityProject.cost - _currentCityProject.currentProductionProgress) / _yieldsPt[1])).ToString();
+        }
+
+        return "-";
+    }
+    
 }
     
     

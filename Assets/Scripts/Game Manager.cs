@@ -29,10 +29,16 @@ public class GameManager : MonoBehaviour
     {
         game = new Game();
         game.singlePlayer = true;
-        Civilization player = new Civilization();
-        player.IsNPC = false;
+        Civilization player1 = new Civilization();
+        Civilization player2 = new Civilization();
+        Civilization player3 = new Civilization();
+        Civilization player4 = new Civilization();
+        player1.IsNPC = false;
         game.civilizations = new List<Civilization>();
-        game.civilizations.Add(player);
+        game.civilizations.Add(player1);
+        game.civilizations.Add(player2);
+        game.civilizations.Add(player3);
+        game.civilizations.Add(player4);
         game.world = new WorldGenerator().GenerateWorld(100, 50, 2, worldSeed, game.civilizations.Count);
         SceneManager.LoadScene(1);
     }

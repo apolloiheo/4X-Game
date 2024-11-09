@@ -18,6 +18,7 @@ public class Director : MonoBehaviour
     public GameObject guiCanvas;
     public GameObject saveCanvas;
     public TMP_InputField saveIF;
+    public GameObject settlementWindowCanvas;
     [Header("Owner")] 
     public Civilization civilization;
     [Header("Tilemaps")] 
@@ -156,7 +157,7 @@ public class Director : MonoBehaviour
         // canvasRect.position = new Vector3(offsetX, offsetY, 0);
     }
 
-    /* Render the Game. */
+    /* Render everything in the Game. */
     private void RenderGame()
     {
         World gameWorld = gm.game.world;
@@ -416,6 +417,16 @@ public class Director : MonoBehaviour
                 name.text = settlement.GetName();
             }
         }
+    }
+
+    public void ToggleSettlementWindow()
+    {
+        // Instantiate Settlement Window Canvas
+        GameObject settlementWindow = Instantiate(settlementWindowCanvas);
+        
+        
+        
+        
     }
 
     // Places some settlements down for testing

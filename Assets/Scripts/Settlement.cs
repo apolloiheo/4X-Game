@@ -77,6 +77,8 @@ public class Settlement : ISerialization
             }
             return territory;
         }
+        
+        UpdateYields();
     }
     
     // End the turn
@@ -348,7 +350,8 @@ public class Settlement : ISerialization
     // Returns a string (integer) to display the turns left to grow.
     public string TurnsToGrow()
     {
-        int food_surplus_per_turn = _yieldsPt[0] - (_population * 2);
+        //int food_surplus_per_turn = _yieldsPt[0] - (_population * 2);
+        int food_surplus_per_turn = _yieldsPt[0];
 
         if (food_surplus_per_turn <= 0)
         {
@@ -367,6 +370,11 @@ public class Settlement : ISerialization
         }
 
         return "-";
+    }
+
+    public void SetCityProject(CityProject project)
+    {
+        _currentCityProject = project;   
     }
     
 }

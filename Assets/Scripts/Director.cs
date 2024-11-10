@@ -69,9 +69,14 @@ public class Director : MonoBehaviour
 
     // Instance Attributes
     private bool _needsDirection;
-    private Settlement _currentSettlement;
-
+    
     private Dictionary<GameTile, GameObject> settlementUIs = new Dictionary<GameTile, GameObject>();
+    
+    // Camera Values
+    public bool _zoomedIn;
+    private Vector3 _prevPos;
+    private float _prevSize;
+    
     
     // Camera Constants 
     private const float dragSpeed = 10f;
@@ -126,8 +131,11 @@ public class Director : MonoBehaviour
             saveCanvas.SetActive(false);
             
         }
-        
-        CameraControl();
+
+        if (!_zoomedIn)
+        {
+            CameraControl();
+        }
     }
     
     // Open the Save Game Menu
@@ -176,268 +184,274 @@ public class Director : MonoBehaviour
         World gameWorld = gm.game.world;
         RenderTilemaps(gameWorld);
         RenderSettlementUI(gameWorld);
-
-        /* Renders all Tilemaps */
-        void RenderTilemaps(World world)
+    }
+    
+    /* Renders Settlement UI above Settlement Tiles */
+    void RenderSettlementUI(World world)
+    {
+        for (int x = 0; x < world.GetLength(); x++)
         {
-            // Grid Dimensions
-            double tileHeight = 0.95f;
-            double tileWidth = 1f;
-
-            for (int x = 0; x < world.GetLength(); x++)
+            for (int y = 0; y < world.GetHeight(); y++)
             {
-                for (int y = 0; y < world.GetHeight(); y++)
+                GameTile currTile = world.GetTile(x, y);
+
+                if (currTile.GetSettlement() is not null)
                 {
-                    GameTile currTile = world.GetTile(x, y);
-
-                    // Tile Position Variables - Jason knows how they work don't ask me.
-                    double bigX = tileWidth * x * .75f;
-                    double bigY = (float)(y * tileHeight + (tileHeight / 2) * (x % 2));
-
-                    /* Render Base Tiles */
-                    // Plains
-                    if (currTile.GetBiome() == 1)
+                    // If we 
+                    if (!settlementUIs.ContainsKey(currTile))
                     {
-                        // Base Flat Tile
-                        baseTilemap.SetTile(new Vector3Int(y, x, 0), prairieTile);
+                        // Instantiate UI Prefab
+                        GameObject uiInstance = Instantiate(settlementUI, worldCanvas.transform);
                         
-                        // Hills
-                        if (currTile.GetTerrain() == 1)
-                        {
-                            hillsTilemap.SetTile(new Vector3Int(y, x, 0), prairieHillsTile);
-                        }
-                        //tile.color = new Color32(145, 158, 11, 255);
-                    }
-                    // Grassland
-                    else if (currTile.GetBiome() == 2)
-                    {
-                        // Flat Tile
-                        baseTilemap.SetTile(new Vector3Int(y, x, 0), grassTile);
+                        // Store the Settlement within Prefab
+                        SettlementUI ui = uiInstance.GetComponent<SettlementUI>();
+                        ui.settlement = currTile.GetSettlement();
                         
-                        // Hills
-                        if (currTile.GetTerrain() == 1)
-                        {
-                            hillsTilemap.SetTile(new Vector3Int(y, x, 0), grassHillsTile);
-                        }
-                        //tile.color = new Color32(92, 128, 82, 255);
-                    }
-                    // Tundra
-                    else if (currTile.GetBiome() == 3)
-                    {
-                        // Flat Tile
-                        baseTilemap.SetTile(new Vector3Int(y, x, 0), tundraTile);
+                        // Update the UI's fields
+                        UpdateUIFields(uiInstance, currTile.GetSettlement());
                         
-                        // Hills
-                        if (currTile.GetTerrain() == 1)
-                        {
-                            hillsTilemap.SetTile(new Vector3Int(y, x, 0), tundraHillsTile);
-                        }
-
-                        //tile.color = new Color32(144, 158, 141, 255);
-                    }
-                    // Desert
-                    else if (currTile.GetBiome() == 4)
-                    {
-                        // Flat Tile
-                        baseTilemap.SetTile(new Vector3Int(y, x, 0), desertTile);
-                        
-                        // Hills
-                        if (currTile.GetTerrain() == 1)
-                        {
-                            hillsTilemap.SetTile(new Vector3Int(y, x, 0), desertHillsTile);
-                        }
-
-                        //tile.color = new Color32(255, 217, 112, 255);
-                    }
-                    // Snow
-                    else if (currTile.GetBiome() == 5)
-                    {
-                        // Flat Tile
-                        baseTilemap.SetTile(new Vector3Int(y, x, 0), snowTile);
-                        
-                        // Hills
-                        if (world.GetTile(x, y).GetTerrain() == 1)
-                        {
-                            hillsTilemap.SetTile(new Vector3Int(y, x, 0), snowHillsTile);
-                        }
-                        //tile.color = Color.white;
-                    }
-                    // Coast
-                    else if (currTile.GetBiome() == 6)
-                    {
-                        baseTilemap.SetTile(new Vector3Int(y, x, 0), coastTile);
-                        //tile.color = new Color32(110, 187, 255, 255);
-                    }
-                    // Ocean
-                    else if (currTile.GetBiome() == 7)
-                    {
-                        baseTilemap.SetTile(new Vector3Int(y, x, 0), oceanTile);
-                        //tile.color = new Color32(20, 102, 184, 255);
-                    }
-                    // Lake
-                    else if (currTile.GetBiome() == 8)
-                    {
-                        baseTilemap.SetTile(new Vector3Int(y, x, 0), lakeTile);
-                    }
+                        // Add this UI Prefab to our active SettlementUIs
+                        settlementUIs.Add(currTile, uiInstance);
                     
-                    // Mountains
-                    if (currTile.GetTerrain() == 2)
-                    {
-                        mountainTilemap.SetTile(new Vector3Int(y, x, 0), mountain);
+                        // Get the tile's world position
+                        Vector3Int cellPosition = new Vector3Int(y, x, 0);
+                        Vector3 tileWorldPosition = baseTilemap.CellToWorld(cellPosition);
+                        
+                        // Make the UI Instance appear slightly above the Tile
+                        tileWorldPosition += new Vector3(0, 0.7f, 0);
+                    
+                        // Set the position of the UI element
+                        uiInstance.transform.position = tileWorldPosition;
                     }
-
-                    /* Render Rivers */
-                    if (currTile.GetFreshWaterAccess())
+                    else
                     {
-                        // For testing FreshWaterAccess
-                        /*baseTilemap.SetTile(new Vector3Int(y, x, 0), tile);
-                        tile.color = Color.white;*/
-
-                        for (int index = 0; index < 6; index++)
-                        {
-                            if (currTile.GetRiverEdge(index))
-                            {
-                                // Instiate Vector3 for Position at Formula for River Position
-                                Vector3 riverPosition = new Vector3((float)(bigX +
-                                                                            Math.Pow(-1f,
-                                                                                Math.Pow(0f,
-                                                                                    (5f - index) * (4f - index))) *
-                                                                            Math.Pow(0f, Math.Pow(0f, index % 3f)) *
-                                                                            tileWidth * 3 / 8),
-                                    (float)(bigY + Math.Pow(-1f,
-                                            Math.Pow(0f, Math.Abs((index - 2f) * (index - 3f) * (index - 4f)))) *
-                                        (tileHeight / 4f + tileHeight / 4f *
-                                            Math.Abs(Math.Pow(0f, Math.Pow(0f, index % 3f)) - 1f))),
-                                    0f);
-                                // Declare riverRotation variable
-                                Quaternion riverRotation;
-
-                                if (index == 1 || index == 4)
-                                {
-                                    // Set the rotation of the river based on it's edge
-                                    riverRotation = Quaternion.Euler(0f, 0f, -63f);
-                                }
-                                else if (index == 5 || index == 2)
-                                {
-                                    // Set the rotation of the river based on it's edge
-                                    riverRotation = Quaternion.Euler(0f, 0f, 63f);
-                                }
-                                else
-                                {
-                                    // Set the rotation of the river based on it's edge
-                                    riverRotation = Quaternion.Euler(0f, 0f, 0f);
-                                }
-
-                                // Instantiate as part of the Rivers obj in order to not clog up hierarchy
-                                GameObject riverPiece = Instantiate(riverSegment, riverPosition, riverRotation);
-                                riverPiece.transform.SetParent(riversParent.transform);
-
-                            }
-                        }
-                    }
-
-                    /* Render Features */
-                    // Woods
-                    if (currTile.GetFeature() == 1)
-                    {
-                        featureTilemap.SetTile(new Vector3Int(y, x, 0), woodsTile);
-                    }
-                    // Floodplains
-                    else if (currTile.GetFeature() == 2)
-                    {
-                        featureTilemap.SetTile(new Vector3Int(y, x, 0), floodplainsTile);
-                    }
-                    // Marshes
-                    else if (currTile.GetFeature() == 3)
-                    {
-                        featureTilemap.SetTile(new Vector3Int(y, x, 0), marshTile);
-                    }
-                    // Rainforest
-                    else if (currTile.GetFeature() == 4)
-                    {
-                        featureTilemap.SetTile(new Vector3Int(y, x, 0), rainforestTile);
-                    }
-                    // Oasis
-                    else if (currTile.GetFeature() == 5)
-                    {
-                        featureTilemap.SetTile(new Vector3Int(y, x, 0), oasisTile);
-                    }
-
-                    /* Render Settlements */
-                    if (currTile.GetSettlement() is not null)
-                    {
-                        featureTilemap.SetTile(new Vector3Int(y, x, 0), village);
+                        // Update that Tile's yields.
+                        UpdateUIFields(settlementUIs[currTile], currTile.GetSettlement());
                     }
                 }
-            }
-        }
-        
-        /* Renders Settlement UI above Settlement Tiles */
-        void RenderSettlementUI(World world)
-        {
-            for (int x = 0; x < world.GetLength(); x++)
-            {
-                for (int y = 0; y < world.GetHeight(); y++)
-                {
-                    GameTile currTile = world.GetTile(x, y);
-
-                    if (currTile.GetSettlement() is not null)
-                    {
-                        // If we 
-                        if (!settlementUIs.ContainsKey(currTile))
-                        {
-                            // Instantiate UI Prefab
-                            GameObject uiInstance = Instantiate(settlementUI, worldCanvas.transform);
-                            
-                            // Store the Settlement within Prefab
-                            SettlementUI ui = uiInstance.GetComponent<SettlementUI>();
-                            ui.settlement = currTile.GetSettlement();
-                            
-                            // Update the UI's fields
-                            UpdateUIFields(uiInstance, currTile.GetSettlement());
-                            
-                            // Add this UI Prefab to our active SettlementUIs
-                            settlementUIs.Add(currTile, uiInstance);
-                        
-                            // Get the tile's world position
-                            Vector3Int cellPosition = new Vector3Int(y, x, 0);
-                            Vector3 tileWorldPosition = baseTilemap.CellToWorld(cellPosition);
-                            
-                            // Make the UI Instance appear slightly above the Tile
-                            tileWorldPosition += new Vector3(0, 0.7f, 0);
-                        
-                            // Set the position of the UI element
-                            uiInstance.transform.position = tileWorldPosition;
-                        }
-                        else
-                        {
-                            // Update that Tile's yields.
-                            UpdateUIFields(settlementUIs[currTile], currTile.GetSettlement());
-                        }
-                    }
-                }
-            }
-            
-            // Helper method to update UI fields for a given settlement
-            void UpdateUIFields(GameObject uiObject, Settlement settlement)
-            {
-                // Access TMP_Text Objs
-                TMP_Text population = uiObject.transform.Find("Population Text").GetComponent<TMP_Text>();
-                TMP_Text growth = uiObject.transform.Find("Growth Text").GetComponent<TMP_Text>();
-                TMP_Text production = uiObject.transform.Find("Production Text").GetComponent<TMP_Text>();
-                TMP_Text name = uiObject.transform.Find("Name Text").GetComponent<TMP_Text>();
-                
-                // Update the text fields with the settlement's data
-                population.text = settlement.GetPopulation().ToString();
-                growth.text = settlement.TurnsToGrow();
-                production.text = settlement.TurnsToProduce();
-                name.text = settlement.GetName();
             }
         }
     }
+    // Helper method to update UI fields for a given settlement
+    
+    void UpdateUIFields(GameObject uiObject, Settlement settlement)
+    {
+        // Access TMP_Text Objs
+        TMP_Text population = uiObject.transform.Find("Population Text").GetComponent<TMP_Text>();
+        TMP_Text growth = uiObject.transform.Find("Growth Text").GetComponent<TMP_Text>();
+        TMP_Text production = uiObject.transform.Find("Production Text").GetComponent<TMP_Text>();
+        TMP_Text name = uiObject.transform.Find("Name Text").GetComponent<TMP_Text>();
+            
+        // Update the text fields with the settlement's data
+        population.text = settlement.GetPopulation().ToString();
+        growth.text = settlement.TurnsToGrow();
+        production.text = settlement.TurnsToProduce();
+        name.text = settlement.GetName();
+    }
 
+    /* Renders all Tilemaps */
+    void RenderTilemaps(World world)
+    {
+        // Grid Dimensions
+        double tileHeight = 0.95f;
+        double tileWidth = 1f;
+
+        for (int x = 0; x < world.GetLength(); x++)
+        {
+            for (int y = 0; y < world.GetHeight(); y++)
+            {
+                GameTile currTile = world.GetTile(x, y);
+
+                // Tile Position Variables - Jason knows how they work don't ask me.
+                double bigX = tileWidth * x * .75f;
+                double bigY = (float)(y * tileHeight + (tileHeight / 2) * (x % 2));
+
+                /* Render Base Tiles */
+                // Plains
+                if (currTile.GetBiome() == 1)
+                {
+                    // Base Flat Tile
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), prairieTile);
+                    
+                    // Hills
+                    if (currTile.GetTerrain() == 1)
+                    {
+                        hillsTilemap.SetTile(new Vector3Int(y, x, 0), prairieHillsTile);
+                    }
+                    //tile.color = new Color32(145, 158, 11, 255);
+                }
+                // Grassland
+                else if (currTile.GetBiome() == 2)
+                {
+                    // Flat Tile
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), grassTile);
+                    
+                    // Hills
+                    if (currTile.GetTerrain() == 1)
+                    {
+                        hillsTilemap.SetTile(new Vector3Int(y, x, 0), grassHillsTile);
+                    }
+                    //tile.color = new Color32(92, 128, 82, 255);
+                }
+                // Tundra
+                else if (currTile.GetBiome() == 3)
+                {
+                    // Flat Tile
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), tundraTile);
+                    
+                    // Hills
+                    if (currTile.GetTerrain() == 1)
+                    {
+                        hillsTilemap.SetTile(new Vector3Int(y, x, 0), tundraHillsTile);
+                    }
+
+                    //tile.color = new Color32(144, 158, 141, 255);
+                }
+                // Desert
+                else if (currTile.GetBiome() == 4)
+                {
+                    // Flat Tile
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), desertTile);
+                    
+                    // Hills
+                    if (currTile.GetTerrain() == 1)
+                    {
+                        hillsTilemap.SetTile(new Vector3Int(y, x, 0), desertHillsTile);
+                    }
+
+                    //tile.color = new Color32(255, 217, 112, 255);
+                }
+                // Snow
+                else if (currTile.GetBiome() == 5)
+                {
+                    // Flat Tile
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), snowTile);
+                    
+                    // Hills
+                    if (world.GetTile(x, y).GetTerrain() == 1)
+                    {
+                        hillsTilemap.SetTile(new Vector3Int(y, x, 0), snowHillsTile);
+                    }
+                    //tile.color = Color.white;
+                }
+                // Coast
+                else if (currTile.GetBiome() == 6)
+                {
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), coastTile);
+                    //tile.color = new Color32(110, 187, 255, 255);
+                }
+                // Ocean
+                else if (currTile.GetBiome() == 7)
+                {
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), oceanTile);
+                    //tile.color = new Color32(20, 102, 184, 255);
+                }
+                // Lake
+                else if (currTile.GetBiome() == 8)
+                {
+                    baseTilemap.SetTile(new Vector3Int(y, x, 0), lakeTile);
+                }
+                
+                // Mountains
+                if (currTile.GetTerrain() == 2)
+                {
+                    mountainTilemap.SetTile(new Vector3Int(y, x, 0), mountain);
+                }
+
+                /* Render Rivers */
+                if (currTile.GetFreshWaterAccess())
+                {
+                    // For testing FreshWaterAccess
+                    /*baseTilemap.SetTile(new Vector3Int(y, x, 0), tile);
+                    tile.color = Color.white;*/
+
+                    for (int index = 0; index < 6; index++)
+                    {
+                        if (currTile.GetRiverEdge(index))
+                        {
+                            // Instiate Vector3 for Position at Formula for River Position
+                            Vector3 riverPosition = new Vector3((float)(bigX +
+                                                                        Math.Pow(-1f,
+                                                                            Math.Pow(0f,
+                                                                                (5f - index) * (4f - index))) *
+                                                                        Math.Pow(0f, Math.Pow(0f, index % 3f)) *
+                                                                        tileWidth * 3 / 8),
+                                (float)(bigY + Math.Pow(-1f,
+                                        Math.Pow(0f, Math.Abs((index - 2f) * (index - 3f) * (index - 4f)))) *
+                                    (tileHeight / 4f + tileHeight / 4f *
+                                        Math.Abs(Math.Pow(0f, Math.Pow(0f, index % 3f)) - 1f))),
+                                0f);
+                            // Declare riverRotation variable
+                            Quaternion riverRotation;
+
+                            if (index == 1 || index == 4)
+                            {
+                                // Set the rotation of the river based on it's edge
+                                riverRotation = Quaternion.Euler(0f, 0f, -63f);
+                            }
+                            else if (index == 5 || index == 2)
+                            {
+                                // Set the rotation of the river based on it's edge
+                                riverRotation = Quaternion.Euler(0f, 0f, 63f);
+                            }
+                            else
+                            {
+                                // Set the rotation of the river based on it's edge
+                                riverRotation = Quaternion.Euler(0f, 0f, 0f);
+                            }
+
+                            // Instantiate as part of the Rivers obj in order to not clog up hierarchy
+                            GameObject riverPiece = Instantiate(riverSegment, riverPosition, riverRotation);
+                            riverPiece.transform.SetParent(riversParent.transform);
+
+                        }
+                    }
+                }
+
+                /* Render Features */
+                // Woods
+                if (currTile.GetFeature() == 1)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), woodsTile);
+                }
+                // Floodplains
+                else if (currTile.GetFeature() == 2)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), floodplainsTile);
+                }
+                // Marshes
+                else if (currTile.GetFeature() == 3)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), marshTile);
+                }
+                // Rainforest
+                else if (currTile.GetFeature() == 4)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), rainforestTile);
+                }
+                // Oasis
+                else if (currTile.GetFeature() == 5)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), oasisTile);
+                }
+
+                /* Render Settlements */
+                if (currTile.GetSettlement() is not null)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), village);
+                }
+            }
+        }
+    }
+    
     public void ToggleSettlementWindow(Settlement settlement)
     {
+        _zoomedIn = true;
+        _prevPos = mainCam.transform.position;
+        _prevSize = mainCam.orthographicSize;
+        settlementUIs[settlement.GetTile()].SetActive(false);
+        
+        ZoomCameraAtSettlement();
         PopulateSettlementWindow();
         
         void PopulateSettlementWindow()
@@ -450,7 +464,8 @@ public class Director : MonoBehaviour
             // Access List Viewport
             Transform unitsContainer = settlementWindow.GetComponent<SettlementWindow>().unitsContent;
             Transform buildingsContainer = settlementWindow.GetComponent<SettlementWindow>().buildingsContent;
-                
+            
+            // Fill Project Tabs
             foreach (CityProject project in settlement.GetProjects())
             {
                 GameObject projectPrefab = null;
@@ -464,10 +479,38 @@ public class Director : MonoBehaviour
                     projectPrefab = Instantiate(cityProjectButton, buildingsContainer);
                 }
                 
-                TMP_Text projectButtonText = projectPrefab.GetComponentInChildren<TMP_Text>();
-                projectButtonText.text = project.projectName;
+                projectPrefab.GetComponent<ProjectButton>().name.text = project.projectName;
+                projectPrefab.GetComponent<ProjectButton>().turns.text = Math.Ceiling((double)(project.projectCost - project.currentProductionProgress / settlement.GetYieldsPt()[1])).ToString();
+                projectPrefab.GetComponent<ProjectButton>().settlement = settlement;
+                projectPrefab.GetComponent<ProjectButton>().project = project;
             }
+
+            settlementWindow.GetComponent<SettlementWindow>().settlementName.text = settlement.GetName();
         }
+
+        void ZoomCameraAtSettlement()
+        {
+            // Settlement's Game Tile
+            GameTile tile = settlement.GetTile();
+            
+            Vector3 settlementPosition = baseTilemap.CellToWorld(new Vector3Int(tile.GetYPos(), tile.GetXPos(), -1));
+            
+            mainCam.transform.position = settlementPosition;
+            mainCam.orthographicSize = 4f;
+        }
+    }
+
+    public void RestoreCameraState()
+    {
+        mainCam.transform.position = _prevPos;
+        mainCam.orthographicSize = _prevSize;
+
+        foreach (GameObject uiPrefab in settlementUIs.Values)
+        {
+            uiPrefab.SetActive(true);
+        }
+        
+        RenderSettlementUI(gm.game.world);
     }
 
     // Places some settlements down for testing

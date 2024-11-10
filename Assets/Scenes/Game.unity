@@ -6059,9 +6059,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: da5a4ea935f70fd48b3e482c461adf35, type: 2}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: settlementWindow
+      value: 
+      objectReference: {fileID: 7039692974896898312, guid: 129e43855a4bb1945a603f0cee2f5701, type: 3}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: cityProjectButton
+      value: 
+      objectReference: {fileID: 3800566918516754172, guid: 5d3ffceca7676bf4f9a172545107dd5c, type: 3}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: settlementUIParent
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: settlementWindowCanvas
+      value: 
+      objectReference: {fileID: 7039692974896898312, guid: 129e43855a4bb1945a603f0cee2f5701, type: 3}
     - target: {fileID: 9175992913147886882, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 592.1574

@@ -221,6 +221,7 @@ GameObject:
   - component: {fileID: 443442084597295487}
   - component: {fileID: 634782714793465225}
   - component: {fileID: 875659782636699881}
+  - component: {fileID: 1449721543535904721}
   m_Layer: 5
   m_Name: Settlement UI
   m_TagString: Untagged
@@ -334,18 +335,36 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 1449721543535904721}
+        m_TargetAssemblyTypeName: SettlementUI, Assembly-CSharp
+        m_MethodName: OnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1449721543535904721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5723561007570470701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8022158a3d1fddf4f88bfe64b5b6855d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settlement:
+    _civilization:
+      IsNPC: 0
+    _territory: []
+    _workedTiles: []
+  director: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
 --- !u!1 &6336259480508340930
 GameObject:
   m_ObjectHideFlags: 0

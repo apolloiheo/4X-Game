@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using City_Projects;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -55,7 +56,7 @@ public class Settlement : ISerialization
         _foodSurplus = 0;
         _combatStrength = 10;
         _buildings = new List<Building>();
-        _projects = new List<CityProject>();
+        _projects = GetBaseProjects();
         _currentCityProject = null;
         _gameTile = gameTile;
         _civilization = civilization;
@@ -164,9 +165,9 @@ public class Settlement : ISerialization
     }
 
     /* Add a city project to settlement */
-    public void AddProject(int name, int cost)
+    public void AddProject(string name, int cost)
     {
-        _projects.Add(new CityProject(name, cost));
+        
     }
 
     /* Switch the project the settlement is working on */
@@ -174,7 +175,19 @@ public class Settlement : ISerialization
     {
         _currentCityProject = _projects[index];
     }
-    
+
+    /* Gives every Settlement the base projects. */
+    private List<CityProject> GetBaseProjects()
+    {
+        List<CityProject> baseProjects = new List<CityProject>();
+        
+        baseProjects.Add(new SettlerProject());
+        baseProjects.Add(new ScoutProject());
+        baseProjects.Add(new WarriorProject());
+        baseProjects.Add(new MonumentProject());
+        
+        return baseProjects;
+    }
     
     // Getter Methods
     public int[] GetYieldsPt()
@@ -350,7 +363,7 @@ public class Settlement : ISerialization
     {
         if (_currentCityProject is not null)
         {
-            return Math.Ceiling((decimal)((_currentCityProject.cost - _currentCityProject.currentProductionProgress) / _yieldsPt[1])).ToString();
+            return Math.Ceiling((decimal)((_currentCityProject.projectCost - _currentCityProject.currentProductionProgress) / _yieldsPt[1])).ToString();
         }
 
         return "-";

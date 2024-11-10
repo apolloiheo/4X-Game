@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
+using City_Projects;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class Director : MonoBehaviour
 {
@@ -60,9 +64,12 @@ public class Director : MonoBehaviour
     public Tile warrior;
     [Header("UI Prefabs")] 
     public GameObject settlementUI;
+    public GameObject settlementWindow;
+    public GameObject cityProjectButton;
 
     // Instance Attributes
     private bool _needsDirection;
+    private Settlement _currentSettlement;
 
     private Dictionary<GameTile, GameObject> settlementUIs = new Dictionary<GameTile, GameObject>();
     
@@ -110,8 +117,14 @@ public class Director : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if (settlementWindowCanvas.activeSelf)
+            {
+                return;
+            }
+            
             menuCanvas.SetActive(!menuCanvas.activeSelf);
             saveCanvas.SetActive(false);
+            
         }
         
         CameraControl();
@@ -376,6 +389,10 @@ public class Director : MonoBehaviour
                             // Instantiate UI Prefab
                             GameObject uiInstance = Instantiate(settlementUI, worldCanvas.transform);
                             
+                            // Store the Settlement within Prefab
+                            SettlementUI ui = uiInstance.GetComponent<SettlementUI>();
+                            ui.settlement = currTile.GetSettlement();
+                            
                             // Update the UI's fields
                             UpdateUIFields(uiInstance, currTile.GetSettlement());
                             
@@ -419,14 +436,38 @@ public class Director : MonoBehaviour
         }
     }
 
-    public void ToggleSettlementWindow()
+    public void ToggleSettlementWindow(Settlement settlement)
     {
-        // Instantiate Settlement Window Canvas
-        GameObject settlementWindow = Instantiate(settlementWindowCanvas);
+        PopulateSettlementWindow();
         
+        void PopulateSettlementWindow()
+        {
+            // Instantiate Settlement Window Canvas
+            settlementWindow = Instantiate(settlementWindowCanvas);
+            // Ensure it is active
+            settlementWindow.SetActive(true);
         
-        
-        
+            // Access List Viewport
+            Transform unitsContainer = settlementWindow.GetComponent<SettlementWindow>().unitsContent;
+            Transform buildingsContainer = settlementWindow.GetComponent<SettlementWindow>().buildingsContent;
+                
+            foreach (CityProject project in settlement.GetProjects())
+            {
+                GameObject projectPrefab = null;
+                
+                if (project.projectType == "unit")
+                {
+                    projectPrefab = Instantiate(cityProjectButton, unitsContainer);
+                }
+                else if (project.projectType == "building")
+                {
+                    projectPrefab = Instantiate(cityProjectButton, buildingsContainer);
+                }
+                
+                TMP_Text projectButtonText = projectPrefab.GetComponentInChildren<TMP_Text>();
+                projectButtonText.text = project.projectName;
+            }
+        }
     }
 
     // Places some settlements down for testing

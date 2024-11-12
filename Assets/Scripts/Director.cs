@@ -66,6 +66,8 @@ public class Director : MonoBehaviour
     public GameObject settlementUI;
     public GameObject settlementWindow;
     public GameObject cityProjectButton;
+    public GameObject territoryParent;
+    public GameObject territoryLines;
 
     // Instance Attributes
     private bool _needsDirection;
@@ -77,12 +79,14 @@ public class Director : MonoBehaviour
     private Vector3 _prevPos;
     private float _prevSize;
     
-    
     // Camera Constants 
     private const float dragSpeed = 10f;
     private const float zoomSpeed = 2f;
     private const float minZoom = 2f;
     private const float maxZoom = 15f;
+    // Grid Dimensions
+    private const double tileHeight = 0.95f;
+    private const double tileWidth = 1f;
     // Camera References
     private Vector3 dragOrign;
 
@@ -122,11 +126,6 @@ public class Director : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (settlementWindowCanvas.activeSelf)
-            {
-                return;
-            }
-            
             menuCanvas.SetActive(!menuCanvas.activeSelf);
             saveCanvas.SetActive(false);
             
@@ -148,6 +147,8 @@ public class Director : MonoBehaviour
     public void SendSaveToGm()
     {
         gm.SaveGame(saveIF.text);
+        
+        saveCanvas.SetActive(false);
     }
 
     /* Resizes World Canvas to match Tilemap size (should work with different world sizes or grid/cell sizes) */
@@ -184,6 +185,7 @@ public class Director : MonoBehaviour
         World gameWorld = gm.game.world;
         RenderTilemaps(gameWorld);
         RenderSettlementUI(gameWorld);
+        RenderTerritoryLines();
     }
     
     /* Renders Settlement UI above Settlement Tiles */
@@ -233,10 +235,75 @@ public class Director : MonoBehaviour
         }
     }
     // Helper method to update UI fields for a given settlement
+
+    void RenderTerritoryLines()
+    {
+        foreach (Civilization civ in gm.game.civilizations)
+        {
+            foreach (Settlement settlement in civ.GetSettlements())
+            {
+                foreach (GameTile tile in settlement._territory)
+                {
+                    int edge = 0;
+                    foreach (GameTile neighbor in tile.GetNeighbors())
+                    {
+                        if (neighbor is not null)
+                        {
+                            // Tile Position Variables - Jason knows how they work don't ask me.
+                            double bigX = tileWidth * tile.GetXPos() * .75f;
+                            double bigY = (float)(tile.GetYPos() * tileHeight + (tileHeight / 2) * (tile.GetXPos() % 2));
+                            
+                            
+                            // If this edge is at the end of the Settlement's territory 
+                            if (!settlement._territory.Contains(neighbor))
+                            {
+                                // Put a Territory on that edge// Instiate Vector3 for Position at Formula for River Position
+                            Vector3 territoryPosition = new Vector3((float)(bigX +
+                                                                        Math.Pow(-1f,
+                                                                            Math.Pow(0f,
+                                                                                (5f - edge) * (4f - edge))) *
+                                                                        Math.Pow(0f, Math.Pow(0f, edge % 3f)) *
+                                                                        tileWidth * 3 / 8),
+                                (float)(bigY + Math.Pow(-1f,
+                                        Math.Pow(0f, Math.Abs((edge - 2f) * (edge - 3f) * (edge - 4f)))) *
+                                    (tileHeight / 4f + tileHeight / 4f *
+                                        Math.Abs(Math.Pow(0f, Math.Pow(0f, edge % 3f)) - 1f))),
+                                0f);
+                            // Declare riverRotation variable
+                            Quaternion territoryRotation;
+
+                            if (edge == 1 || edge == 4)
+                            {
+                                // Set the rotation of the river based on it's edge
+                                territoryRotation = Quaternion.Euler(0f, 0f, -63f);
+                            }
+                            else if (edge == 5 || edge == 2)
+                            {
+                                // Set the rotation of the river based on it's edge
+                                territoryRotation = Quaternion.Euler(0f, 0f, 63f);
+                            }
+                            else
+                            {
+                                // Set the rotation of the river based on it's edge
+                                territoryRotation = Quaternion.Euler(0f, 0f, 0f);
+                            }
+
+                            // Instantiate as part of the Rivers obj in order to not clog up hierarchy
+                            GameObject territoryLine = Instantiate(territoryLines, territoryPosition, territoryRotation);
+                            territoryLine.GetComponent<TerritroyLine>().color = civ._color;
+                            territoryLine.transform.SetParent(territoryParent.transform);
+                            }
+                        }
+                        edge++;
+                    }
+                }
+            }
+        }
+    }
     
     void UpdateUIFields(GameObject uiObject, Settlement settlement)
     {
-        // Access TMP_Text Objs
+        // Access TMP_Text Objs - These need to be access through a script transform.Find is too expensive 
         TMP_Text population = uiObject.transform.Find("Population Text").GetComponent<TMP_Text>();
         TMP_Text growth = uiObject.transform.Find("Growth Text").GetComponent<TMP_Text>();
         TMP_Text production = uiObject.transform.Find("Production Text").GetComponent<TMP_Text>();
@@ -252,10 +319,6 @@ public class Director : MonoBehaviour
     /* Renders all Tilemaps */
     void RenderTilemaps(World world)
     {
-        // Grid Dimensions
-        double tileHeight = 0.95f;
-        double tileWidth = 1f;
-
         for (int x = 0; x < world.GetLength(); x++)
         {
             for (int y = 0; y < world.GetHeight(); y++)
@@ -524,6 +587,8 @@ public class Director : MonoBehaviour
             GameTile currTile = gm.game.world.GetTile(start);
             
             Settlement settlement = new Settlement("Jersey", gm.game.civilizations[0], currTile);
+            
+            gm.game.civilizations[0].AddSettlement(settlement);
             
             currTile.SetSettlement(settlement);
         }

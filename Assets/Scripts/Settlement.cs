@@ -77,7 +77,6 @@ public class Settlement : ISerialization
             }
             return territory;
         }
-        
         UpdateYields();
     }
     
@@ -321,6 +320,9 @@ public class Settlement : ISerialization
         // Restore Territory Tile References to Settlement
         void RestoreTerritory()
         {
+            // Reinitialize
+            _territory = new List<GameTile>();
+            
             foreach (Point point in _territoryPoints)
             {
                 _territory.Add(game.world.GetTile(point));
@@ -330,6 +332,9 @@ public class Settlement : ISerialization
         // Restore Worked Tile References to Settlement
         void RestoreWorkedTiles()
         {
+            // Reinitialize
+            _workedTiles = new List<GameTile>();
+            
             foreach (Point point in _workedTilesPoints)
             {
                 _workedTiles.Add(game.world.GetTile(point));

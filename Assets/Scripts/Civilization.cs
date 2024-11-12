@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class Civilization : ISerialization
@@ -13,8 +14,7 @@ public class Civilization : ISerialization
     // Civilization Traits
     [JsonProperty]
     private TechnologyTree _technology; // ** WIP - Technology tree for each Civilization
-    [JsonProperty]
-    private Tree _cultureTree; // ** WIP - Cultural tree for each Civilization
+    
     
     // Yields
     [JsonProperty]
@@ -33,6 +33,27 @@ public class Civilization : ISerialization
     private List<Settlement> _settlements; // A List of the Settlements this Civilization owns.
     [JsonProperty]
     private List<Unit> _units; // A List of the Units this Civilization owns.
+    
+    public Color32 _color;
+    //[JsonProperty]
+    //private Tree _cultureTree; // ** WIP - Cultural tree for each Civilization
+
+    public Civilization()
+    {
+        _technology = new TechnologyTree();
+        //_cultureTree = new Tree();
+        _settlements = new List<Settlement>();
+        _units = new List<Unit>();
+    }
+    
+    public Civilization(Color32 color)
+    {
+        _technology = new TechnologyTree();
+        //_cultureTree = new Tree();
+        _settlements = new List<Settlement>();
+        _units = new List<Unit>();
+        _color = color;
+    }
     
     // Constant
     private const int Gold = 3;
@@ -157,5 +178,15 @@ public class Civilization : ISerialization
                 unit.RestoreAfterDeserialization(game);
             }
         }
+    }
+
+    public void AddSettlement(Settlement settlement)
+    {
+        _settlements.Add(settlement);
+    }
+
+    public List<Settlement> GetSettlements()
+    {
+        return _settlements;
     }
 }

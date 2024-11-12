@@ -29,10 +29,10 @@ public class GameManager : MonoBehaviour
     {
         game = new Game();
         game.singlePlayer = true;
-        Civilization player1 = new Civilization();
-        Civilization player2 = new Civilization();
-        Civilization player3 = new Civilization();
-        Civilization player4 = new Civilization();
+        Civilization player1 = new Civilization(new Color32(255, 181, 43, 255));
+        Civilization player2 = new Civilization(new Color32(255, 95, 92, 255));
+        Civilization player3 = new Civilization(new Color32(103, 92, 255, 255));
+        Civilization player4 = new Civilization(new Color32(0, 150, 13, 255));
         player1.IsNPC = false;
         game.civilizations = new List<Civilization>();
         game.civilizations.Add(player1);
@@ -97,6 +97,7 @@ public class GameManager : MonoBehaviour
                 fileStream.Write(jsonBytes, 0, jsonBytes.Length);
             }
         }
+        Debug.Log("Game successfully saved as: " + filename);
     }
 
     public void LoadGame(string filePath)

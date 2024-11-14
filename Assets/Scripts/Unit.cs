@@ -208,7 +208,7 @@ public class Unit : ISerialization
         {
             possible_moves = new List<Point>();
         }
-        if (movementPoints == 0)
+        if (movementPoints <= 0)
         {
             possible_moves.Add(currPoint);
         }

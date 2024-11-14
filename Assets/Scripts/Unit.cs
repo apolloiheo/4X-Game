@@ -208,9 +208,14 @@ public class Unit : ISerialization
         {
             possible_moves = new List<Point>();
         }
-        if (movementPoints <= 0)
+        if (movementPoints == 0)
         {
             possible_moves.Add(currPoint);
+        }
+
+        if (movementPoints > 0)
+        {
+            return null;
         }
 
         foreach (GameTile neighbor in _gameTile.GetNeighbors())

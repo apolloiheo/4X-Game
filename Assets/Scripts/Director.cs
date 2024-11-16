@@ -526,7 +526,7 @@ public class Director : MonoBehaviour
             Transform buildingsContainer = settlementWindow.GetComponent<SettlementWindow>().buildingsContent;
             settlementWindow.GetComponent<SettlementWindow>()._settlement = settlement;
             settlementWindow.GetComponent<SettlementWindow>().tilemap = baseTilemap;
-            settlementWindow.GetComponent<SettlementWindow>().mainCamera = mainCam;
+            settlementWindow.GetComponent<SettlementWindow>()._worldCanvas = worldCanvas;
             
             
             

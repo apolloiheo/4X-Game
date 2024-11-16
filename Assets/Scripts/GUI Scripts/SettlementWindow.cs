@@ -6,9 +6,8 @@ using UnityEngine.Tilemaps;
 
 public class SettlementWindow : MonoBehaviour
 {
-    public Camera mainCamera;
     public GameObject settlementWindow;
-    public RectTransform settlementCanvas;
+    public Canvas _worldCanvas;
     public RectTransform unitsContent;
     public RectTransform buildingsContent;
     public Director director;
@@ -19,11 +18,12 @@ public class SettlementWindow : MonoBehaviour
     public Settlement _settlement;
     public Tilemap tilemap;
     
-    private Dictionary<GameObject, GameTile> citizenUIs = new Dictionary<GameObject, GameTile>();
+    private HashSet<GameObject> citizenUIs = new HashSet<GameObject>();
 
     public void Start()
     {
         director = FindObjectOfType<Director>();
+        citizenUIs = new HashSet<GameObject>();
     }
 
 
@@ -37,44 +37,65 @@ public class SettlementWindow : MonoBehaviour
 
     public void ToggleManageCitizens()
     {
-        // Render once
-        foreach (GameTile tile in _settlement._territory)
+        if (citizenUIs.Count <= 0)
         {
-            // Get a Vector3 Position of that Tile
-            Vector3Int tilePosition = new Vector3Int(tile.GetYPos(), tile.GetXPos(), 0);
-            Vector3 worldPosition = tilemap.CellToWorld(tilePosition);
+            // Initialize
+            citizenUIs = new HashSet<GameObject>();
             
-            // Convert Vector3 World Position to screen position
-            Vector3 screenPosition = mainCamera.WorldToScreenPoint(worldPosition);
+            // Render once
+            foreach (GameTile tile in _settlement._territory)
+            {
+                // Get a Vector3 Position of that Tile
+                Vector3Int tilePosition = new Vector3Int(tile.GetYPos(), tile.GetXPos(), 0);
+                Vector3 worldPosition = tilemap.CellToWorld(tilePosition);
             
-            if (_settlement._workedTiles.Contains(tile))
+                if (_settlement._workedTiles.Contains(tile))
+                {
+                    // Spawn Citizen Image
+                    GameObject citizenUI = Instantiate(citizenOn, _worldCanvas.transform);
+                
+                    // Position it relative to screen space
+                    RectTransform rectTransform = citizenUI.GetComponentInChildren<RectTransform>();
+                    rectTransform.position = worldPosition;
+                    
+                    // Add it to Hash Set to keep track of it
+                    citizenUIs.Add(citizenUI);
+                }
+                else if (_settlement._lockedTiles.Contains(tile))
+                {
+                    // Spawn Locked Image
+                    GameObject lockedCitizen = Instantiate(citizenLocked, _worldCanvas.transform);
+                
+                    // Position it relative to screen space
+                    RectTransform rectTransform = lockedCitizen.GetComponentInChildren<RectTransform>();
+                    rectTransform.position = worldPosition;
+                    
+                    // Add it to Hash Set to keep track of it
+                    citizenUIs.Add(lockedCitizen);
+                
+                }
+                else if (!_settlement._workedTiles.Contains(tile))
+                {
+                    // Spawn Unused Image
+                    GameObject offCitizen = Instantiate(citizenOff, _worldCanvas.transform);
+                
+                    // Position it relative to screen space
+                    RectTransform rectTransform = offCitizen.GetComponentInChildren<RectTransform>();
+                    rectTransform.position = worldPosition;;
+                    
+                    // Add it to Hash Set to keep track of it
+                    citizenUIs.Add(offCitizen);
+                }
+            } 
+        }
+        else
+        {
+            foreach (GameObject ui in citizenUIs)
             {
-                // Spawn Citizen Image
-                GameObject citizenUI = Instantiate(citizenOn, settlementCanvas.transform);
-                
-                // Position it relative to screen space
-                RectTransform rectTransform = citizenUI.GetComponentInChildren<RectTransform>();
-                rectTransform.position = screenPosition;
+                Destroy(ui);
             }
-            else if (_settlement._lockedTiles.Contains(tile))
-            {
-                // Spawn Locked Image
-                GameObject lockedCitizen = Instantiate(citizenLocked, settlementCanvas.transform);
-                
-                // Position it relative to screen space
-                RectTransform rectTransform = lockedCitizen.GetComponentInChildren<RectTransform>();
-                rectTransform.position = screenPosition;
-                
-            }
-            else if (!_settlement._workedTiles.Contains(tile))
-            {
-                // Spawn Unused Image
-                GameObject offCitizen = Instantiate(citizenOff, settlementCanvas.transform);
-                
-                // Position it relative to screen space
-                RectTransform rectTransform = offCitizen.GetComponentInChildren<RectTransform>();
-                rectTransform.position = screenPosition;;
-            }
+
+            citizenUIs = new HashSet<GameObject>();
         }
     }
     

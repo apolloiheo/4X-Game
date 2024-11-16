@@ -48,6 +48,8 @@ public class SettlementWindow : MonoBehaviour
                 // Get a Vector3 Position of that Tile
                 Vector3Int tilePosition = new Vector3Int(tile.GetYPos(), tile.GetXPos(), 0);
                 Vector3 worldPosition = tilemap.CellToWorld(tilePosition);
+                
+                Debug.Log(" Worked tiles: " + _settlement._workedTiles.Count.ToString());
             
                 if (_settlement._workedTiles.Contains(tile))
                 {
@@ -98,6 +100,8 @@ public class SettlementWindow : MonoBehaviour
             citizenUIs = new HashSet<GameObject>();
         }
     }
+    
+    
     
     private void DestoryWindow()
     {

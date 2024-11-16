@@ -68,8 +68,7 @@ public class Settlement : ISerialization
         _lockedTiles = new List<GameTile>();
         _lockedTiles.Add(gameTile);
         AutoAssignWorkedTiles();
-        
-        
+        UpdateYields();
         _tier = 1;
         
         /* Adds all adjacent Tiles to territory */
@@ -84,7 +83,7 @@ public class Settlement : ISerialization
             }
             return territory;
         }
-        UpdateYields();
+        
     }
     
     // End the turn
@@ -200,17 +199,19 @@ public class Settlement : ISerialization
     /* Auto Assigns Worked Tiles that haven't been locked in by player */
     public void AutoAssignWorkedTiles()
     {
-        // Sort tiles in territory according to best yield value
-        List<GameTile> bestTilesInOrder = _territory;
-        bestTilesInOrder.Sort((tile1,tile2) => tile2.TileValue().CompareTo(tile1.TileValue()));
-        
         // If there are exactly the same amount of locked tiles as there can possibly be worked
         if (_lockedTiles.Count == _population + 1)
         {
             // Assign them, and return.
             _workedTiles = _lockedTiles;
+            Debug.Log("All tiles already assigned. Returning.");
             return;
         }
+        
+        // Sort tiles in territory according to best yield value
+        List<GameTile> bestTilesInTerritory = _territory;
+        // Best file in the front
+        bestTilesInTerritory.Sort((tile1,tile2) => tile2.TileValue().CompareTo(tile1.TileValue()));
         
         // If there are more locked tiles than the Settlement can work, add the best Locked Tiles to Worked Tiles
         if (_lockedTiles.Count > _population + 1)
@@ -223,16 +224,15 @@ public class Settlement : ISerialization
                 // If we are at max capacity
                 if (_workedTiles.Count >= _population + 1)
                 {
+                    Debug.Log("Assigned all locked tiles until full.");
                     return;
                 }
-                else
+                
+                // If this tile isn't already being worked
+                if (!_workedTiles.Contains(t))
                 {
-                    // If this tile isn't already being worked
-                    if (!_workedTiles.Contains(t))
-                    {
-                        // Add it
-                        _workedTiles.Add(t);
-                    }
+                    // Add it
+                    _workedTiles.Add(t);
                 }
             } 
         }
@@ -242,31 +242,20 @@ public class Settlement : ISerialization
         {
             _workedTiles = _lockedTiles;
         }
-        // Add the rest based on value
-        foreach (GameTile tile in _lockedTiles)
-        {
-            // If there are locked tiles that haven't been worked
-            if (!_workedTiles.Contains(tile))
-            {
-                // Add them
-                _workedTiles.Add(tile);
-            }
-        }
         
         // Fill any remaining tiles (population) with the best valued tiles
-        foreach (GameTile tile in bestTilesInOrder)
+        foreach (GameTile territoryTile in bestTilesInTerritory)
         {
             // If we are at max capacity
-            if (_population + 1 >= _workedTiles.Count)
+            if (_population + 1 <= _workedTiles.Count)
             {
+                Debug.Log("Auto Assigned tiles until full.");
                 return;
             }
-            else
+            
+            if (!_workedTiles.Contains(territoryTile))
             {
-                if (!_workedTiles.Contains(tile))
-                {
-                    _workedTiles.Add(tile);
-                }
+                _workedTiles.Add(territoryTile);
             }
         }
     }

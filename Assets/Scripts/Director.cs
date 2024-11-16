@@ -528,8 +528,6 @@ public class Director : MonoBehaviour
             settlementWindow.GetComponent<SettlementWindow>().tilemap = baseTilemap;
             settlementWindow.GetComponent<SettlementWindow>()._worldCanvas = worldCanvas;
             
-            
-            
             // Fill Project Tabs
             foreach (CityProject project in settlement.GetProjects())
             {

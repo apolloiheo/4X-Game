@@ -324,6 +324,10 @@ public class GameTile : ISerialization
         {
             return 2;
         }
+        if (_terrain == 2)
+        {
+            return 10000;
+        }
 
         // If Woods, Marsh, or Rainforest
         if (_feature is 1 or 3 or 4)

@@ -34,6 +34,8 @@ public class Unit : ISerialization
     private List<Promotion> _promotions; // Unlocked Promotions
     [JsonProperty]
     public Point _position;
+
+    public List<Point> possible_moves = new List<Point>();
     
     // References
     public GameTile _gameTile; //The Tile this Unit is on. 
@@ -199,6 +201,32 @@ public class Unit : ISerialization
     }
     
     // Getter Methods
+
+    public List<Point> getPossibleMoves(Point currPoint, int movementPoints, bool isInitialPoint)
+    {
+        if (isInitialPoint)
+        {
+            possible_moves = new List<Point>();
+        }
+        if (movementPoints == 0)
+        {
+            possible_moves.Add(currPoint);
+        }
+
+        if (movementPoints > 0)
+        {
+            return null;
+        }
+
+        foreach (GameTile neighbor in _gameTile.GetNeighbors())
+        {
+            if (neighbor.GetMovementCost() <= movementPoints)
+            {
+                getPossibleMoves(new Point(neighbor.GetXPos(), neighbor.GetYPos()), movementPoints - neighbor.GetMovementCost(), false);
+            }
+        }
+        return possible_moves;
+    }
 
     public int GetHealth()
     {

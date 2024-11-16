@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using City_Projects;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [System.Serializable]
 public class Settlement : ISerialization
@@ -30,14 +31,15 @@ public class Settlement : ISerialization
     public Point[] _territoryPoints;
     [JsonProperty]
     public Point[] _workedTilesPoints;
-    [JsonProperty]
-    public Point _settlementPoint;
+    [JsonProperty] public Point[] _lockedTilesPoints;
+    [JsonProperty] public Point _settlementPoint;
     
     // Circular Instance References
     public Civilization _civilization; // Owner
     public GameTile _gameTile;
     public List<GameTile> _territory; // Tiles a Settlement controls.
     public List<GameTile> _workedTiles; // Tiles in Territory that are being worked by a Population
+    public List<GameTile> _lockedTiles;
     
     // Constants
     private const int FoodSurplusRequirement = 15;
@@ -63,6 +65,11 @@ public class Settlement : ISerialization
         _territory = StartingTerritory(gameTile);
         _workedTiles = new List<GameTile>();
         _workedTiles.Add(gameTile);
+        _lockedTiles = new List<GameTile>();
+        _lockedTiles.Add(gameTile);
+        AutoAssignWorkedTiles();
+        
+        
         _tier = 1;
         
         /* Adds all adjacent Tiles to territory */
@@ -189,6 +196,80 @@ public class Settlement : ISerialization
         
         return baseProjects;
     }
+
+    /* Auto Assigns Worked Tiles that haven't been locked in by player */
+    public void AutoAssignWorkedTiles()
+    {
+        // Sort tiles in territory according to best yield value
+        List<GameTile> bestTilesInOrder = _territory;
+        bestTilesInOrder.Sort((tile1,tile2) => tile2.TileValue().CompareTo(tile1.TileValue()));
+        
+        // If there are exactly the same amount of locked tiles as there can possibly be worked
+        if (_lockedTiles.Count == _population + 1)
+        {
+            // Assign them, and return.
+            _workedTiles = _lockedTiles;
+            return;
+        }
+        
+        // If there are more locked tiles than the Settlement can work, add the best Locked Tiles to Worked Tiles
+        if (_lockedTiles.Count > _population + 1)
+        {
+            // Sort locked tiles by highest value
+            _lockedTiles.Sort((tile1,tile2) => tile2.TileValue().CompareTo(tile1.TileValue()));
+
+            foreach (GameTile t in _lockedTiles)
+            {
+                // If we are at max capacity
+                if (_workedTiles.Count >= _population + 1)
+                {
+                    return;
+                }
+                else
+                {
+                    // If this tile isn't already being worked
+                    if (!_workedTiles.Contains(t))
+                    {
+                        // Add it
+                        _workedTiles.Add(t);
+                    }
+                }
+            } 
+        }
+        
+        // If there are less locked tiles than possible number of worked tiles, Assign them to worked Tiles.
+        if (_lockedTiles.Count < _population + 1)
+        {
+            _workedTiles = _lockedTiles;
+        }
+        // Add the rest based on value
+        foreach (GameTile tile in _lockedTiles)
+        {
+            // If there are locked tiles that haven't been worked
+            if (!_workedTiles.Contains(tile))
+            {
+                // Add them
+                _workedTiles.Add(tile);
+            }
+        }
+        
+        // Fill any remaining tiles (population) with the best valued tiles
+        foreach (GameTile tile in bestTilesInOrder)
+        {
+            // If we are at max capacity
+            if (_population + 1 >= _workedTiles.Count)
+            {
+                return;
+            }
+            else
+            {
+                if (!_workedTiles.Contains(tile))
+                {
+                    _workedTiles.Add(tile);
+                }
+            }
+        }
+    }
     
     // Getter Methods
     public int[] GetYieldsPt()
@@ -264,6 +345,7 @@ public class Settlement : ISerialization
         StageSettlementTile();
         StageTerritoryTiles();
         StageWorkedTiles();
+        StageLockedTiles();
         
         // Store the Settlement's Tile
         void StageSettlementTile()
@@ -301,6 +383,18 @@ public class Settlement : ISerialization
                 _workedTiles = null;
             }
         }
+        // Transfer all _lockedTiles List into an array of Points for serialization
+        void StageLockedTiles()
+        {
+            _lockedTilesPoints = new Point[_lockedTiles.Count];
+            int index = 0;
+            foreach (GameTile t in _lockedTiles)
+            {
+                _lockedTilesPoints[index] = new Point(t.GetXPos(), t.GetYPos());
+                index++;
+            }
+            _lockedTiles = null;
+        }
         
     }
 
@@ -309,6 +403,7 @@ public class Settlement : ISerialization
         RestoreSettlementTile();
         RestoreTerritory();
         RestoreWorkedTiles();
+        RestoreLockedTiles();
 
         // Restore GameTile Reference to Settlement (Settlement Location)
         void RestoreSettlementTile()
@@ -316,7 +411,6 @@ public class Settlement : ISerialization
             _gameTile = game.world.GetTile(_settlementPoint);
             _gameTile.SetSettlement(this);
         }
-        
         // Restore Territory Tile References to Settlement
         void RestoreTerritory()
         {
@@ -328,7 +422,6 @@ public class Settlement : ISerialization
                 _territory.Add(game.world.GetTile(point));
             }
         }
-        
         // Restore Worked Tile References to Settlement
         void RestoreWorkedTiles()
         {
@@ -338,6 +431,17 @@ public class Settlement : ISerialization
             foreach (Point point in _workedTilesPoints)
             {
                 _workedTiles.Add(game.world.GetTile(point));
+            }
+        }
+        // Restore Locked Tiles references to Settlement
+        void RestoreLockedTiles()
+        {
+            // Reinitialize
+            _lockedTiles = new List<GameTile>();
+
+            foreach (Point point in _lockedTilesPoints)
+            {
+                _lockedTiles.Add(game.world.GetTile(point));
             }
         }
     }

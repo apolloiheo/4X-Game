@@ -2,12 +2,9 @@ using System;
 using System.Collections.Generic;
 using City_Projects;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class Director : MonoBehaviour
 {
@@ -234,7 +231,6 @@ public class Director : MonoBehaviour
             }
         }
     }
-    // Helper method to update UI fields for a given settlement
 
     void RenderTerritoryLines()
     {
@@ -301,6 +297,7 @@ public class Director : MonoBehaviour
         }
     }
     
+    // Helper method to update UI fields for a given settlement
     void UpdateUIFields(GameObject uiObject, Settlement settlement)
     {
         // Access TMP_Text Objs - These need to be access through a script transform.Find is too expensive 
@@ -527,6 +524,11 @@ public class Director : MonoBehaviour
             // Access List Viewport
             Transform unitsContainer = settlementWindow.GetComponent<SettlementWindow>().unitsContent;
             Transform buildingsContainer = settlementWindow.GetComponent<SettlementWindow>().buildingsContent;
+            settlementWindow.GetComponent<SettlementWindow>()._settlement = settlement;
+            settlementWindow.GetComponent<SettlementWindow>().tilemap = baseTilemap;
+            settlementWindow.GetComponent<SettlementWindow>().mainCamera = mainCam;
+            
+            
             
             // Fill Project Tabs
             foreach (CityProject project in settlement.GetProjects())

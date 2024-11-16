@@ -6018,6 +6018,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1297460425}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: citizenUI
+      value: 
+      objectReference: {fileID: 8828438948917521683, guid: 531e575f0290f5b4fb4f740841bf1baf, type: 3}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: guiCanvas
       value: 
       objectReference: {fileID: 414876454}

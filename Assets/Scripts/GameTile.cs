@@ -296,6 +296,19 @@ public class GameTile : ISerialization
 
         return yields;
     }
+    
+    public float TileValue()
+    {
+        float yieldsValue = 0;
+        
+        yieldsValue += _yields[0];
+        yieldsValue += (_yields[1] * 1.25f);
+        yieldsValue += _yields[2];
+        yieldsValue += (_yields[3] * 1.5f);
+        yieldsValue += (_yields[4] * 1.5f);
+
+        return yieldsValue;
+    }
 
     private bool[] CalculateRiverAdjacency()
     {

@@ -62,13 +62,11 @@ public class Director : MonoBehaviour
     [Header("UI Prefabs")] 
     public GameObject settlementUI;
     public GameObject settlementWindow;
-    public GameObject cityProjectButton;
     public GameObject territoryParent;
     public GameObject territoryLines;
 
-    // Instance Attributes
+    // Private Instance Attributes
     private bool _needsDirection;
-    
     private Dictionary<GameTile, GameObject> settlementUIs = new Dictionary<GameTile, GameObject>();
     
     // Camera Values
@@ -121,11 +119,10 @@ public class Director : MonoBehaviour
     // Update is called every frame
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !_zoomedIn)
         {
             menuCanvas.SetActive(!menuCanvas.activeSelf);
             saveCanvas.SetActive(false);
-            
         }
 
         if (!_zoomedIn)
@@ -506,58 +503,39 @@ public class Director : MonoBehaviour
     
     public void ToggleSettlementWindow(Settlement settlement)
     {
+        // Tell the director we are zoom in
         _zoomedIn = true;
+        
+        // Store previous camera size and positions
         _prevPos = mainCam.transform.position;
         _prevSize = mainCam.orthographicSize;
+        
+        // Deactivate the settlementUI
         settlementUIs[settlement.GetTile()].SetActive(false);
         
+        // Instantiate Settlement Window Canvas
+        settlementWindow = Instantiate(settlementWindowCanvas);
+        
+        // Ensure it is active
+        settlementWindow.SetActive(true);
+    
+        // Give Settlement Window Script info necessary references
+        settlementWindow.GetComponent<SettlementWindow>()._settlement = settlement;
+        settlementWindow.GetComponent<SettlementWindow>().tilemap = baseTilemap;
+        settlementWindow.GetComponent<SettlementWindow>()._worldCanvas = worldCanvas;
+        settlementWindow.GetComponent<SettlementWindow>().settlementName.text = settlement.GetName();
+        
         ZoomCameraAtSettlement();
-        PopulateSettlementWindow();
         
-        void PopulateSettlementWindow()
-        {
-            // Instantiate Settlement Window Canvas
-            settlementWindow = Instantiate(settlementWindowCanvas);
-            // Ensure it is active
-            settlementWindow.SetActive(true);
-        
-            // Access List Viewport
-            Transform unitsContainer = settlementWindow.GetComponent<SettlementWindow>().unitsContent;
-            Transform buildingsContainer = settlementWindow.GetComponent<SettlementWindow>().buildingsContent;
-            settlementWindow.GetComponent<SettlementWindow>()._settlement = settlement;
-            settlementWindow.GetComponent<SettlementWindow>().tilemap = baseTilemap;
-            settlementWindow.GetComponent<SettlementWindow>()._worldCanvas = worldCanvas;
-            
-            // Fill Project Tabs
-            foreach (CityProject project in settlement.GetProjects())
-            {
-                GameObject projectPrefab = null;
-                
-                if (project.projectType == "unit")
-                {
-                    projectPrefab = Instantiate(cityProjectButton, unitsContainer);
-                }
-                else if (project.projectType == "building")
-                {
-                    projectPrefab = Instantiate(cityProjectButton, buildingsContainer);
-                }
-                
-                projectPrefab.GetComponent<ProjectButton>().name.text = project.projectName;
-                projectPrefab.GetComponent<ProjectButton>().turns.text = Math.Ceiling((double)(project.projectCost - project.currentProductionProgress / settlement.GetYieldsPt()[1])).ToString();
-                projectPrefab.GetComponent<ProjectButton>().settlement = settlement;
-                projectPrefab.GetComponent<ProjectButton>().project = project;
-            }
-
-            settlementWindow.GetComponent<SettlementWindow>().settlementName.text = settlement.GetName();
-        }
-
         void ZoomCameraAtSettlement()
         {
             // Settlement's Game Tile
             GameTile tile = settlement.GetTile();
             
+            // Settlement's position
             Vector3 settlementPosition = baseTilemap.CellToWorld(new Vector3Int(tile.GetYPos(), tile.GetXPos(), -1));
             
+            // Move camera into the Settlement Window view
             mainCam.transform.position = settlementPosition;
             mainCam.orthographicSize = 4f;
         }

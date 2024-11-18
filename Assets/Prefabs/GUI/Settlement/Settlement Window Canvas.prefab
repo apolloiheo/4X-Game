@@ -1692,14 +1692,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5f6c23313a8fb644a9673a8a71ac6f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 0}
   settlementWindow: {fileID: 7039692974896898312}
-  settlementCanvas: {fileID: 3351677811993924644}
+  _worldCanvas: {fileID: 0}
   unitsContent: {fileID: 3597552613227607190}
   buildingsContent: {fileID: 612810953862279479}
   director: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
   settlementName: {fileID: 8766336105797827154}
-  citizenParent: {fileID: 0}
   citizenOn: {fileID: 8828438948917521683, guid: 531e575f0290f5b4fb4f740841bf1baf, type: 3}
   citizenOff: {fileID: 408743816360994247, guid: aa697995e0a970742a878e905595b610, type: 3}
   citizenLocked: {fileID: 3122950074746812462, guid: a2b7e7d919fa5dd40862601d8f1545b5, type: 3}
@@ -1713,6 +1711,7 @@ MonoBehaviour:
     _workedTiles: []
     _lockedTiles: []
   tilemap: {fileID: 0}
+  cityProjectButton: {fileID: 3800566918516754172, guid: 5d3ffceca7676bf4f9a172545107dd5c, type: 3}
 --- !u!1 &7056435122029945541
 GameObject:
   m_ObjectHideFlags: 0
@@ -2469,7 +2468,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.27558166, y: 0.835298}
   m_AnchorMax: {x: 0.35568774, y: 0.9554327}
-  m_AnchoredPosition: {x: -3.999939, y: -5}
+  m_AnchoredPosition: {x: -3.9999542, y: -5}
   m_SizeDelta: {x: 2.9197083, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3527574034958730265

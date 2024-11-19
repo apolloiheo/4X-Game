@@ -1698,9 +1698,7 @@ MonoBehaviour:
   buildingsContent: {fileID: 612810953862279479}
   director: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
   settlementName: {fileID: 8766336105797827154}
-  citizenOn: {fileID: 8828438948917521683, guid: 531e575f0290f5b4fb4f740841bf1baf, type: 3}
-  citizenOff: {fileID: 408743816360994247, guid: aa697995e0a970742a878e905595b610, type: 3}
-  citizenLocked: {fileID: 3122950074746812462, guid: a2b7e7d919fa5dd40862601d8f1545b5, type: 3}
+  citizenUI: {fileID: 8828438948917521683, guid: 531e575f0290f5b4fb4f740841bf1baf, type: 3}
   _settlement:
     _civilization:
       IsNPC: 0

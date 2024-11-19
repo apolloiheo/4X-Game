@@ -64,7 +64,6 @@ public class Settlement : ISerialization
         _civilization = civilization;
         _territory = StartingTerritory(gameTile);
         _workedTiles = new List<GameTile>();
-        _workedTiles.Add(gameTile);
         _lockedTiles = new List<GameTile>();
         _lockedTiles.Add(gameTile);
         AutoAssignWorkedTiles();
@@ -199,17 +198,20 @@ public class Settlement : ISerialization
     /* Auto Assigns Worked Tiles that haven't been locked in by player */
     public void AutoAssignWorkedTiles()
     {
+        // Reinitialize _workedTiles
+        _workedTiles = new List<GameTile>();
+        
         // If there are exactly the same amount of locked tiles as there can possibly be worked
         if (_lockedTiles.Count == _population + 1)
         {
             // Assign them, and return.
             _workedTiles = _lockedTiles;
-            Debug.Log("All tiles already assigned. Returning.");
             return;
         }
         
         // Sort tiles in territory according to best yield value
         List<GameTile> bestTilesInTerritory = _territory;
+        
         // Best file in the front
         bestTilesInTerritory.Sort((tile1,tile2) => tile2.TileValue().CompareTo(tile1.TileValue()));
         
@@ -249,7 +251,6 @@ public class Settlement : ISerialization
             // If we are at max capacity
             if (_population + 1 <= _workedTiles.Count)
             {
-                Debug.Log("Auto Assigned tiles until full.");
                 return;
             }
             
@@ -258,6 +259,8 @@ public class Settlement : ISerialization
                 _workedTiles.Add(territoryTile);
             }
         }
+        
+        UpdateYields();
     }
     
     // Getter Methods

@@ -13,15 +13,14 @@ public class SettlementWindow : MonoBehaviour
     public RectTransform buildingsContent;
     public Director director;
     public TMP_Text settlementName;
-    public GameObject citizenOn;
-    public GameObject citizenOff;
-    public GameObject citizenLocked;
+    public GameObject citizenUI;
     public Settlement _settlement;
     public Tilemap tilemap;
     public GameObject cityProjectButton;
     
     private HashSet<GameObject> citizenUIs = new HashSet<GameObject>();
-    private bool managingCitizens;
+
+    private Dictionary<CityProject, GameObject> projects = new Dictionary<CityProject, GameObject>();
 
     public void Start()
     {
@@ -39,65 +38,45 @@ public class SettlementWindow : MonoBehaviour
         }
     }
 
+    public void RenderCitizenUIs()
+    {
+        // Initialize
+        citizenUIs = new HashSet<GameObject>();
+
+        foreach (GameTile tile in _settlement._territory)
+        {
+            // Get a Vector 3 Position of that tile
+            Vector3Int tilePosition = new Vector3Int(tile.GetYPos(), tile.GetXPos(), 0);
+            Vector3 worldPosition = tilemap.CellToWorld(tilePosition);
+            
+            // Instance citizen Obj and the UI prefab
+            GameObject citizen = Instantiate(citizenUI, _worldCanvas.transform);
+            
+            // Position it in world canvas
+            RectTransform rectTransform = citizen.GetComponentInChildren<RectTransform>();
+            rectTransform.position = worldPosition;
+            
+            // Set Citizen scripts references
+            citizen.GetComponent<Citizen>().settlementWindow = this;
+            citizen.GetComponent<Citizen>().settlement = _settlement;
+            citizen.GetComponent<Citizen>().gameTile = tile;
+            
+            // Keep track of it in HashSet
+            citizenUIs.Add(citizen);
+        }
+    }
+
     /* Renders buttons on top of Citizen tiles. */
     public void ToggleManageCitizens()
     {
         if (citizenUIs.Count <= 0)
         {
-            // Initialize
-            citizenUIs = new HashSet<GameObject>();
-            
-            // Render once
-            foreach (GameTile tile in _settlement._territory)
-            {
-                // Get a Vector3 Position of that Tile
-                Vector3Int tilePosition = new Vector3Int(tile.GetYPos(), tile.GetXPos(), 0);
-                Vector3 worldPosition = tilemap.CellToWorld(tilePosition);
-                
-                Debug.Log(" Worked tiles: " + _settlement._workedTiles.Count.ToString());
-            
-                if (_settlement._workedTiles.Contains(tile))
-                {
-                    // Spawn Citizen Image
-                    GameObject citizenUI = Instantiate(citizenOn, _worldCanvas.transform);
-                
-                    // Position it relative to screen space
-                    RectTransform rectTransform = citizenUI.GetComponentInChildren<RectTransform>();
-                    rectTransform.position = worldPosition;
-                    
-                    // Add it to Hash Set to keep track of it
-                    citizenUIs.Add(citizenUI);
-                }
-                else if (_settlement._lockedTiles.Contains(tile))
-                {
-                    // Spawn Locked Image
-                    GameObject lockedCitizen = Instantiate(citizenLocked, _worldCanvas.transform);
-                
-                    // Position it relative to screen space
-                    RectTransform rectTransform = lockedCitizen.GetComponentInChildren<RectTransform>();
-                    rectTransform.position = worldPosition;
-                    
-                    // Add it to Hash Set to keep track of it
-                    citizenUIs.Add(lockedCitizen);
-                
-                }
-                else if (!_settlement._workedTiles.Contains(tile))
-                {
-                    // Spawn Unused Image
-                    GameObject offCitizen = Instantiate(citizenOff, _worldCanvas.transform);
-                
-                    // Position it relative to screen space
-                    RectTransform rectTransform = offCitizen.GetComponentInChildren<RectTransform>();
-                    rectTransform.position = worldPosition;;
-                    
-                    // Add it to Hash Set to keep track of it
-                    citizenUIs.Add(offCitizen);
-                }
-            } 
+            RenderCitizenUIs();
         }
         else
         {
             DestroyCitizenUIs();
+            _settlement.AutoAssignWorkedTiles();
         }
     }
 
@@ -142,6 +121,19 @@ public class SettlementWindow : MonoBehaviour
             projectPrefab.GetComponent<ProjectButton>().turns.text = Math.Ceiling((double)((project.projectCost - project.currentProductionProgress) / _settlement.GetYieldsPt()[1])).ToString();
             projectPrefab.GetComponent<ProjectButton>().settlement = _settlement;
             projectPrefab.GetComponent<ProjectButton>().project = project;
+
+            projects.Add(project, projectPrefab);
+        }
+    }
+
+    /* Goes through each Project Prefab button and updates its cost. (Useful when Settlement changes yields) */
+    public void UpdateProjectTabs()
+    {
+        foreach (CityProject project in projects.Keys)
+        {
+            GameObject projectPrefab = projects[project];
+            
+            projectPrefab.GetComponent<ProjectButton>().turns.text = Math.Ceiling((double)((project.projectCost - project.currentProductionProgress) / _settlement.GetYieldsPt()[1])).ToString();
         }
     }
 }

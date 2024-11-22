@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Units;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -210,22 +211,6 @@ public class World : ISerialization
         foreach (var tuple in path)
         {
             Debug.Log(tuple.Item1);
-        }
-    }
-
-    // Creates a unit in a position(or uses a unit already in the position) and attempts to move it to the target location.
-    public void TestUnitMovement(int startX, int startY, int endX, int endY, int movementPoints=2)
-    {
-        GameTile startTile = _world[startX, startY];
-        GameTile endTile = _world[endX, endY];
-        if (startTile.GetUnit() is not null)
-        {
-            startTile.GetUnit().Move(endTile);
-        }
-        else
-        {
-            startTile.SetUnit(new Unit("Recruit", movementPoints, 0, 0, 0 ));
-            startTile.GetUnit().Move(endTile);
         }
     }
     

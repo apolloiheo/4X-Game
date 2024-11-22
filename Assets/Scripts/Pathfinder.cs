@@ -144,7 +144,7 @@ public static class Pathfinder
     {
         if (start.GetUnit() is not null)
         {
-            return AStarWithLimit(start, goal, start.GetUnit().GetMovementPoints());
+            return AStarWithLimit(start, goal, start.GetUnit()._currMP);
         }
         else return null;
 

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using City_Projects;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +17,7 @@ public class Director : MonoBehaviour
     public GameObject menuCanvas;
     public GameObject guiCanvas;
     public GameObject saveCanvas;
+    public GameObject unitWindowCanvas;
     public TMP_InputField saveIF;
     public GameObject settlementWindowCanvas;
     [Header("Owner")] 
@@ -64,10 +64,16 @@ public class Director : MonoBehaviour
     public GameObject settlementWindow;
     public GameObject territoryParent;
     public GameObject territoryLines;
+    public GameObject unitTab;
+    [Header("Unit Selection")]
+    public Unit selectedUnit;
+    public TMP_Text selectedUnitName;
+    public TMP_Text selectedUnitMovementPoints;
 
     // Private Instance Attributes
     private bool _needsDirection;
     private Dictionary<GameTile, GameObject> settlementUIs = new Dictionary<GameTile, GameObject>();
+    
     
     // Camera Values
     public bool _zoomedIn;
@@ -119,10 +125,22 @@ public class Director : MonoBehaviour
     // Update is called every frame
     private void Update()
     {
+        // Pressing Esc - Deselected Unit
         if (Input.GetKeyDown(KeyCode.Escape) && !_zoomedIn)
         {
+            // Toggle Unit Selected
+            if (unitTab.activeSelf)
+            {
+                // Deactive it
+                unitTab.SetActive(false);
+                return;
+            }
+            
+            // Toggle Menu Canvas
             menuCanvas.SetActive(!menuCanvas.activeSelf);
+            // Ensure that save canvas starts off
             saveCanvas.SetActive(false);
+            return;
         }
 
         if (!_zoomedIn)
@@ -246,7 +264,6 @@ public class Director : MonoBehaviour
                             double bigX = tileWidth * tile.GetXPos() * .75f;
                             double bigY = (float)(tile.GetYPos() * tileHeight + (tileHeight / 2) * (tile.GetXPos() % 2));
                             
-                            
                             // If this edge is at the end of the Settlement's territory 
                             if (!settlement._territory.Contains(neighbor))
                             {
@@ -262,6 +279,7 @@ public class Director : MonoBehaviour
                                     (tileHeight / 4f + tileHeight / 4f *
                                         Math.Abs(Math.Pow(0f, Math.Pow(0f, edge % 3f)) - 1f))),
                                 0f);
+                            
                             // Declare riverRotation variable
                             Quaternion territoryRotation;
 
@@ -500,11 +518,25 @@ public class Director : MonoBehaviour
             }
         }
     }
+
+    public void OpenUnitWindow()
+    {
+        unitWindowCanvas.SetActive(true);
+
+        // Change Window Text to Selected Unit Properties
+        // Name
+        selectedUnitName.text = selectedUnit._name;
+        // Movement Points
+        selectedUnitMovementPoints.text = selectedUnit._currMP.ToString();
+    }
     
     public void ToggleSettlementWindow(Settlement settlement)
     {
         // Tell the director we are zoom in
         _zoomedIn = true;
+
+        // Turn off the Base Canvas
+        guiCanvas.SetActive(false);
         
         // Store previous camera size and positions
         _prevPos = mainCam.transform.position;

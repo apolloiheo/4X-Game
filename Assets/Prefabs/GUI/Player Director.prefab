@@ -45,8 +45,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 0}
+  mainCam: {fileID: 0}
+  worldCanvas: {fileID: 0}
+  menuCanvas: {fileID: 0}
+  guiCanvas: {fileID: 1079547127313388032, guid: 100567947f7d634459e496955b249d61, type: 3}
+  saveCanvas: {fileID: 0}
+  saveIF: {fileID: 0}
+  settlementWindowCanvas: {fileID: 0}
+  civilization:
+    IsNPC: 0
+    _color:
+      serializedVersion: 2
+      rgba: 0
   baseTilemap: {fileID: 0}
-  terrainTilemap: {fileID: 0}
+  hillsTilemap: {fileID: 0}
+  mountainTilemap: {fileID: 0}
   featureTilemap: {fileID: 0}
   unitTilemap: {fileID: 0}
   tile: {fileID: 11400000, guid: 6dc6f9350229dc44fba6e7e57417cb10, type: 2}
@@ -73,3 +86,9 @@ MonoBehaviour:
   riverSegment: {fileID: 7700684974192715068, guid: 5ee1d19087010834ea13908e3fde1750, type: 3}
   village: {fileID: 11400000, guid: b2abd4511315fbe4a8fceb093144c256, type: 2}
   warrior: {fileID: 11400000, guid: d1800a3c292ef2b459ce77d97399bc54, type: 2}
+  settlementUI: {fileID: 0}
+  settlementWindow: {fileID: 0}
+  territoryParent: {fileID: 0}
+  territoryLines: {fileID: 0}
+  unitTab: {fileID: 0}
+  _zoomedIn: 0

@@ -420,7 +420,7 @@ public class GameTile : ISerialization
         _unit = unit;
         if (unit != null)
         {
-            _unit.SetTile(this);
+            _unit._gameTile = this;
         }
         
     }

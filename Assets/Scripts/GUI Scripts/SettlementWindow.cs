@@ -35,6 +35,8 @@ public class SettlementWindow : MonoBehaviour
         {
             DestoryWindow();
             DestroyCitizenUIs();
+            // Turn base UI back on
+            director.guiCanvas.SetActive(true);
         }
     }
 

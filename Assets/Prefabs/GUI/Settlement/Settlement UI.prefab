@@ -362,8 +362,12 @@ MonoBehaviour:
   settlement:
     _civilization:
       IsNPC: 0
+      _color:
+        serializedVersion: 2
+        rgba: 0
     _territory: []
     _workedTiles: []
+    _lockedTiles: []
   director: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
 --- !u!1 &6336259480508340930
 GameObject:

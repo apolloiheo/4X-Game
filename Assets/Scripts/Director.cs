@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using Units;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
@@ -8,28 +9,21 @@ using UnityEngine.Tilemaps;
 public class Director : MonoBehaviour
 {
     // Serialized Variables
-    [Header("Game Manager")] 
-    public GameManager gm;
-    [Header("Cameras")] 
-    public Camera mainCam;
-    [Header("Canvases")] 
-    public Canvas worldCanvas;
+    [Header("Game Manager")] public GameManager gm;
+    [Header("Cameras")] public Camera mainCam;
+    [Header("Canvases")] public Canvas worldCanvas;
     public GameObject menuCanvas;
     public GameObject guiCanvas;
     public GameObject saveCanvas;
     public GameObject unitWindowCanvas;
     public TMP_InputField saveIF;
     public GameObject settlementWindowCanvas;
-    [Header("Owner")] 
-    public Civilization civilization;
-    [Header("Tilemaps")] 
-    public Tilemap baseTilemap;
+    [Header("Owner")] public Civilization civilization;
+    [Header("Tilemaps")] public Tilemap baseTilemap;
     public Tilemap hillsTilemap;
     public Tilemap mountainTilemap;
     public Tilemap featureTilemap;
-    public Tilemap unitTilemap;
-    [Header("Flat Tiles")] 
-    public Tile tile;
+    [Header("Flat Tiles")] public Tile tile;
     public Tile prairieTile;
     public Tile grassTile;
     public Tile tundraTile;
@@ -38,56 +32,56 @@ public class Director : MonoBehaviour
     public Tile coastTile;
     public Tile snowTile;
     public Tile lakeTile;
-    [Header("Hills Tiles")]
-    public Tile prairieHillsTile;
+    [Header("Hills Tiles")] public Tile prairieHillsTile;
     public Tile grassHillsTile;
     public Tile tundraHillsTile;
     public Tile desertHillsTile;
     public Tile snowHillsTile;
-    [Header("Features")] 
-    public Tile woodsTile;
+    [Header("Features")] public Tile woodsTile;
     public Tile floodplainsTile;
     public Tile marshTile;
     public Tile rainforestTile;
     public Tile oasisTile;
-    [Header("Terrain")] 
-    public Tile mountain;
-    [Header("Rivers")] 
-    public GameObject riversParent;
+    [Header("Terrain")] public Tile mountain;
+    [Header("Rivers")] public GameObject riversParent;
     public GameObject riverSegment;
-    [Header("Settlements")] 
-    public Tile village;
-    [Header("Units")] 
-    public Tile warrior;
-    [Header("UI Prefabs")] 
-    public GameObject settlementUI;
+    [Header("Settlements")] public Tile village;
+    [Header("Units")] public Tile warrior;
+    [Header("UI Prefabs")] public GameObject settlementUI;
     public GameObject settlementWindow;
     public GameObject territoryParent;
     public GameObject territoryLines;
-    public GameObject unitTab;
-    [Header("Unit Selection")]
+    [Header("Unit Selection")] 
     public Unit selectedUnit;
     public TMP_Text selectedUnitName;
     public TMP_Text selectedUnitMovementPoints;
+    public GameObject unitPrefab;
+    public GameObject unitsParent;
+    
 
     // Private Instance Attributes
     private bool _needsDirection;
     private Dictionary<GameTile, GameObject> settlementUIs = new Dictionary<GameTile, GameObject>();
-    
-    
+    private HashSet<GameObject> units = new HashSet<GameObject>();
+
+
     // Camera Values
     public bool _zoomedIn;
     private Vector3 _prevPos;
     private float _prevSize;
-    
+
     // Camera Constants 
     private const float dragSpeed = 10f;
     private const float zoomSpeed = 2f;
     private const float minZoom = 2f;
+
     private const float maxZoom = 15f;
+
     // Grid Dimensions
     private const double tileHeight = 0.95f;
+
     private const double tileWidth = 1f;
+
     // Camera References
     private Vector3 dragOrign;
 
@@ -108,20 +102,17 @@ public class Director : MonoBehaviour
                 }
             }
         }
-        
-        // Place some Settlements down (for testing)
-        Test();
-        
+
         // Situate the World Canvas for UI (based on tilemap size)
         SetUpWorldCanvas();
-        
+
         // Render the game (once)
         RenderGame();
 
         // Player needs to take action -> True
         _needsDirection = true;
     }
-    
+
     // Update is called every frame
     private void Update()
     {
@@ -129,13 +120,13 @@ public class Director : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && !_zoomedIn)
         {
             // Toggle Unit Selected
-            if (unitTab.activeSelf)
+            if (unitWindowCanvas.activeSelf)
             {
                 // Deactive it
-                unitTab.SetActive(false);
+                unitWindowCanvas.SetActive(false);
                 return;
             }
-            
+
             // Toggle Menu Canvas
             menuCanvas.SetActive(!menuCanvas.activeSelf);
             // Ensure that save canvas starts off
@@ -148,7 +139,7 @@ public class Director : MonoBehaviour
             CameraControl();
         }
     }
-    
+
     // Open the Save Game Menu
     public void OpenSaveGameCanvas()
     {
@@ -159,7 +150,7 @@ public class Director : MonoBehaviour
     public void SendSaveToGm()
     {
         gm.SaveGame(saveIF.text);
-        
+
         saveCanvas.SetActive(false);
     }
 
@@ -168,10 +159,11 @@ public class Director : MonoBehaviour
     {
         // Set exact dimensions based on editor observations
         RectTransform canvasRect = worldCanvas.GetComponent<RectTransform>();
-        canvasRect.transform.position = new Vector3(worldCanvas.transform.position.x / 2, worldCanvas.transform.position.y / 2, worldCanvas.transform.position.z);
+        canvasRect.transform.position = new Vector3(worldCanvas.transform.position.x / 2,
+            worldCanvas.transform.position.y / 2, worldCanvas.transform.position.z);
         canvasRect.sizeDelta = new Vector2(74.2f, 47);
         canvasRect.pivot = new Vector2(74.2f / 2, 47f / 2);
-        
+
         // float tileWidth = baseTilemap.cellSize.x;
         // float tileHeight = baseTilemap.cellSize.y;
         // float tileCountX = gm.game.world.GetLength();
@@ -198,8 +190,9 @@ public class Director : MonoBehaviour
         RenderTilemaps(gameWorld);
         RenderSettlementUI(gameWorld);
         RenderTerritoryLines();
+        RenderUnits();
     }
-    
+
     /* Renders Settlement UI above Settlement Tiles */
     void RenderSettlementUI(World world)
     {
@@ -216,24 +209,24 @@ public class Director : MonoBehaviour
                     {
                         // Instantiate UI Prefab
                         GameObject uiInstance = Instantiate(settlementUI, worldCanvas.transform);
-                        
+
                         // Store the Settlement within Prefab
                         SettlementUI ui = uiInstance.GetComponent<SettlementUI>();
                         ui.settlement = currTile.GetSettlement();
-                        
+
                         // Update the UI's fields
                         UpdateUIFields(uiInstance, currTile.GetSettlement());
-                        
+
                         // Add this UI Prefab to our active SettlementUIs
                         settlementUIs.Add(currTile, uiInstance);
-                    
+
                         // Get the tile's world position
                         Vector3Int cellPosition = new Vector3Int(y, x, 0);
                         Vector3 tileWorldPosition = baseTilemap.CellToWorld(cellPosition);
-                        
+
                         // Make the UI Instance appear slightly above the Tile
                         tileWorldPosition += new Vector3(0, 0.7f, 0);
-                    
+
                         // Set the position of the UI element
                         uiInstance.transform.position = tileWorldPosition;
                     }
@@ -262,56 +255,59 @@ public class Director : MonoBehaviour
                         {
                             // Tile Position Variables - Jason knows how they work don't ask me.
                             double bigX = tileWidth * tile.GetXPos() * .75f;
-                            double bigY = (float)(tile.GetYPos() * tileHeight + (tileHeight / 2) * (tile.GetXPos() % 2));
-                            
+                            double bigY =
+                                (float)(tile.GetYPos() * tileHeight + (tileHeight / 2) * (tile.GetXPos() % 2));
+
                             // If this edge is at the end of the Settlement's territory 
                             if (!settlement._territory.Contains(neighbor))
                             {
                                 // Put a Territory on that edge// Instiate Vector3 for Position at Formula for River Position
-                            Vector3 territoryPosition = new Vector3((float)(bigX +
-                                                                        Math.Pow(-1f,
-                                                                            Math.Pow(0f,
-                                                                                (5f - edge) * (4f - edge))) *
-                                                                        Math.Pow(0f, Math.Pow(0f, edge % 3f)) *
-                                                                        tileWidth * 3 / 8),
-                                (float)(bigY + Math.Pow(-1f,
-                                        Math.Pow(0f, Math.Abs((edge - 2f) * (edge - 3f) * (edge - 4f)))) *
-                                    (tileHeight / 4f + tileHeight / 4f *
-                                        Math.Abs(Math.Pow(0f, Math.Pow(0f, edge % 3f)) - 1f))),
-                                0f);
-                            
-                            // Declare riverRotation variable
-                            Quaternion territoryRotation;
+                                Vector3 territoryPosition = new Vector3((float)(bigX +
+                                        Math.Pow(-1f,
+                                            Math.Pow(0f,
+                                                (5f - edge) * (4f - edge))) *
+                                        Math.Pow(0f, Math.Pow(0f, edge % 3f)) *
+                                        tileWidth * 3 / 8),
+                                    (float)(bigY + Math.Pow(-1f,
+                                            Math.Pow(0f, Math.Abs((edge - 2f) * (edge - 3f) * (edge - 4f)))) *
+                                        (tileHeight / 4f + tileHeight / 4f *
+                                            Math.Abs(Math.Pow(0f, Math.Pow(0f, edge % 3f)) - 1f))),
+                                    0f);
 
-                            if (edge == 1 || edge == 4)
-                            {
-                                // Set the rotation of the river based on it's edge
-                                territoryRotation = Quaternion.Euler(0f, 0f, -63f);
-                            }
-                            else if (edge == 5 || edge == 2)
-                            {
-                                // Set the rotation of the river based on it's edge
-                                territoryRotation = Quaternion.Euler(0f, 0f, 63f);
-                            }
-                            else
-                            {
-                                // Set the rotation of the river based on it's edge
-                                territoryRotation = Quaternion.Euler(0f, 0f, 0f);
-                            }
+                                // Declare riverRotation variable
+                                Quaternion territoryRotation;
 
-                            // Instantiate as part of the Rivers obj in order to not clog up hierarchy
-                            GameObject territoryLine = Instantiate(territoryLines, territoryPosition, territoryRotation);
-                            territoryLine.GetComponent<TerritroyLine>().color = civ._color;
-                            territoryLine.transform.SetParent(territoryParent.transform);
+                                if (edge == 1 || edge == 4)
+                                {
+                                    // Set the rotation of the river based on it's edge
+                                    territoryRotation = Quaternion.Euler(0f, 0f, -63f);
+                                }
+                                else if (edge == 5 || edge == 2)
+                                {
+                                    // Set the rotation of the river based on it's edge
+                                    territoryRotation = Quaternion.Euler(0f, 0f, 63f);
+                                }
+                                else
+                                {
+                                    // Set the rotation of the river based on it's edge
+                                    territoryRotation = Quaternion.Euler(0f, 0f, 0f);
+                                }
+
+                                // Instantiate as part of the Rivers obj in order to not clog up hierarchy
+                                GameObject territoryLine =
+                                    Instantiate(territoryLines, territoryPosition, territoryRotation);
+                                territoryLine.GetComponent<TerritroyLine>().color = civ._color;
+                                territoryLine.transform.SetParent(territoryParent.transform);
                             }
                         }
+
                         edge++;
                     }
                 }
             }
         }
     }
-    
+
     // Helper method to update UI fields for a given settlement
     void UpdateUIFields(GameObject uiObject, Settlement settlement)
     {
@@ -320,7 +316,7 @@ public class Director : MonoBehaviour
         TMP_Text growth = uiObject.transform.Find("Growth Text").GetComponent<TMP_Text>();
         TMP_Text production = uiObject.transform.Find("Production Text").GetComponent<TMP_Text>();
         TMP_Text name = uiObject.transform.Find("Name Text").GetComponent<TMP_Text>();
-            
+
         // Update the text fields with the settlement's data
         population.text = settlement.GetPopulation().ToString();
         growth.text = settlement.TurnsToGrow();
@@ -347,7 +343,7 @@ public class Director : MonoBehaviour
                 {
                     // Base Flat Tile
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), prairieTile);
-                    
+
                     // Hills
                     if (currTile.GetTerrain() == 1)
                     {
@@ -360,7 +356,7 @@ public class Director : MonoBehaviour
                 {
                     // Flat Tile
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), grassTile);
-                    
+
                     // Hills
                     if (currTile.GetTerrain() == 1)
                     {
@@ -373,7 +369,7 @@ public class Director : MonoBehaviour
                 {
                     // Flat Tile
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), tundraTile);
-                    
+
                     // Hills
                     if (currTile.GetTerrain() == 1)
                     {
@@ -387,7 +383,7 @@ public class Director : MonoBehaviour
                 {
                     // Flat Tile
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), desertTile);
-                    
+
                     // Hills
                     if (currTile.GetTerrain() == 1)
                     {
@@ -401,7 +397,7 @@ public class Director : MonoBehaviour
                 {
                     // Flat Tile
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), snowTile);
-                    
+
                     // Hills
                     if (world.GetTile(x, y).GetTerrain() == 1)
                     {
@@ -426,7 +422,7 @@ public class Director : MonoBehaviour
                 {
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), lakeTile);
                 }
-                
+
                 // Mountains
                 if (currTile.GetTerrain() == 2)
                 {
@@ -519,11 +515,49 @@ public class Director : MonoBehaviour
         }
     }
 
+    /* Render Units */
+    void RenderUnits()
+    {
+        for (int x = 0; x < gm.game.world.GetLength(); x++)
+        {
+            for (int y = 0; y < gm.game.world.GetHeight(); y++)
+            {
+                GameTile currTile = gm.game.world.GetTile(x, y);
+
+                if (currTile.GetUnit() is not null)
+                {
+                    // Calculate World Position
+                    Vector3Int tilePosition = new Vector3Int(y, x, 0);
+                    Vector3 worldPosition = baseTilemap.CellToWorld(tilePosition);
+
+                    // Instantitate
+                    GameObject unit = Instantiate(unitPrefab, unitsParent.transform);
+
+                    // Move Unit to Tile
+                    unit.transform.position = worldPosition;
+
+                    // Give the Prefab reference to its own Unit
+                    unit.GetComponent<UnitPrefab>().Unit = currTile.GetUnit();
+                    unit.GetComponent<UnitPrefab>().director = this;
+                    
+                    // Update it's art and values
+                    unit.GetComponent<UnitPrefab>().UpdatePrefab();
+
+                    // Add it to our HashSet tracker
+                    units.Add(unit);
+                }
+            }
+        }
+    }
+    
+
     public void OpenUnitWindow()
     {
+        // Activate the Unit Window Canvas
         unitWindowCanvas.SetActive(true);
 
-        // Change Window Text to Selected Unit Properties
+        // Update Window Values to Selected Unit Properties
+        
         // Name
         selectedUnitName.text = selectedUnit._name;
         // Movement Points
@@ -585,24 +619,6 @@ public class Director : MonoBehaviour
         
         RenderSettlementUI(gm.game.world);
     }
-
-    // Places some settlements down for testing
-    private void Test()
-    {
-        List<Point> spawnPoints = gm.game.world.GetSpawnPoints();
-        
-        foreach (Point start in spawnPoints)
-        {
-            // Put a Settlement at each start point
-            GameTile currTile = gm.game.world.GetTile(start);
-            
-            Settlement settlement = new Settlement("Jersey", gm.game.civilizations[0], currTile);
-            
-            gm.game.civilizations[0].AddSettlement(settlement);
-            
-            currTile.SetSettlement(settlement);
-        }
-    }    
 
     // Load Main Menu Scene
     public void QuitToMainMenu()

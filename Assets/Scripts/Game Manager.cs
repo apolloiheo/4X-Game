@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Units;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -40,8 +41,36 @@ public class GameManager : MonoBehaviour
         game.civilizations.Add(player3);
         game.civilizations.Add(player4);
         game.world = new WorldGenerator().GenerateWorld(100, 50, 2, worldSeed, game.civilizations.Count);
+        Test();
         SceneManager.LoadScene(1);
     }
+    
+    // Places some settlements down for testing
+    private void Test()
+    {
+        List<Point> spawnPoints = game.world.GetSpawnPoints();
+        
+        foreach (Point start in spawnPoints)
+        {
+            // Put a Settlement at each start point
+            GameTile currTile = game.world.GetTile(start);
+            
+            Settlement settlement = new Settlement("Jersey", game.civilizations[0], currTile);
+            
+            game.civilizations[0].AddSettlement(settlement);
+            
+            currTile.SetSettlement(settlement);
+
+            foreach (GameTile tile in currTile.GetNeighbors())
+            {
+                if (tile.IsWalkable())
+                {
+                    tile.SetUnit(new Warrior(tile, game.civilizations[0]));
+                    break;
+                }
+            }
+        }
+    }    
     
     public void SaveGame(string filename) 
     {

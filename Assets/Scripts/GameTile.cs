@@ -506,6 +506,16 @@ public class GameTile : ISerialization
         return _yields;
     }
 
+    public bool IsWalkable()
+    {
+        if (IsLand() && _terrain != 2)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public void StageForSerialization()
     {
         // This is reset by world's set adjacency

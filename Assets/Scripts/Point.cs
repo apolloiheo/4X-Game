@@ -12,4 +12,9 @@ public class Point
         this.x = x;
         this.y = y;
     }
+
+    public string ToString()
+    {
+        return "(" + x + "," + y + ")";
+    }
 }

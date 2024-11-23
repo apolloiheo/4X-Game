@@ -23,6 +23,7 @@ public class Director : MonoBehaviour
     public Tilemap hillsTilemap;
     public Tilemap mountainTilemap;
     public Tilemap featureTilemap;
+    public Tilemap shadingTilemap;
     [Header("Flat Tiles")] public Tile tile;
     public Tile prairieTile;
     public Tile grassTile;
@@ -42,8 +43,14 @@ public class Director : MonoBehaviour
     public Tile marshTile;
     public Tile rainforestTile;
     public Tile oasisTile;
-    [Header("Terrain")] public Tile mountain;
-    [Header("Rivers")] public GameObject riversParent;
+    [Header("Terrain")] 
+    public Tile mountain;
+    [Header("Shading Tiles")] 
+    public Tile highlight;
+    public Tile unexplored;
+    public Tile darkened;
+    [Header("Rivers")] 
+    public GameObject riversParent;
     public GameObject riverSegment;
     [Header("Settlements")] public Tile village;
     [Header("Units")] public Tile warrior;
@@ -57,13 +64,12 @@ public class Director : MonoBehaviour
     public TMP_Text selectedUnitMovementPoints;
     public GameObject unitPrefab;
     public GameObject unitsParent;
-    
 
     // Private Instance Attributes
     private bool _needsDirection;
     private Dictionary<GameTile, GameObject> settlementUIs = new Dictionary<GameTile, GameObject>();
     private HashSet<GameObject> units = new HashSet<GameObject>();
-
+    private HashSet<Point> highlightedTiles = new HashSet<Point>();
 
     // Camera Values
     public bool _zoomedIn;
@@ -124,6 +130,10 @@ public class Director : MonoBehaviour
             {
                 // Deactive it
                 unitWindowCanvas.SetActive(false);
+                // Unselect Unit
+                selectedUnit = null;
+                //Remove possibleMoves() highlighted tiles
+                RemovePossibleMoves();
                 return;
             }
 
@@ -537,7 +547,7 @@ public class Director : MonoBehaviour
                     unit.transform.position = worldPosition;
 
                     // Give the Prefab reference to its own Unit
-                    unit.GetComponent<UnitPrefab>().Unit = currTile.GetUnit();
+                    unit.GetComponent<UnitPrefab>().unit = currTile.GetUnit();
                     unit.GetComponent<UnitPrefab>().director = this;
                     
                     // Update it's art and values
@@ -549,8 +559,50 @@ public class Director : MonoBehaviour
             }
         }
     }
-    
 
+    public void SelectUnit(Unit unit)
+    {
+        // Assign Selected Unit
+        selectedUnit = unit;
+        
+        // Set UnitWindow Active and Update it's text
+        OpenUnitWindow();
+
+        // Display that Unit's possible moves through the Shading Tilemap (highlight tiles)
+        DisplayPossibleMoves(unit);
+    }
+
+    void DisplayPossibleMoves(Unit unit)
+    {
+        List<Point> possibleMoves = unit.GetPossibleMoves(unit._gameTile, unit._currMP, true);
+        
+        if (possibleMoves.Count > 0)
+        {
+            foreach (Point point in possibleMoves)
+            {
+                // On a shading Tilemap, place highlights on the possible moves
+                shadingTilemap.SetTile(new Vector3Int(point.y, point.x), highlight);
+
+                // Store that point
+                highlightedTiles.Add(point);
+            }
+        }
+    }
+
+    void RemovePossibleMoves()
+    {
+        if (highlightedTiles.Count > 0)
+        {
+            foreach (Point point in highlightedTiles)
+            {
+                // Remove that tile
+                shadingTilemap.SetTile(new Vector3Int(point.y, point.x), null);
+            }
+            
+            highlightedTiles.Clear();
+        }
+    }
+    
     public void OpenUnitWindow()
     {
         // Activate the Unit Window Canvas

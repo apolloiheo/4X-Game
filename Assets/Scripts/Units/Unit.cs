@@ -33,8 +33,9 @@ public abstract class Unit : ISerialization
     public List<Promotion> _promotions; // Unlocked Promotions
     [JsonProperty]
     public Point _position;
-
-    public List<Point> possible_moves = new List<Point>();
+    
+    // Private Variables
+    private List<Point> possible_moves;
     
     // References
     public GameTile _gameTile; //The Tile this Unit is on. 
@@ -100,30 +101,82 @@ public abstract class Unit : ISerialization
         _health -= damage;
     }
 
-    public List<Point> getPossibleMoves(Point currPoint, int movementPoints, bool isInitialPoint)
+    public List<Point> GetPossibleMoves(GameTile currTile, int movementPoints, bool isInitial)
     {
-        if (isInitialPoint)
+        if (isInitial)
         {
             possible_moves = new List<Point>();
         }
+        
         if (movementPoints == 0)
         {
-            possible_moves.Add(currPoint);
+            possible_moves.Add(new Point(currTile.GetXPos(), currTile.GetYPos()));
         }
-
-        if (movementPoints > 0)
+        
+        if (movementPoints < 0)
         {
             return null;
         }
 
-        foreach (GameTile neighbor in _gameTile.GetNeighbors())
+        foreach (GameTile neighbor in currTile.GetNeighbors())
         {
-            if (neighbor.GetMovementCost() <= movementPoints)
+            if (neighbor.GetMovementCost() <= movementPoints && neighbor.IsWalkable())
             {
-                getPossibleMoves(new Point(neighbor.GetXPos(), neighbor.GetYPos()), movementPoints - neighbor.GetMovementCost(), false);
+                List<Point> possibleMoves = GetPossibleMoves(neighbor, movementPoints - neighbor.GetMovementCost(), false);
+                
+                possible_moves.AddRange(possibleMoves);
             }
         }
+        
+        // String Building
+        /*string pointsString = "";
+        foreach (Point point in possible_moves)
+        {
+            pointsString += point.ToString() + "\n";
+        }
+
+        Debug.Log(pointsString);*/
+        
         return possible_moves;
+    }
+    
+    public List<GameTile> PossibleMoves()
+    {
+        List<GameTile> possibleMoves = new List<GameTile>();
+        Queue<(GameTile, int)> queue = new Queue<(GameTile, int)>();
+        HashSet<GameTile> visited = new HashSet<GameTile>();
+        
+        // Start with current tile
+        queue.Enqueue((_gameTile, _currMP));
+        visited.Add(_gameTile);
+
+        while (queue.Count > 0)
+        {
+            var (tile, remainingPoints) = queue.Dequeue();
+
+            foreach (GameTile neighbor in _gameTile.GetNeighbors())
+            {
+                // Skip if already vistied
+                if (visited.Contains(neighbor))
+                {
+                    continue;
+                }
+                
+                // Calculate remaining movement points after moving to this neighbor
+                int movementCost = neighbor.GetMovementCost();
+                int newRemainingPoints = remainingPoints - movementCost;
+                
+                // If the unit can move to this tile
+                if (newRemainingPoints >= 0)
+                {
+                    possibleMoves.Add(neighbor);
+                    queue.Enqueue((neighbor, newRemainingPoints));
+                    visited.Add(neighbor);
+                }
+            }
+        }
+        
+        return possibleMoves;
     }
     
     public void StageForSerialization()

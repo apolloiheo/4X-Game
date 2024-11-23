@@ -8,6 +8,7 @@ namespace Units
         {
             _name = "Warrior";
             _baseMP = 2;
+            _currMP = _baseMP;
             _combatStrength = 20;
             _supplies = 10;
             _attackRange = 0;
@@ -16,6 +17,7 @@ namespace Units
             _exhausted = false;
             _fortified = false;
             _gameTile = tile;
+            _position = new Point(_gameTile.GetYPos(), _gameTile.GetXPos());
             _civilization = civilization;
             _promotions = new List<Promotion>();
         }

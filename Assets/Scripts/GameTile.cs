@@ -488,7 +488,17 @@ public class GameTile : ISerialization
 
     public int GetMovementCost()
     {
-        return _mc;
+        if (_terrain == 1)
+        {
+            return 2;
+        }
+
+        if (_feature is 1 or 3 or 4)
+        {
+            return 2;
+        }
+
+        return 1;
     }
 
     public Unit GetUnit()

@@ -574,11 +574,11 @@ public class Director : MonoBehaviour
 
     void DisplayPossibleMoves(Unit unit)
     {
-        List<Point> possibleMoves = unit.GetPossibleMoves(unit._gameTile, unit._currMP, true);
+        unit.GetPossibleMoves(unit._gameTile, unit._currMP, true);
         
-        if (possibleMoves.Count > 0)
+        if (unit.possible_moves.Count > 0)
         {
-            foreach (Point point in possibleMoves)
+            foreach (Point point in unit.possible_moves)
             {
                 // On a shading Tilemap, place highlights on the possible moves
                 shadingTilemap.SetTile(new Vector3Int(point.y, point.x), highlight);

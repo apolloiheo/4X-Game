@@ -17,6 +17,10 @@ public class UnitPrefab : MonoBehaviour
 
     public void OnClick()
     {
-        director.SelectUnit(unit);
+        if (!director._zoomedIn)
+        {
+            director.SelectUnit(unit);
+            director.selectedUnitPrefab = this.gameObject;
+        }
     }
 }

@@ -179,4 +179,21 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    public void MoveUnit(Unit unit, Point target)
+    {
+        // Store Game Tile references
+        GameTile previousTile = unit._gameTile;
+        GameTile newTile = game.world.GetTile(target);
+        
+        // Update Tiles
+        previousTile.SetUnit(null);
+        newTile.SetUnit(unit);
+        
+        // Update Unit's own Tile
+        unit._gameTile = newTile;
+        
+        // Restart get possible moves
+        unit.GetPossibleMoves(unit._gameTile, unit._currMP, true);
+    }
 }

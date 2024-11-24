@@ -89,6 +89,7 @@ public abstract class Unit : ISerialization
         Debug.Log("Ended at" + _gameTile.GetXPos() +  _gameTile.GetYPos());
         Debug.Log("Was trying to arrive at" + target.GetXPos() +  target.GetYPos());
     }
+    
 
     /* Attack a Settlement */
     public void Attack(Settlement target)

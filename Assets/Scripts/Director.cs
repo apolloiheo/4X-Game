@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
-using Units;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
@@ -60,6 +59,7 @@ public class Director : MonoBehaviour
     public GameObject territoryLines;
     [Header("Unit Selection")] 
     public Unit selectedUnit;
+    public GameObject selectedUnitPrefab;
     public TMP_Text selectedUnitName;
     public TMP_Text selectedUnitMovementPoints;
     public GameObject unitPrefab;
@@ -120,7 +120,7 @@ public class Director : MonoBehaviour
     }
 
     // Update is called every frame
-    private void Update()
+    void Update()
     {
         // Pressing Esc - Deselected Unit
         if (Input.GetKeyDown(KeyCode.Escape) && !_zoomedIn)
@@ -132,6 +132,7 @@ public class Director : MonoBehaviour
                 unitWindowCanvas.SetActive(false);
                 // Unselect Unit
                 selectedUnit = null;
+                selectedUnitPrefab = null;
                 //Remove possibleMoves() highlighted tiles
                 RemovePossibleMoves();
                 return;
@@ -148,8 +149,111 @@ public class Director : MonoBehaviour
         {
             CameraControl();
         }
+
+
+        if (selectedUnit != null)
+        {
+            if (Input.GetMouseButtonDown(1)) // 1 - Right Mousebutton
+            {
+                Vector3 mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+                mousePos.z = 0;
+                
+                Vector3Int cellPosition = shadingTilemap.WorldToCell(mousePos);
+
+                // If that location is highlighted
+                if (shadingTilemap.HasTile(cellPosition))
+                {
+                    // Move Unit in GM
+                    gm.MoveUnit(selectedUnit, new Point(cellPosition.y, cellPosition.x) );
+                    
+                    // Rerender Units
+                    selectedUnitPrefab.transform.position = shadingTilemap.CellToWorld(cellPosition);
+                    
+                    // Reset previous moves
+                    RemovePossibleMoves();
+                    
+                    // Display New Possible Moves
+                    DisplayPossibleMoves(selectedUnit);
+                }
+            }
+        }
     }
 
+    public void OpenUnitWindow()
+    {
+        // Activate the Unit Window Canvas
+        unitWindowCanvas.SetActive(true);
+
+        // Update Window Values to Selected Unit Properties
+        
+        // Name
+        selectedUnitName.text = selectedUnit._name;
+        // Movement Points
+        selectedUnitMovementPoints.text = selectedUnit._currMP.ToString();
+    }
+    
+    public void ToggleSettlementWindow(Settlement settlement)
+    {
+        // Tell the director we are zoom in
+        _zoomedIn = true;
+
+        // Turn off the Base Canvas
+        guiCanvas.SetActive(false);
+        
+        // Store previous camera size and positions
+        _prevPos = mainCam.transform.position;
+        _prevSize = mainCam.orthographicSize;
+        
+        // Deactivate the settlementUI
+        settlementUIs[settlement.GetTile()].SetActive(false);
+        
+        // Instantiate Settlement Window Canvas
+        settlementWindow = Instantiate(settlementWindowCanvas);
+        
+        // Ensure it is active
+        settlementWindow.SetActive(true);
+    
+        // Give Settlement Window Script info necessary references
+        settlementWindow.GetComponent<SettlementWindow>()._settlement = settlement;
+        settlementWindow.GetComponent<SettlementWindow>().tilemap = baseTilemap;
+        settlementWindow.GetComponent<SettlementWindow>()._worldCanvas = worldCanvas;
+        settlementWindow.GetComponent<SettlementWindow>().settlementName.text = settlement.GetName();
+        
+        ZoomCameraAtSettlement();
+        
+        void ZoomCameraAtSettlement()
+        {
+            // Settlement's Game Tile
+            GameTile tile = settlement.GetTile();
+            
+            // Settlement's position
+            Vector3 settlementPosition = baseTilemap.CellToWorld(new Vector3Int(tile.GetYPos(), tile.GetXPos(), -1));
+            
+            // Move camera into the Settlement Window view
+            mainCam.transform.position = settlementPosition;
+            mainCam.orthographicSize = 4f;
+        }
+    }
+
+    public void RestoreCameraState()
+    {
+        mainCam.transform.position = _prevPos;
+        mainCam.orthographicSize = _prevSize;
+
+        foreach (GameObject uiPrefab in settlementUIs.Values)
+        {
+            uiPrefab.SetActive(true);
+        }
+        
+        RenderSettlementUI(gm.game.world);
+    }
+
+    // Load Main Menu Scene
+    public void QuitToMainMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+    
     // Open the Save Game Menu
     public void OpenSaveGameCanvas()
     {
@@ -163,9 +267,21 @@ public class Director : MonoBehaviour
 
         saveCanvas.SetActive(false);
     }
+    
+    public void SelectUnit(Unit unit)
+    {
+        // Assign Selected Unit
+        selectedUnit = unit;
+        
+        // Set UnitWindow Active and Update it's text
+        OpenUnitWindow();
+
+        // Display that Unit's possible moves through the Shading Tilemap (highlight tiles)
+        DisplayPossibleMoves(unit);
+    }
 
     /* Resizes World Canvas to match Tilemap size (should work with different world sizes or grid/cell sizes) */
-    private void SetUpWorldCanvas()
+    void SetUpWorldCanvas()
     {
         // Set exact dimensions based on editor observations
         RectTransform canvasRect = worldCanvas.GetComponent<RectTransform>();
@@ -194,7 +310,7 @@ public class Director : MonoBehaviour
     }
 
     /* Render everything in the Game. */
-    private void RenderGame()
+    void RenderGame()
     {
         World gameWorld = gm.game.world;
         RenderTilemaps(gameWorld);
@@ -248,8 +364,25 @@ public class Director : MonoBehaviour
                 }
             }
         }
+        
+        // Helper method to update UI fields for a given settlement
+        void UpdateUIFields(GameObject uiObject, Settlement settlement)
+        {
+            // Access TMP_Text Objs - These need to be access through a script transform.Find is too expensive 
+            TMP_Text population = uiObject.transform.Find("Population Text").GetComponent<TMP_Text>();
+            TMP_Text growth = uiObject.transform.Find("Growth Text").GetComponent<TMP_Text>();
+            TMP_Text production = uiObject.transform.Find("Production Text").GetComponent<TMP_Text>();
+            TMP_Text name = uiObject.transform.Find("Name Text").GetComponent<TMP_Text>();
+
+            // Update the text fields with the settlement's data
+            population.text = settlement.GetPopulation().ToString();
+            growth.text = settlement.TurnsToGrow();
+            production.text = settlement.TurnsToProduce();
+            name.text = settlement.GetName();
+        }
     }
 
+    /* Spawns Territory Lines on Tile Edges around Settlement's territory. */
     void RenderTerritoryLines()
     {
         foreach (Civilization civ in gm.game.civilizations)
@@ -316,22 +449,6 @@ public class Director : MonoBehaviour
                 }
             }
         }
-    }
-
-    // Helper method to update UI fields for a given settlement
-    void UpdateUIFields(GameObject uiObject, Settlement settlement)
-    {
-        // Access TMP_Text Objs - These need to be access through a script transform.Find is too expensive 
-        TMP_Text population = uiObject.transform.Find("Population Text").GetComponent<TMP_Text>();
-        TMP_Text growth = uiObject.transform.Find("Growth Text").GetComponent<TMP_Text>();
-        TMP_Text production = uiObject.transform.Find("Production Text").GetComponent<TMP_Text>();
-        TMP_Text name = uiObject.transform.Find("Name Text").GetComponent<TMP_Text>();
-
-        // Update the text fields with the settlement's data
-        population.text = settlement.GetPopulation().ToString();
-        growth.text = settlement.TurnsToGrow();
-        production.text = settlement.TurnsToProduce();
-        name.text = settlement.GetName();
     }
 
     /* Renders all Tilemaps */
@@ -560,16 +677,20 @@ public class Director : MonoBehaviour
         }
     }
 
-    public void SelectUnit(Unit unit)
+    void UpdateUnitPositions()
     {
-        // Assign Selected Unit
-        selectedUnit = unit;
-        
-        // Set UnitWindow Active and Update it's text
-        OpenUnitWindow();
-
-        // Display that Unit's possible moves through the Shading Tilemap (highlight tiles)
-        DisplayPossibleMoves(unit);
+        foreach (GameObject unit in units)
+        {
+            // Get Access to the Unit's tile
+            GameTile unitTile = unit.GetComponent<UnitPrefab>().unit._gameTile;
+            
+            // Set the location where it is supposed to be
+            Vector3Int cellPosition = new Vector3Int(unitTile.GetYPos(), unitTile.GetXPos(), 0);
+            Vector3 worldPosition = baseTilemap.CellToWorld(cellPosition);
+            
+            // Make sure prefab is on that Tile.
+            unit.transform.position = worldPosition;
+        }
     }
 
     void DisplayPossibleMoves(Unit unit)
@@ -602,112 +723,36 @@ public class Director : MonoBehaviour
             highlightedTiles.Clear();
         }
     }
-    
-    public void OpenUnitWindow()
-    {
-        // Activate the Unit Window Canvas
-        unitWindowCanvas.SetActive(true);
-
-        // Update Window Values to Selected Unit Properties
-        
-        // Name
-        selectedUnitName.text = selectedUnit._name;
-        // Movement Points
-        selectedUnitMovementPoints.text = selectedUnit._currMP.ToString();
-    }
-    
-    public void ToggleSettlementWindow(Settlement settlement)
-    {
-        // Tell the director we are zoom in
-        _zoomedIn = true;
-
-        // Turn off the Base Canvas
-        guiCanvas.SetActive(false);
-        
-        // Store previous camera size and positions
-        _prevPos = mainCam.transform.position;
-        _prevSize = mainCam.orthographicSize;
-        
-        // Deactivate the settlementUI
-        settlementUIs[settlement.GetTile()].SetActive(false);
-        
-        // Instantiate Settlement Window Canvas
-        settlementWindow = Instantiate(settlementWindowCanvas);
-        
-        // Ensure it is active
-        settlementWindow.SetActive(true);
-    
-        // Give Settlement Window Script info necessary references
-        settlementWindow.GetComponent<SettlementWindow>()._settlement = settlement;
-        settlementWindow.GetComponent<SettlementWindow>().tilemap = baseTilemap;
-        settlementWindow.GetComponent<SettlementWindow>()._worldCanvas = worldCanvas;
-        settlementWindow.GetComponent<SettlementWindow>().settlementName.text = settlement.GetName();
-        
-        ZoomCameraAtSettlement();
-        
-        void ZoomCameraAtSettlement()
-        {
-            // Settlement's Game Tile
-            GameTile tile = settlement.GetTile();
-            
-            // Settlement's position
-            Vector3 settlementPosition = baseTilemap.CellToWorld(new Vector3Int(tile.GetYPos(), tile.GetXPos(), -1));
-            
-            // Move camera into the Settlement Window view
-            mainCam.transform.position = settlementPosition;
-            mainCam.orthographicSize = 4f;
-        }
-    }
-
-    public void RestoreCameraState()
-    {
-        mainCam.transform.position = _prevPos;
-        mainCam.orthographicSize = _prevSize;
-
-        foreach (GameObject uiPrefab in settlementUIs.Values)
-        {
-            uiPrefab.SetActive(true);
-        }
-        
-        RenderSettlementUI(gm.game.world);
-    }
-
-    // Load Main Menu Scene
-    public void QuitToMainMenu()
-    {
-        SceneManager.LoadScene(0);
-    }
 
     /* Calls all the other Camera methods. */
     void CameraControl()
     {
         DragCamera();
         HandleZoom();
-    }
-
-    /* Moves the Camera by dragging the world with Left-Click. */
-    void DragCamera()
-    {
-        // When left mouse is clicked
-        if (Input.GetMouseButtonDown(0))
+        
+        /* Moves the Camera by dragging the world with Left-Click. */
+        void DragCamera()
         {
-            dragOrign = mainCam.ScreenToWorldPoint(Input.mousePosition);
-        }
+            // When left mouse is clicked
+            if (Input.GetMouseButtonDown(0))
+            {
+                dragOrign = mainCam.ScreenToWorldPoint(Input.mousePosition);
+            }
 
-        // While left mouse is held
-        if (Input.GetMouseButton(0))
+            // While left mouse is held
+            if (Input.GetMouseButton(0))
+            {
+                Vector3 difference = dragOrign - mainCam.ScreenToWorldPoint(Input.mousePosition);
+                mainCam.transform.position += difference * (dragSpeed * Time.deltaTime);
+            }
+        }
+    
+        /* Changes the size of the camera with Mouse Scroll wheel. */
+        void HandleZoom()
         {
-            Vector3 difference = dragOrign - mainCam.ScreenToWorldPoint(Input.mousePosition);
-            mainCam.transform.position += difference * (dragSpeed * Time.deltaTime);
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            mainCam.orthographicSize -= scroll * zoomSpeed;
+            mainCam.orthographicSize = Mathf.Clamp(mainCam.orthographicSize, minZoom, maxZoom);
         }
     }
-    
-    /* Changes the size of the camera with Mouse Scroll wheel. */
-    void HandleZoom()
-    {
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        mainCam.orthographicSize -= scroll * zoomSpeed;
-        mainCam.orthographicSize = Mathf.Clamp(mainCam.orthographicSize, minZoom, maxZoom);
-    }
-    
 }

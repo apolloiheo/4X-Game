@@ -488,11 +488,13 @@ public class GameTile : ISerialization
 
     public int GetMovementCost()
     {
+        // If Hill
         if (_terrain == 1)
         {
             return 2;
         }
 
+        // If Woods, Marsh, or Rainforest
         if (_feature is 1 or 3 or 4)
         {
             return 2;

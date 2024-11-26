@@ -3314,6 +3314,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 393516174211181368}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: woodsTile_plains
+      value: 
+      objectReference: {fileID: 11400000, guid: ed535cbce8b234e1d96196a98d76f39c, type: 2}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: cityProjectButton
       value: 
       objectReference: {fileID: 3800566918516754172, guid: 5d3ffceca7676bf4f9a172545107dd5c, type: 3}
@@ -3321,6 +3325,10 @@ PrefabInstance:
       propertyPath: settlementUIParent
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: woodsTile_grassland
+      value: 
+      objectReference: {fileID: 11400000, guid: 7bf481a80da13274a885d345b5637b36, type: 2}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: settlementWindowCanvas
       value: 

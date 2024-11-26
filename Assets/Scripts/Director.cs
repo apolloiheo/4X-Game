@@ -37,7 +37,8 @@ public class Director : MonoBehaviour
     public Tile tundraHillsTile;
     public Tile desertHillsTile;
     public Tile snowHillsTile;
-    [Header("Features")] public Tile woodsTile;
+    [Header("Features")] public Tile woodsTile_grassland;
+	public Tile woodsTile_plains;
     public Tile floodplainsTile;
     public Tile marshTile;
     public Tile rainforestTile;
@@ -610,7 +611,14 @@ public class Director : MonoBehaviour
                 // Woods
                 if (currTile.GetFeature() == 1)
                 {
-                    featureTilemap.SetTile(new Vector3Int(y, x, 0), woodsTile);
+					if (currTile.GetBiome() == 1)
+					{
+                    	featureTilemap.SetTile(new Vector3Int(y, x, 0), woodsTile_plains);
+					}
+					else 
+					{
+						featureTilemap.SetTile(new Vector3Int(y, x, 0), woodsTile_grassland);
+					}
                 }
                 // Floodplains
                 else if (currTile.GetFeature() == 2)

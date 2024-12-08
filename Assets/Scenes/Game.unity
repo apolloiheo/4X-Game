@@ -3202,9 +3202,9 @@ PrefabInstance:
       value: Player Director
       objectReference: {fileID: 0}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: gm
+      propertyPath: tile
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: cbca67c175c26c849ba45fb338fd9f35, type: 2}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: saveIF
       value: 
@@ -3214,17 +3214,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1297460425}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: citizenUI
-      value: 
-      objectReference: {fileID: 8828438948917521683, guid: 531e575f0290f5b4fb4f740841bf1baf, type: 3}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: guiCanvas
       value: 
       objectReference: {fileID: 414876454}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: highlight
       value: 
-      objectReference: {fileID: 11400000, guid: b67d49639f3c06f40a847baeb4853375, type: 2}
+      objectReference: {fileID: 11400000, guid: cbca67c175c26c849ba45fb338fd9f35, type: 2}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: menuCanvas
       value: 
@@ -3234,21 +3230,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1772910759}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: unitPrefab
-      value: 
-      objectReference: {fileID: 152829552671779283, guid: d8f718e0d3eab6243bfcbe0d6ae74977, type: 3}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: baseTilemap
       value: 
       objectReference: {fileID: 407515335}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: mapUICanvas
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: unitTilemap
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: unitsParent
       value: 
@@ -3266,37 +3250,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1540924628}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: settlementUI
-      value: 
-      objectReference: {fileID: 5723561007570470701, guid: cdff5139bdaca52478ec641965bd9b7d, type: 3}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: snowHillsTile
-      value: 
-      objectReference: {fileID: 11400000, guid: a31264ef5fae64043ac53d2ffde82647, type: 2}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: featureTilemap
       value: 
       objectReference: {fileID: 1529647187}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: grassHillsTile
-      value: 
-      objectReference: {fileID: 11400000, guid: e6eabd19921ddac43819496849e91ae1, type: 2}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: shadingTilemap
       value: 
       objectReference: {fileID: 1182034947}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: terrainTilemap
-      value: 
-      objectReference: {fileID: 111856324}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: territoryLines
-      value: 
-      objectReference: {fileID: 5212823977036206406, guid: dbe8bb619cb8e1449b9fae5787478918, type: 3}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: desertHillsTile
-      value: 
-      objectReference: {fileID: 11400000, guid: 2a831a654df0ef148bda357f6671d539, type: 2}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: mountainTilemap
       value: 
@@ -3306,45 +3266,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 586622510}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: tundraHillsTile
-      value: 
-      objectReference: {fileID: 11400000, guid: 45a0dea28ca3cab4d8165524c98f1bb4, type: 2}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: prairieHillsTile
-      value: 
-      objectReference: {fileID: 11400000, guid: da5a4ea935f70fd48b3e482c461adf35, type: 2}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: selectedUnitName
       value: 
       objectReference: {fileID: 393516174211181367}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: settlementWindow
-      value: 
-      objectReference: {fileID: 7039692974896898312, guid: 129e43855a4bb1945a603f0cee2f5701, type: 3}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: unitWindowCanvas
       value: 
       objectReference: {fileID: 393516174211181368}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: woodsTile_plains
-      value: 
-      objectReference: {fileID: 11400000, guid: ed535cbce8b234e1d96196a98d76f39c, type: 2}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: cityProjectButton
-      value: 
-      objectReference: {fileID: 3800566918516754172, guid: 5d3ffceca7676bf4f9a172545107dd5c, type: 3}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: settlementUIParent
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: woodsTile_grassland
-      value: 
-      objectReference: {fileID: 11400000, guid: 7bf481a80da13274a885d345b5637b36, type: 2}
-    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
-      propertyPath: settlementWindowCanvas
-      value: 
-      objectReference: {fileID: 7039692974896898312, guid: 129e43855a4bb1945a603f0cee2f5701, type: 3}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: selectedUnitMovementPoints
       value: 

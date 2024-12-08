@@ -179,7 +179,14 @@ public class GameTile : ISerialization
                 yields[1] += 1; // +1 Production
                 break;
             case 2: // Floodplains
-                yields[0] += 1; // +1 Food
+                if (_biome == 4)
+                {
+                    yields[0] += 2;
+                }
+                else
+                {
+                    yields[0] += 1; // +1 Food
+                }
                 break;
             case 3: // Marsh
                 yields[0] += 1; // +1 Food
@@ -292,6 +299,12 @@ public class GameTile : ISerialization
             case 7: // Fishing Boats
                 yields[0] += 1; // +1 Food
                 break;
+        }
+
+        if (_settlement is not null)
+        {
+            // Settlement Tiles always have 2 Food
+            yields[0] = 2;
         }
 
         return yields;

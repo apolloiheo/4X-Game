@@ -48,12 +48,14 @@ MonoBehaviour:
   mainCam: {fileID: 0}
   worldCanvas: {fileID: 0}
   menuCanvas: {fileID: 0}
-  guiCanvas: {fileID: 1079547127313388032, guid: 100567947f7d634459e496955b249d61, type: 3}
+  guiCanvas: {fileID: 0}
   saveCanvas: {fileID: 0}
+  unitWindowCanvas: {fileID: 0}
   saveIF: {fileID: 0}
-  settlementWindowCanvas: {fileID: 0}
+  settlementWindowCanvas: {fileID: 7039692974896898312, guid: 129e43855a4bb1945a603f0cee2f5701, type: 3}
   civilization:
     IsNPC: 0
+    _settlements: []
     _color:
       serializedVersion: 2
       rgba: 0
@@ -61,7 +63,7 @@ MonoBehaviour:
   hillsTilemap: {fileID: 0}
   mountainTilemap: {fileID: 0}
   featureTilemap: {fileID: 0}
-  unitTilemap: {fileID: 0}
+  shadingTilemap: {fileID: 0}
   tile: {fileID: 11400000, guid: 6dc6f9350229dc44fba6e7e57417cb10, type: 2}
   prairieTile: {fileID: 11400000, guid: 27b1ce3b55e8ee448ba52b1f59f01dac, type: 2}
   grassTile: {fileID: 11400000, guid: 199f0a7142903de44bb71ce1edda0ebf, type: 2}
@@ -71,24 +73,32 @@ MonoBehaviour:
   coastTile: {fileID: 11400000, guid: 7b8d4326a3f00584da0867ed0e40b1db, type: 2}
   snowTile: {fileID: 11400000, guid: 801de112595f9e24e8a05a150c9eebd4, type: 2}
   lakeTile: {fileID: 11400000, guid: 476895a79033a684880e07131f346e8f, type: 2}
-  prairieHillsTile: {fileID: 11400000, guid: e7c50492582db4a4db16f003067171a8, type: 2}
-  grassHillsTile: {fileID: 11400000, guid: 99f10817582e4154ea344c1ba79e4890, type: 2}
-  tundraHillsTile: {fileID: 11400000, guid: d5762e35721d6c7409c338a3982d7331, type: 2}
-  desertHillsTile: {fileID: 11400000, guid: 23b6a5d231c68bb448e6753d6e3b444d, type: 2}
-  snowHillsTile: {fileID: 11400000, guid: 801de112595f9e24e8a05a150c9eebd4, type: 2}
-  woodsTile: {fileID: 11400000, guid: 7bf481a80da13274a885d345b5637b36, type: 2}
+  prairieHillsTile: {fileID: 11400000, guid: da5a4ea935f70fd48b3e482c461adf35, type: 2}
+  grassHillsTile: {fileID: 11400000, guid: e6eabd19921ddac43819496849e91ae1, type: 2}
+  tundraHillsTile: {fileID: 11400000, guid: 45a0dea28ca3cab4d8165524c98f1bb4, type: 2}
+  desertHillsTile: {fileID: 11400000, guid: 2a831a654df0ef148bda357f6671d539, type: 2}
+  snowHillsTile: {fileID: 11400000, guid: a31264ef5fae64043ac53d2ffde82647, type: 2}
+  woodsTile_grassland: {fileID: 11400000, guid: 7bf481a80da13274a885d345b5637b36, type: 2}
+  woodsTile_plains: {fileID: 11400000, guid: ed535cbce8b234e1d96196a98d76f39c, type: 2}
   floodplainsTile: {fileID: 11400000, guid: 7972f8e666fe0504d990e66a70710d47, type: 2}
   marshTile: {fileID: 11400000, guid: 60b5e8bc972ae234bad2fa1199acf425, type: 2}
   rainforestTile: {fileID: 11400000, guid: d808d8c5d6ffc224d82969bdf11c041d, type: 2}
   oasisTile: {fileID: 11400000, guid: 052447c804702a6458d014fcc7e9bb86, type: 2}
   mountain: {fileID: 11400000, guid: 45ff8b2c159ce8241a5df6055779047d, type: 2}
+  highlight: {fileID: 11400000, guid: b67d49639f3c06f40a847baeb4853375, type: 2}
+  unexplored: {fileID: 0}
+  darkened: {fileID: 0}
   riversParent: {fileID: 0}
   riverSegment: {fileID: 7700684974192715068, guid: 5ee1d19087010834ea13908e3fde1750, type: 3}
   village: {fileID: 11400000, guid: b2abd4511315fbe4a8fceb093144c256, type: 2}
   warrior: {fileID: 11400000, guid: d1800a3c292ef2b459ce77d97399bc54, type: 2}
-  settlementUI: {fileID: 0}
-  settlementWindow: {fileID: 0}
+  settlementUI: {fileID: 5723561007570470701, guid: cdff5139bdaca52478ec641965bd9b7d, type: 3}
+  settlementWindow: {fileID: 7039692974896898312, guid: 129e43855a4bb1945a603f0cee2f5701, type: 3}
   territoryParent: {fileID: 0}
-  territoryLines: {fileID: 0}
-  unitTab: {fileID: 0}
+  territoryLines: {fileID: 5212823977036206406, guid: dbe8bb619cb8e1449b9fae5787478918, type: 3}
+  selectedUnitPrefab: {fileID: 0}
+  selectedUnitName: {fileID: 0}
+  selectedUnitMovementPoints: {fileID: 0}
+  unitPrefab: {fileID: 152829552671779283, guid: d8f718e0d3eab6243bfcbe0d6ae74977, type: 3}
+  unitsParent: {fileID: 0}
   _zoomedIn: 0

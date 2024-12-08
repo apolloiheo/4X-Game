@@ -17,13 +17,16 @@ public class GameManager : MonoBehaviour
    {
        game.gameTurn++;
 
-       if (game.civilizations != null)
+       if (game.civilizations is not null)
        {
            foreach (Civilization civilization in game.civilizations)
            {
                civilization.OnTurnEnded();
+               Debug.Log("Scanned Civilization.");
            }
        }
+       
+       Debug.Log("Next Turn.");
    }
     
     public void NewDemoGame(uint worldSeed)
@@ -65,7 +68,7 @@ public class GameManager : MonoBehaviour
             {
                 if (tile.IsWalkable())
                 {
-                    tile.SetUnit(new Warrior(tile, game.civilizations[0]));
+                    SpawnUnit(new Warrior(tile, game.civilizations[0]));
                     break;
                 }
             }
@@ -182,6 +185,15 @@ public class GameManager : MonoBehaviour
 
     public void MoveUnit(Unit unit, Point target)
     {
+        // Shortest path from Unit's position to target point
+        List<GameTile> path = Pathfinder.FindShortestPath(unit._gameTile, game.world.GetTile(target));
+        
+        // Movement Cost of moving across that Path.
+        int moveCost = Pathfinder.CalculatePathCost(path);
+        
+        // Subtract Movement Points from Unit
+        unit._currMP -= moveCost;
+        
         // Store Game Tile references
         GameTile previousTile = unit._gameTile;
         GameTile newTile = game.world.GetTile(target);
@@ -195,5 +207,15 @@ public class GameManager : MonoBehaviour
         
         // Restart get possible moves
         unit.GetPossibleMoves(unit._gameTile, unit._currMP, true);
+    }
+
+    private void SpawnUnit(Unit unit)
+    {
+        // Set it on the Tile
+        GameTile tile = unit._gameTile;
+        tile.SetUnit(unit);
+        // Add into it's Civilization
+        Civilization owner = unit._civilization;
+        owner._units.Add(unit);
     }
 }

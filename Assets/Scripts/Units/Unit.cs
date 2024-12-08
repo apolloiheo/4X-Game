@@ -48,7 +48,7 @@ public abstract class Unit : ISerialization
     private const int HillAttackDebuf = 10;
     private const int RiverAttackDebuf = 10;
 
-    public Unit( GameTile tile, Civilization civilization)
+    public Unit(GameTile tile, Civilization civilization)
     {
         _gameTile = tile;
         _civilization = civilization;
@@ -64,6 +64,8 @@ public abstract class Unit : ISerialization
         _exhausted = false;
         _hasOrder = false;
         _currMP = _baseMP;
+        
+        Debug.Log("Unit refreshed.");
     }
 
     public void UpdateUnit()
@@ -79,17 +81,9 @@ public abstract class Unit : ISerialization
     public void Move(GameTile target)
     {
         // To be implemented
-        Debug.Log("Started at" + _gameTile.GetXPos() +  _gameTile.GetYPos());
-        foreach (var node in Pathfinder.UnitAstar(_gameTile, target))
-        {
-            _gameTile.SetUnit(null);
-            _gameTile = node.Item1;
-        }
         
-        Debug.Log("Ended at" + _gameTile.GetXPos() +  _gameTile.GetYPos());
-        Debug.Log("Was trying to arrive at" + target.GetXPos() +  target.GetYPos());
     }
-    
+
 
     /* Attack a Settlement */
     public void Attack(Settlement target)
@@ -125,6 +119,11 @@ public abstract class Unit : ISerialization
                 GetPossibleMoves(neighbor, movementPoints - neighbor.GetMovementCost(), false);
             }
         }
+    }
+
+    public int CalculateMovementCost(GameTile target)
+    {
+        return 0;
     }
     
     public void StageForSerialization()

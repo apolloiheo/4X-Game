@@ -85,7 +85,6 @@ public class MenuHandler : MonoBehaviour
 
     public void StartNewGame()
     {
-        
         int input = int.Parse(seedInput.text);
         uint seed = Convert.ToUInt32(input);
         gameManager.NewDemoGame(seed);

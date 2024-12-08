@@ -86,7 +86,6 @@ public class Director : MonoBehaviour
 
     // Grid Dimensions
     private const double tileHeight = 0.95f;
-
     private const double tileWidth = 1f;
 
     // Camera References
@@ -151,10 +150,15 @@ public class Director : MonoBehaviour
             CameraControl();
         }
 
+        // Unit Movement
+        MoveUnit();
+    }
 
+    private void MoveUnit()
+    {
         if (selectedUnit != null)
         {
-            if (Input.GetMouseButtonDown(1)) // 1 - Right Mousebutton
+            if (Input.GetMouseButtonDown(1)) // 1 - Right Mouse button
             {
                 Vector3 mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
                 mousePos.z = 0;
@@ -165,7 +169,7 @@ public class Director : MonoBehaviour
                 if (shadingTilemap.HasTile(cellPosition))
                 {
                     // Move Unit in GM
-                    gm.MoveUnit(selectedUnit, new Point(cellPosition.y, cellPosition.x) );
+                    gm.MoveUnit(selectedUnit, new Point(cellPosition.y, cellPosition.x));
                     
                     // Rerender Units
                     selectedUnitPrefab.transform.position = shadingTilemap.CellToWorld(cellPosition);
@@ -175,6 +179,8 @@ public class Director : MonoBehaviour
                     
                     // Display New Possible Moves
                     DisplayPossibleMoves(selectedUnit);
+                    
+                    OpenUnitWindow();
                 }
             }
         }
@@ -268,7 +274,15 @@ public class Director : MonoBehaviour
 
         saveCanvas.SetActive(false);
     }
+
+    public void SendEndTurnToGM()
+    {
+        gm.EndTurn();
+        
+        
+    }
     
+    /* Selects the Unit in the parameter, open's the unit window. */
     public void SelectUnit(Unit unit)
     {
         // Assign Selected Unit
@@ -329,9 +343,10 @@ public class Director : MonoBehaviour
             {
                 GameTile currTile = world.GetTile(x, y);
 
+                // if a Tile has a Settlement
                 if (currTile.GetSettlement() is not null)
                 {
-                    // If we 
+                    // If a prefab for that Tile's settlement doesn't exist, instantiate it.
                     if (!settlementUIs.ContainsKey(currTile))
                     {
                         // Instantiate UI Prefab
@@ -359,28 +374,28 @@ public class Director : MonoBehaviour
                     }
                     else
                     {
-                        // Update that Tile's yields.
+                        // Update that UI prefab's text yields.
                         UpdateUIFields(settlementUIs[currTile], currTile.GetSettlement());
                     }
                 }
             }
         }
-        
-        // Helper method to update UI fields for a given settlement
-        void UpdateUIFields(GameObject uiObject, Settlement settlement)
-        {
-            // Access TMP_Text Objs - These need to be access through a script transform.Find is too expensive 
-            TMP_Text population = uiObject.transform.Find("Population Text").GetComponent<TMP_Text>();
-            TMP_Text growth = uiObject.transform.Find("Growth Text").GetComponent<TMP_Text>();
-            TMP_Text production = uiObject.transform.Find("Production Text").GetComponent<TMP_Text>();
-            TMP_Text name = uiObject.transform.Find("Name Text").GetComponent<TMP_Text>();
+    }
+    
+    // Helper method to update UI fields for a given settlement
+    void UpdateUIFields(GameObject uiObject, Settlement settlement)
+    {
+        // Access TMP_Text Objs - These need to be access through a script transform. Find is too expensive 
+        TMP_Text population = uiObject.transform.Find("Population Text").GetComponent<TMP_Text>();
+        TMP_Text growth = uiObject.transform.Find("Growth Text").GetComponent<TMP_Text>();
+        TMP_Text production = uiObject.transform.Find("Production Text").GetComponent<TMP_Text>();
+        TMP_Text name = uiObject.transform.Find("Name Text").GetComponent<TMP_Text>();
 
-            // Update the text fields with the settlement's data
-            population.text = settlement.GetPopulation().ToString();
-            growth.text = settlement.TurnsToGrow();
-            production.text = settlement.TurnsToProduce();
-            name.text = settlement.GetName();
-        }
+        // Update the text fields with the settlement's data
+        population.text = settlement.GetPopulation().ToString();
+        growth.text = settlement.TurnsToGrow();
+        production.text = settlement.TurnsToProduce();
+        name.text = settlement.GetName();
     }
 
     /* Spawns Territory Lines on Tile Edges around Settlement's territory. */

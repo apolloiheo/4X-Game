@@ -191,28 +191,6 @@ public class World : ISerialization
         }
         Debug.Log(output);
     }
-
-    // Sets a random amount of world tiles to be mountains, then tests patthfinding on it.
-    // Destructively modifies the world.
-    public void TestPathfinder(int x1, int y1, int x2, int y2, double pOfMountain)
-    {
-        for (int y = 0; y < _height; y++)
-        {
-            for (int x = 0; x < _length; x++)
-            {
-                if (Random.Range(0, 10) > pOfMountain && x!= x1 && y!= y1 && x != x2 && y != y2 )
-                {
-                    _world[x,y].SetTerrain(2);
-                }
-            }
-        }
-
-        List<Tuple<GameTile, int>> path = Pathfinder.AStarWithLimit(_world[x1, y1], _world[x2, y2], 250);
-        foreach (var tuple in path)
-        {
-            Debug.Log(tuple.Item1);
-        }
-    }
     
     // Tile Modification Methods
     public void ModifyTile(String tileProperty, Point point, int value)

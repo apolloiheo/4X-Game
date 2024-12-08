@@ -15,7 +15,6 @@ public class Civilization : ISerialization
     [JsonProperty]
     private TechnologyTree _technology; // ** WIP - Technology tree for each Civilization
     
-    
     // Yields
     [JsonProperty]
     private int _goldPt; // A Civilization's Gold income per turn.
@@ -30,9 +29,9 @@ public class Civilization : ISerialization
     
     // Property
     [JsonProperty]
-    private List<Settlement> _settlements; // A List of the Settlements this Civilization owns.
+    public List<Settlement> _settlements; // A List of the Settlements this Civilization owns.
     [JsonProperty]
-    private List<Unit> _units; // A List of the Units this Civilization owns.
+    public List<Unit> _units; // A List of the Units this Civilization owns.
     
     public Color32 _color;
     //[JsonProperty]
@@ -62,46 +61,28 @@ public class Civilization : ISerialization
 
     public void OnTurnEnded()
     {
+        Debug.Log("test");
+        
         // Units
-        UpdateUnits();
+        foreach (Unit unit in _units)
+        {
+            unit.OnTurnEnd();
+            Debug.Log(unit._name);
+        }
         
         // Settlements
-        UpdateSettlements();
+        foreach (Settlement settlement in _settlements)
+        {
+            settlement.OnTurnEnd();
+        }
         
         // Confirm that current Yields are up to date
         UpdateYields();
         
         // Yields Per Turn -> Total Yields + Technology Progress
-        AddUpYields();
-        
-        void UpdateUnits()
-        {
-            if (_units is not null)
-            {
-                foreach (Unit unit in _units)
-                {
-                    unit.OnTurnEnd();
-                }
-            }
-        }
-
-        void UpdateSettlements()
-        {
-            if (_settlements is not null)
-            {
-                foreach (Settlement settlement in _settlements)
-                {
-                    settlement.OnTurnEnd();
-                }
-            }
-        }
-
-        void AddUpYields()
-        {
-            _gold += _goldPt;
-            _culture += _culturePt;
-            _technology._currentlyResearching.AddToProgress(_sciencePt);
-        }
+        _gold += _goldPt;
+        _culture += _culturePt;
+        _technology._currentlyResearching.AddToProgress(_sciencePt);
     }
     
     /* Called frequently to ensure Civilization displays the proper yields in GUI */

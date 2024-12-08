@@ -1,5 +1,8 @@
+using System;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using UnityEngine.Serialization;
+
+
 
 namespace City_Projects
 {
@@ -14,7 +17,7 @@ namespace City_Projects
         public void AddToProgress(int production)
         {
             currentProductionProgress += production;
-        
+
             if (currentProductionProgress >= projectCost)
             {
                 Complete();
@@ -23,13 +26,13 @@ namespace City_Projects
 
         public void Complete()
         {
-            // Abstract Class cannot be instantiated
+            // Raise completion event
+
         }
 
         public string GetName()
         {
             return projectName;
         }
-
     }
 }

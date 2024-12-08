@@ -278,8 +278,17 @@ public class Director : MonoBehaviour
     public void SendEndTurnToGM()
     {
         gm.EndTurn();
-        
-        
+
+        foreach (GameTile tile in settlementUIs.Keys)
+        {
+            UpdateUIFields(settlementUIs[tile], tile.GetSettlement());
+        }
+
+        if (selectedUnit != null)
+        {
+            DisplayPossibleMoves(selectedUnit);
+            OpenUnitWindow();
+        }
     }
     
     /* Selects the Unit in the parameter, open's the unit window. */

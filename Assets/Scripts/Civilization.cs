@@ -55,14 +55,12 @@ public class Civilization : ISerialization
     }
     
     // Constant
-    private const int Gold = 3;
-    private const int Culture = 4;
-    private const int Science = 5;
+    private const int Gold = 2;
+    private const int Culture = 3;
+    private const int Science = 4;
 
     public void OnTurnEnded()
     {
-        Debug.Log("test");
-        
         // Units
         foreach (Unit unit in _units)
         {
@@ -82,7 +80,7 @@ public class Civilization : ISerialization
         // Yields Per Turn -> Total Yields + Technology Progress
         _gold += _goldPt;
         _culture += _culturePt;
-        _technology._currentlyResearching.AddToProgress(_sciencePt);
+        //_technology._currentlyResearching.AddToProgress(_sciencePt);
     }
     
     /* Called frequently to ensure Civilization displays the proper yields in GUI */

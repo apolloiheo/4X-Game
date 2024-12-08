@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using City_Projects;
 using Newtonsoft.Json;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -40,6 +41,9 @@ public class Settlement : ISerialization
     public List<GameTile> _territory; // Tiles a Settlement controls.
     public List<GameTile> _workedTiles; // Tiles in Territory that are being worked by a Population
     public List<GameTile> _lockedTiles;
+    
+    // Private properties
+    private GameManager _gm;
     
     // Constants
     private const int FoodSurplusRequirement = 15;
@@ -119,12 +123,10 @@ public class Settlement : ISerialization
             
                 // Increase population
                 _population += 1;
+                
+                // Auto Assign new Population
+                AutoAssignWorkedTiles();
             }
-        }
-
-        void UpdateCivilizationYields()
-        {
-            
         }
     }
 
@@ -451,15 +453,16 @@ public class Settlement : ISerialization
     // Returns a string (integer) to display the turns left to grow.
     public string TurnsToGrow()
     {
-        //int food_surplus_per_turn = _yieldsPt[0] - (_population * 2);
-        int food_surplus_per_turn = _yieldsPt[0];
+        int foodSurplusPerTurn = _yieldsPt[0] - (_population * 2);
 
-        if (food_surplus_per_turn <= 0)
+        int remainingSurplusNeeded = 15 - _foodSurplus;
+
+        if (foodSurplusPerTurn <= 0)
         {
             return "-";
         }
 
-        return Math.Ceiling((double)(15 - _foodSurplus / food_surplus_per_turn)).ToString();
+        return Math.Ceiling((double)(remainingSurplusNeeded / foodSurplusPerTurn)).ToString();
     }
     
     // Returns a string (integer) to display the turns left to produce.
@@ -476,6 +479,17 @@ public class Settlement : ISerialization
     public void SetCityProject(CityProject project)
     {
         _currentCityProject = project;   
+    }
+
+    /* Calls on GM to Spawn Unit but only called from City Projects. */
+    public void UnitProjectComplete()
+    {
+        
+    }
+
+    public void BuildingProjectComplete()
+    {
+        
     }
     
 }

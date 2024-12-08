@@ -64,8 +64,6 @@ public abstract class Unit : ISerialization
         _exhausted = false;
         _hasOrder = false;
         _currMP = _baseMP;
-        
-        Debug.Log("Unit refreshed.");
     }
 
     public void UpdateUnit()

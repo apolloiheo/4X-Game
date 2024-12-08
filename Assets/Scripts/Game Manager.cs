@@ -13,20 +13,16 @@ public class GameManager : MonoBehaviour
     public Game game;
 
     private bool savedGame = false;
+    
     public void EndTurn()
    {
        game.gameTurn++;
-
-       if (game.civilizations is not null)
-       {
-           foreach (Civilization civilization in game.civilizations)
-           {
-               civilization.OnTurnEnded();
-               Debug.Log("Scanned Civilization.");
-           }
-       }
+       Debug.Log("Turn: " + game.gameTurn);
        
-       Debug.Log("Next Turn.");
+       foreach (Civilization civilization in game.civilizations)
+       {
+           civilization.OnTurnEnded();
+       }
    }
     
     public void NewDemoGame(uint worldSeed)
@@ -53,24 +49,21 @@ public class GameManager : MonoBehaviour
     {
         List<Point> spawnPoints = game.world.GetSpawnPoints();
         
-        foreach (Point start in spawnPoints)
-        {
-            // Put a Settlement at each start point
-            GameTile currTile = game.world.GetTile(start);
-            
-            Settlement settlement = new Settlement("Jersey", game.civilizations[0], currTile);
-            
-            game.civilizations[0].AddSettlement(settlement);
-            
-            currTile.SetSettlement(settlement);
+        // Put a Settlement at each start point
+        GameTile currTile = game.world.GetTile(spawnPoints[0]);
+        
+        Settlement settlement = new Settlement("Jersey", game.civilizations[0], currTile);
+        
+        game.civilizations[0].AddSettlement(settlement);
+        
+        currTile.SetSettlement(settlement);
 
-            foreach (GameTile tile in currTile.GetNeighbors())
+        foreach (GameTile tile in currTile.GetNeighbors())
+        {
+            if (tile.IsWalkable())
             {
-                if (tile.IsWalkable())
-                {
-                    SpawnUnit(new Warrior(tile, game.civilizations[0]));
-                    break;
-                }
+                SpawnUnit(new Warrior(tile, game.civilizations[0]));
+                break;
             }
         }
     }    
@@ -218,4 +211,6 @@ public class GameManager : MonoBehaviour
         Civilization owner = unit._civilization;
         owner._units.Add(unit);
     }
+    
+    
 }

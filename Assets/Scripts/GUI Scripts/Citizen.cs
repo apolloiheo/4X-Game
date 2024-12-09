@@ -94,11 +94,12 @@ public class Citizen : MonoBehaviour
 
     private void UpdateSettlementWindow()
     {
-        // Update the Settlement's yields
+        // Update the Settlement's yields in memory
         settlement.UpdateYields();
         // Update ProjectCosts
         settlementWindow.UpdateProjectTabs();
-        
+        // Update Yields Tab
+        settlementWindow.UpdateYieldsTab();
     }
     
     // Get/Set/Is Methods

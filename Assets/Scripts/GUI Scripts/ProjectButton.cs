@@ -10,6 +10,7 @@ public class ProjectButton : MonoBehaviour
     public CityProject project;
     public TMP_Text name;
     public TMP_Text turns;
+    public TMP_Text cost;
     public Settlement settlement;
 
     public void OnClick()

@@ -123,6 +123,16 @@ public abstract class Unit : ISerialization
     {
         return 0;
     }
+
+    public bool canMove()
+    {
+        if (_currMP <= 0)
+        {
+            return false;
+        }
+        
+        return true;
+    }
     
     public void StageForSerialization()
     {

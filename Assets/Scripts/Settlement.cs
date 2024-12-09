@@ -462,7 +462,7 @@ public class Settlement : ISerialization
             return "-";
         }
 
-        return Math.Ceiling((double)(remainingSurplusNeeded / foodSurplusPerTurn)).ToString();
+        return Math.Ceiling((float)remainingSurplusNeeded / (float) foodSurplusPerTurn).ToString();
     }
     
     // Returns a string (integer) to display the turns left to produce.

@@ -17,9 +17,13 @@ public class SettlementWindow : MonoBehaviour
     public Settlement _settlement;
     public Tilemap tilemap;
     public GameObject cityProjectButton;
+    public TMP_Text food;
+    public TMP_Text production;
+    public TMP_Text culture;
+    public TMP_Text science;
     
+    // Private Properties
     private HashSet<GameObject> citizenUIs = new HashSet<GameObject>();
-
     private Dictionary<CityProject, GameObject> projects = new Dictionary<CityProject, GameObject>();
 
     public void Start()
@@ -27,6 +31,7 @@ public class SettlementWindow : MonoBehaviour
         director = FindObjectOfType<Director>();
         citizenUIs = new HashSet<GameObject>();
         FillProjectTabs();
+        UpdateYieldsTab();
     }
     
     public void Update()
@@ -38,6 +43,14 @@ public class SettlementWindow : MonoBehaviour
             // Turn base UI back on
             director.guiCanvas.SetActive(true);
         }
+    }
+
+    public void UpdateYieldsTab()
+    {
+        food.text = _settlement.GetYieldsPt()[0].ToString();
+        production.text = _settlement.GetYieldsPt()[1].ToString();
+        culture.text = _settlement.GetYieldsPt()[2].ToString();
+        science.text = _settlement.GetYieldsPt()[3].ToString();
     }
 
     public void RenderCitizenUIs()
@@ -121,6 +134,7 @@ public class SettlementWindow : MonoBehaviour
                 
             projectPrefab.GetComponent<ProjectButton>().name.text = project.projectName;
             projectPrefab.GetComponent<ProjectButton>().turns.text = Math.Ceiling((double)((project.projectCost - project.currentProductionProgress) / _settlement.GetYieldsPt()[1])).ToString();
+            projectPrefab.GetComponent<ProjectButton>().cost.text = project.projectCost.ToString();
             projectPrefab.GetComponent<ProjectButton>().settlement = _settlement;
             projectPrefab.GetComponent<ProjectButton>().project = project;
 

@@ -180,7 +180,13 @@ public class Director : MonoBehaviour
                     // Display New Possible Moves
                     DisplayPossibleMoves(selectedUnit);
                     
+                    // Update Unit Window Values
                     OpenUnitWindow();
+
+                    if (!selectedUnit.canMove())
+                    {
+                        RemovePossibleMoves();
+                    }
                 }
             }
         }
@@ -279,11 +285,13 @@ public class Director : MonoBehaviour
     {
         gm.EndTurn();
 
+        // Update Settlement UIs
         foreach (GameTile tile in settlementUIs.Keys)
         {
             UpdateUIFields(settlementUIs[tile], tile.GetSettlement());
         }
 
+        // Update Selected Unit
         if (selectedUnit != null)
         {
             DisplayPossibleMoves(selectedUnit);
@@ -727,8 +735,16 @@ public class Director : MonoBehaviour
 
     void DisplayPossibleMoves(Unit unit)
     {
+        // If unit can't move, don't highlight anything
+        if (!unit.canMove())
+        {
+            return;
+        }
+        
+        // Update the Unit's instance possible moves property
         unit.GetPossibleMoves(unit._gameTile, unit._currMP, true);
         
+        // If there are moves 
         if (unit.possible_moves.Count > 0)
         {
             foreach (Point point in unit.possible_moves)

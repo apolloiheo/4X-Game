@@ -19,6 +19,7 @@ public class SettlementWindow : MonoBehaviour
     public GameObject cityProjectButton;
     public TMP_Text food;
     public TMP_Text production;
+    public TMP_Text gold;
     public TMP_Text culture;
     public TMP_Text science;
     
@@ -49,8 +50,9 @@ public class SettlementWindow : MonoBehaviour
     {
         food.text = _settlement.GetYieldsPt()[0].ToString();
         production.text = _settlement.GetYieldsPt()[1].ToString();
-        culture.text = _settlement.GetYieldsPt()[2].ToString();
-        science.text = _settlement.GetYieldsPt()[3].ToString();
+        gold.text = _settlement.GetYieldsPt()[2].ToString();
+        culture.text = _settlement.GetYieldsPt()[3].ToString();
+        science.text = _settlement.GetYieldsPt()[4].ToString();
     }
 
     public void RenderCitizenUIs()

@@ -146,7 +146,7 @@ public class GameTile : ISerialization
                 break;
             case 6: // Coast
                 yields[0] = 1; // +1 Food
-                yields[3] = 1; // +1 Gold
+                yields[2] = 1; // +1 Gold
                 break;
             case 7: // Ocean
                 yields[0] = 1; // +1 Food

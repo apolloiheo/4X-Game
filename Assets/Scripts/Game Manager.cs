@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using City_Projects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Units;
@@ -30,15 +31,9 @@ public class GameManager : MonoBehaviour
         game = new Game();
         game.singlePlayer = true;
         Civilization player1 = new Civilization(new Color32(255, 181, 43, 255));
-        Civilization player2 = new Civilization(new Color32(255, 95, 92, 255));
-        Civilization player3 = new Civilization(new Color32(103, 92, 255, 255));
-        Civilization player4 = new Civilization(new Color32(0, 150, 13, 255));
         player1.IsNPC = false;
         game.civilizations = new List<Civilization>();
         game.civilizations.Add(player1);
-        game.civilizations.Add(player2);
-        game.civilizations.Add(player3);
-        game.civilizations.Add(player4);
         game.world = new WorldGenerator().GenerateWorld(100, 50, 2, worldSeed, game.civilizations.Count);
         Test();
         SceneManager.LoadScene(1);
@@ -49,15 +44,12 @@ public class GameManager : MonoBehaviour
     {
         List<Point> spawnPoints = game.world.GetSpawnPoints();
         
-        // Put a Settlement at each start point
         GameTile currTile = game.world.GetTile(spawnPoints[0]);
         
-        Settlement settlement = new Settlement("Jersey", game.civilizations[0], currTile);
-        
-        game.civilizations[0].AddSettlement(settlement);
-        
-        currTile.SetSettlement(settlement);
+        // Put a Settlement at each start point
+        SpawnSettlement(new Settlement("Jersey", game.civilizations[0], currTile));
 
+        // Spawn a Unit around each Settlement
         foreach (GameTile tile in currTile.GetNeighbors())
         {
             if (tile.IsWalkable())
@@ -202,7 +194,7 @@ public class GameManager : MonoBehaviour
         unit.GetPossibleMoves(unit._gameTile, unit._currMP, true);
     }
 
-    private void SpawnUnit(Unit unit)
+    public void SpawnUnit(Unit unit)
     {
         // Set it on the Tile
         GameTile tile = unit._gameTile;
@@ -211,6 +203,31 @@ public class GameManager : MonoBehaviour
         Civilization owner = unit._civilization;
         owner._units.Add(unit);
     }
-    
-    
+
+    public void SpawnSettlement(Settlement settlement)
+    {
+        // Set it on the Tile
+        GameTile tile = settlement._gameTile;
+        tile.SetSettlement(settlement);
+        
+        // Add it to it's Civilization
+        Civilization owner = settlement._civilization;
+        owner.AddSettlement(settlement);
+
+        // Give reference to the GM to the Settlement's Projects (so the projects can call Spawn UNit/Add Building, etc)
+        foreach (CityProject project in settlement.GetProjects())
+        {
+            project.gameManager = this;
+            project.settlement = settlement;
+        }
+        
+        settlement.UpdateYields();
+    }
+
+    public void AddBuilding(Settlement settlement, Building building)
+    {
+        settlement._buildings.Add(building);
+        
+        settlement.UpdateYields();
+    }
 }

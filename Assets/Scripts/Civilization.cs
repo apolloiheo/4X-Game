@@ -65,7 +65,6 @@ public class Civilization : ISerialization
         foreach (Unit unit in _units)
         {
             unit.OnTurnEnd();
-            Debug.Log(unit._name);
         }
         
         // Settlements

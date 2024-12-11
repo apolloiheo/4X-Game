@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class Building 
 {
-    [JsonProperty]
-    private int[] _yields;
+    [JsonProperty] public string name;
+    [JsonProperty] public int[] yields;
     
-    public int[] GetYields()
+    public Building(string nameString, int[] yieldArray)
     {
-        return _yields;
+        this.name = nameString;
+        yields = yieldArray;
     }
 }

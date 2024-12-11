@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-
+using Unity.VisualScripting;
 
 
 namespace City_Projects
@@ -13,8 +13,11 @@ namespace City_Projects
         [JsonProperty] public int projectCost;
         [JsonProperty] public int currentProductionProgress = 0;
         [JsonProperty] public string projectType;
-
-        public void AddToProgress(int production)
+        [JsonProperty] public bool alreadyBuilt;
+        public GameManager gameManager;
+        public Settlement settlement;
+        
+        public virtual void AddToProgress(int production)
         {
             currentProductionProgress += production;
 
@@ -24,15 +27,10 @@ namespace City_Projects
             }
         }
 
-        public void Complete()
+        public virtual void Complete()
         {
             // Raise completion event
-
-        }
-
-        public string GetName()
-        {
-            return projectName;
+           
         }
     }
 }

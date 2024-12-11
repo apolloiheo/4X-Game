@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using City_Projects;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -69,7 +71,7 @@ public class Director : MonoBehaviour
     // Private Instance Attributes
     private bool _needsDirection;
     private Dictionary<GameTile, GameObject> settlementUIs = new Dictionary<GameTile, GameObject>();
-    private HashSet<GameObject> units = new HashSet<GameObject>();
+    private Dictionary<Unit, GameObject> units = new Dictionary<Unit, GameObject>();
     private HashSet<Point> highlightedTiles = new HashSet<Point>();
 
     // Camera Values
@@ -151,12 +153,12 @@ public class Director : MonoBehaviour
         }
 
         // Unit Movement
-        MoveUnit();
+        MoveSelectedUnit();
     }
 
-    private void MoveUnit()
+    private void MoveSelectedUnit()
     {
-        if (selectedUnit != null)
+        if (selectedUnit is not null)
         {
             if (Input.GetMouseButtonDown(1)) // 1 - Right Mouse button
             {
@@ -171,8 +173,8 @@ public class Director : MonoBehaviour
                     // Move Unit in GM
                     gm.MoveUnit(selectedUnit, new Point(cellPosition.y, cellPosition.x));
                     
-                    // Rerender Units
-                    selectedUnitPrefab.transform.position = shadingTilemap.CellToWorld(cellPosition);
+                    // Reposition Selected Unit prefab
+                    RenderUnits();
                     
                     // Reset previous moves
                     RemovePossibleMoves();
@@ -183,6 +185,7 @@ public class Director : MonoBehaviour
                     // Update Unit Window Values
                     OpenUnitWindow();
 
+                    // If Selected Unit can no longer move (out of movement points)
                     if (!selectedUnit.canMove())
                     {
                         RemovePossibleMoves();
@@ -297,6 +300,8 @@ public class Director : MonoBehaviour
             DisplayPossibleMoves(selectedUnit);
             OpenUnitWindow();
         }
+        
+        RenderUnits();
     }
     
     /* Selects the Unit in the parameter, open's the unit window. */
@@ -691,45 +696,42 @@ public class Director : MonoBehaviour
             {
                 GameTile currTile = gm.game.world.GetTile(x, y);
 
+                // If the Tile has a Unit on it
                 if (currTile.GetUnit() is not null)
                 {
-                    // Calculate World Position
+                    // Calculate World Position of that Tile
                     Vector3Int tilePosition = new Vector3Int(y, x, 0);
                     Vector3 worldPosition = baseTilemap.CellToWorld(tilePosition);
-
-                    // Instantitate
-                    GameObject unit = Instantiate(unitPrefab, unitsParent.transform);
-
-                    // Move Unit to Tile
-                    unit.transform.position = worldPosition;
-
-                    // Give the Prefab reference to its own Unit
-                    unit.GetComponent<UnitPrefab>().unit = currTile.GetUnit();
-                    unit.GetComponent<UnitPrefab>().director = this;
                     
-                    // Update it's art and values
-                    unit.GetComponent<UnitPrefab>().UpdatePrefab();
+                    // Store the Unit on that Tile
+                    Unit currUnit = currTile.GetUnit();
+                    
+                    // If it's already instantiated and tracked
+                    if (units.Keys.Contains(currUnit))
+                    {
+                        // Move GameObj Prefab to it's correct position
+                        units[currUnit].transform.position = worldPosition;
+                    }
+                    else
+                    {
+                        // Instantiate a Prefab for that new Unit
+                        GameObject unitOBJ = Instantiate(unitPrefab, unitsParent.transform);
 
-                    // Add it to our HashSet tracker
-                    units.Add(unit);
+                        // Place Game Obj Prefab on that Tile
+                        unitOBJ.transform.position = worldPosition;
+
+                        // Give the Prefab reference to its own Unit
+                        unitOBJ.GetComponent<UnitPrefab>().unit = currTile.GetUnit();
+                        unitOBJ.GetComponent<UnitPrefab>().director = this;
+                    
+                        // Update it's art and values
+                        unitOBJ.GetComponent<UnitPrefab>().UpdatePrefab();
+
+                        // Add it to our HashSet tracker
+                        units.Add(currUnit, unitOBJ);
+                    }
                 }
             }
-        }
-    }
-
-    void UpdateUnitPositions()
-    {
-        foreach (GameObject unit in units)
-        {
-            // Get Access to the Unit's tile
-            GameTile unitTile = unit.GetComponent<UnitPrefab>().unit._gameTile;
-            
-            // Set the location where it is supposed to be
-            Vector3Int cellPosition = new Vector3Int(unitTile.GetYPos(), unitTile.GetXPos(), 0);
-            Vector3 worldPosition = baseTilemap.CellToWorld(cellPosition);
-            
-            // Make sure prefab is on that Tile.
-            unit.transform.position = worldPosition;
         }
     }
 

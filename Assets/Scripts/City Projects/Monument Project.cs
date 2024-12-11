@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace City_Projects
@@ -7,13 +8,18 @@ namespace City_Projects
         public MonumentProject()
         {
             projectName = "Monument";
+            currentProductionProgress = 0;
             projectCost = 20;
             projectType = "building";
         }
 
-        new public void Complete()
-        {
-            // Spawn Monument
+        public override void Complete()
+        { 
+            int[] buildingYields = { 0, 0, 0, 2 , 0};
+            Building monument = new Building("Monument", buildingYields);
+            gameManager.AddBuilding(settlement, monument);
+            currentProductionProgress = 0;
+            alreadyBuilt = true;
         }
     }
 }

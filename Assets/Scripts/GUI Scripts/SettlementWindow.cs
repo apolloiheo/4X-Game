@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using City_Projects;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class SettlementWindow : MonoBehaviour
 {
     public GameObject settlementWindow;
     public Canvas _worldCanvas;
-    public RectTransform unitsContent;
+    public RectTransform unitProjectsContent;
+    public RectTransform buildingProjectsContent;
     public RectTransform buildingsContent;
     public Director director;
     public TMP_Text settlementName;
@@ -17,6 +20,7 @@ public class SettlementWindow : MonoBehaviour
     public Settlement _settlement;
     public Tilemap tilemap;
     public GameObject cityProjectButton;
+    public GameObject buildingButton;
     public TMP_Text food;
     public TMP_Text production;
     public TMP_Text gold;
@@ -26,12 +30,14 @@ public class SettlementWindow : MonoBehaviour
     // Private Properties
     private HashSet<GameObject> citizenUIs = new HashSet<GameObject>();
     private Dictionary<CityProject, GameObject> projects = new Dictionary<CityProject, GameObject>();
+    private Dictionary<Building, GameObject> buildings = new Dictionary<Building, GameObject>();
 
     public void Start()
     {
         director = FindObjectOfType<Director>();
         citizenUIs = new HashSet<GameObject>();
         FillProjectTabs();
+        FillBuildingTabs();
         UpdateYieldsTab();
     }
     
@@ -126,21 +132,55 @@ public class SettlementWindow : MonoBehaviour
             // Place Units in the Units content
             if (project.projectType == "unit")
             {
-                projectPrefab = Instantiate(cityProjectButton, unitsContent);
+                projectPrefab = Instantiate(cityProjectButton, unitProjectsContent);
             }
             // Place Buildings in the Buildings content
             else if (project.projectType == "building")
             {
-                projectPrefab = Instantiate(cityProjectButton, buildingsContent);
+                // If that Building hasn't already been built
+                if (project.alreadyBuilt)
+                {
+                    if (projects.Keys.Contains(project))
+                    {
+                        // Remove it from our tracked projects
+                        projects.Remove(project);
+                    }
+                    continue;
+                }
+                
+                projectPrefab = Instantiate(cityProjectButton, buildingProjectsContent);
             }
                 
             projectPrefab.GetComponent<ProjectButton>().name.text = project.projectName;
-            projectPrefab.GetComponent<ProjectButton>().turns.text = Math.Ceiling((double)((project.projectCost - project.currentProductionProgress) / _settlement.GetYieldsPt()[1])).ToString();
+            projectPrefab.GetComponent<ProjectButton>().turns.text = Math.Ceiling((((float) project.projectCost - (float) project.currentProductionProgress) / (float) _settlement.GetYieldsPt()[1])).ToString();
             projectPrefab.GetComponent<ProjectButton>().cost.text = project.projectCost.ToString();
             projectPrefab.GetComponent<ProjectButton>().settlement = _settlement;
             projectPrefab.GetComponent<ProjectButton>().project = project;
 
             projects.Add(project, projectPrefab);
+        }
+    }
+
+    public void FillBuildingTabs()
+    {
+        Debug.Log(_settlement._buildings.Count);
+        if (_settlement._buildings.Count > 0)
+        {
+            GameObject buildingPrefab = null;
+            
+            // Fill Buildings Tab with a Settlement's buildings
+            foreach (Building building in _settlement._buildings)
+            {
+                // Instantiate the prefab
+                buildingPrefab = Instantiate(buildingButton, buildingsContent);
+
+                BuildingButton buttonScript = buildingPrefab.GetComponent<BuildingButton>();
+                buttonScript.building = building;
+                buttonScript.DisplayText();
+            
+                buildings.Add(building, buildingPrefab);
+                Debug.Log(buildings.Count);
+            }
         }
     }
 

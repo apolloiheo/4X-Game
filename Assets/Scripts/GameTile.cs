@@ -98,7 +98,7 @@ public class GameTile : ISerialization
         _mc = CalculateMovementCost();
         _riverEdges = CalculateRiverAdjacency();
         _freshWaterAccess = false;
-        _yields = CalculateYields();
+        _yields = GetYields();
     }
 
     /* Full Tile Constructor (Good for testing) */
@@ -116,40 +116,40 @@ public class GameTile : ISerialization
         _riverEdges = CalculateRiverAdjacency();
         _freshWaterAccess = false;
         _mc = CalculateMovementCost();
-        _yields = CalculateYields();
+        _yields = GetYields();
     }
 
     /* Calculate/Update the Yields of a Tile by going through its properties. */
-    private int[] CalculateYields()
+    public int[] GetYields()
     {
-        int[] yields = new int[TotalYields];
+        _yields = new int[TotalYields];
 
         // Set base Biome yields.
         switch (_biome)
         {
             case 1: // Plains
-                yields[0] = 1; // +1 Food
-                yields[1] = 1; // +1 Production
+                _yields[0] = 1; // +1 Food
+                _yields[1] = 1; // +1 Production
                 break;
             case 2: // Grassland
-                yields[0] = 2; // +2 Food
-                yields[1] = 1; // +1 Production
+                _yields[0] = 2; // +2 Food
+                _yields[1] = 1; // +1 Production
                 break;
             case 3: // Tundra
-                yields[0] = 1; // +1 Food
-                yields[1] = 1; // +1 Production
+                _yields[0] = 1; // +1 Food
+                _yields[1] = 1; // +1 Production
                 break;
             case 4: // Desert
-                yields[1] = 1; // +1 Production
+                _yields[1] = 1; // +1 Production
                 break;
             case 5: // Snow
                 break;
             case 6: // Coast
-                yields[0] = 1; // +1 Food
-                yields[2] = 1; // +1 Gold
+                _yields[0] = 1; // +1 Food
+                _yields[2] = 1; // +1 Gold
                 break;
             case 7: // Ocean
-                yields[0] = 1; // +1 Food
+                _yields[0] = 1; // +1 Food
                 break;
         }
 
@@ -159,15 +159,15 @@ public class GameTile : ISerialization
             case 0: // Flat
                 break;
             case 1: // Hills
-                yields[1] += 1; // +1 Production
+                _yields[1] += 1; // +1 Production
                 break;
             case 2: // Mountain (has no yields)
-                foreach (int y in yields)
+                foreach (int y in _yields)
                 {
-                    yields[y] = 0;
+                    _yields[y] = 0;
                 }
 
-                return yields;
+                return _yields;
         }
 
         // Factor in Tile Feature
@@ -176,27 +176,27 @@ public class GameTile : ISerialization
             case 0: // No Tile Feature
                 break;
             case 1: // Woods
-                yields[1] += 1; // +1 Production
+                _yields[1] += 1; // +1 Production
                 break;
             case 2: // Floodplains
                 if (_biome == 4)
                 {
-                    yields[0] += 2;
+                    _yields[0] += 2;
                 }
                 else
                 {
-                    yields[0] += 1; // +1 Food
+                    _yields[0] += 1; // +1 Food
                 }
                 break;
             case 3: // Marsh
-                yields[0] += 1; // +1 Food
+                _yields[0] += 1; // +1 Food
                 break;
             case 4: // Rainforest
-                yields[0] += 1; // +1 Food
+                _yields[0] += 1; // +1 Food
                 break;
             case 5: // Oasis
-                yields[0] += 3; // +3 Food
-                yields[2] += 1; // +1 Gold
+                _yields[0] += 3; // +3 Food
+                _yields[2] += 1; // +1 Gold
                 break;
         }
 
@@ -279,35 +279,35 @@ public class GameTile : ISerialization
             case 0: // No Improvement
                 break;
             case 1: // Farm
-                yields[0] += 1; // +1 Food
+                _yields[0] += 1; // +1 Food
                 break;
             case 2: // Mine
-                yields[1] += 1; // +1 Production
+                _yields[1] += 1; // +1 Production
                 break;
             case 3: // Lumber Camp
-                yields[1] += 1; // +1 Production
+                _yields[1] += 1; // +1 Production
                 break;
             case 4: // Pasture
-                yields[1] += 1; // +1 Production
+                _yields[1] += 1; // +1 Production
                 break;
             case 5: // Camp
-                yields[2] += 1; // +1 Gold
+                _yields[2] += 1; // +1 Gold
                 break;
             case 6: // Plantation
-                yields[2] += 2; // +2 Gold
+                _yields[2] += 2; // +2 Gold
                 break;
             case 7: // Fishing Boats
-                yields[0] += 1; // +1 Food
+                _yields[0] += 1; // +1 Food
                 break;
         }
 
         if (_settlement is not null)
         {
             // Settlement Tiles always have 2 Food
-            yields[0] = 2;
+            _yields[0] = 2;
         }
 
-        return yields;
+        return _yields;
     }
     
     public float TileValue()
@@ -377,31 +377,31 @@ public class GameTile : ISerialization
     public void SetBiome(int biome)
     {
         _biome = biome;
-        _yields = CalculateYields();
+        _yields = GetYields();
     }
 
     public void SetTerrain(int terrain)
     {
         _terrain = terrain;
-        _yields = CalculateYields();
+        _yields = GetYields();
     }
 
     public void SetFeature(int feature)
     {
         _feature = feature;
-        _yields = CalculateYields();
+        _yields = GetYields();
     }
 
     public void SetResource(int resource)
     {
         _resource = resource;
-        _yields = CalculateYields();
+        _yields = GetYields();
     }
 
     public void SetImprovement(int improvement)
     {
         _improvement = improvement;
-        _yields = CalculateYields();
+        _yields = GetYields();
     }
 
     public void SetNeighbor(int edge, GameTile neighbor)
@@ -525,12 +525,7 @@ public class GameTile : ISerialization
     {
         return _settlement;
     }
-
-    public int[] GetYields()
-    {
-        return _yields;
-    }
-
+    
     public bool IsWalkable()
     {
         if (IsLand() && _terrain != 2)

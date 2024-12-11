@@ -1,3 +1,6 @@
+using Units;
+using UnityEngine.UIElements;
+
 namespace City_Projects
 {
     public class WarriorProject : CityProject
@@ -5,13 +8,17 @@ namespace City_Projects
         public WarriorProject()
         {
             projectName = "Warrior";
+            currentProductionProgress = 0;
             projectCost = 20;
             projectType = "unit";
         }
 
-        new public void Complete()
+        public override void Complete()
         {
             // Spawn Warrior
+            gameManager.SpawnUnit(new Warrior(settlement._gameTile, settlement._civilization));
+            
+            currentProductionProgress = 0;
         }
     
     

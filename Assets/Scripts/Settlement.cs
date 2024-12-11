@@ -21,7 +21,7 @@ public class Settlement : ISerialization
     [JsonProperty]
     private int _combatStrength;
     [JsonProperty]
-    private List<Building> _buildings;
+    public List<Building> _buildings;
     [JsonProperty]
     private List<CityProject> _projects;
     [JsonProperty]
@@ -150,7 +150,7 @@ public class Settlement : ISerialization
         {
             foreach (Building b in _buildings)
             {
-                _yieldsPt[yield] += b.GetYields()[yield];
+                _yieldsPt[yield] += b.yields[yield];
             }
         }
     }

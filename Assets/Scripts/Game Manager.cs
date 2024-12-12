@@ -230,4 +230,14 @@ public class GameManager : MonoBehaviour
         
         settlement.UpdateYields();
     }
+
+    public void CampUnit(Unit unit)
+    {
+        unit._camping = !unit._camping;
+    }
+
+    public void PassUnit(Unit unit)
+    {
+        unit._passing = true;
+    }
 }

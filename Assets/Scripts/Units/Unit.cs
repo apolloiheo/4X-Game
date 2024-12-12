@@ -7,32 +7,20 @@ using UnityEngine.Serialization;
 public abstract class Unit : ISerialization
 {
     // Instance Properties
-    [JsonProperty]
-    public string _name; // The Unit's name.
-    [JsonProperty]
-    public int _health; // A Unit's current Health Points (Default of 100)
-    [JsonProperty]
-    public int _baseMP; // A Unit's current Movement Points per turn.
-    [JsonProperty]
-    public int _currMP; // A Unit's remaining movement points this turn.
-    [JsonProperty]
-    public int _combatStrength; // A Unit's base Combat Strength Stat - used to determine Attack Damage and Defense Damage.
-    [JsonProperty]
-    public int _supplies; // A Unit's current Supplies stat - Determines how many turns it can stay out of your territory before taking damage.
-    [JsonProperty]
-    public int _attackRange; // The range of Tiles a Unit can attack from. (Melee: 0, Ranged: 1 - X).
-    [JsonProperty]
-    public int _experience; // A Unit's current XP. Needs X amount for a Promotion.
-    [JsonProperty]
-    public bool _hasOrder; // Determines whether a Unit has already been given an order for this turn.
-    [JsonProperty]
-    public bool _exhausted; // Determines if a Unit still has moves to make this turn.
-    [JsonProperty]
-    public bool _fortified; // Determines if a Unit was ordered to Fortify this turn.
-    [JsonProperty]
-    public List<Promotion> _promotions; // Unlocked Promotions
-    [JsonProperty]
-    public Point _position;
+    [JsonProperty] public string _name; // The Unit's name.
+    [JsonProperty] public int _health; // A Unit's current Health Points (Default of 100)
+    [JsonProperty] public int _baseMP; // A Unit's current Movement Points per turn.
+    [JsonProperty] public int _currMP; // A Unit's remaining movement points this turn.
+    [JsonProperty] public int _combatStrength; // A Unit's base Combat Strength Stat - used to determine Attack Damage and Defense Damage.
+    [JsonProperty] public int _supplies; // A Unit's current Supplies stat - Determines how many turns it can stay out of your territory before taking damage.
+    [JsonProperty] public int _attackRange; // The range of Tiles a Unit can attack from. (Melee: 0, Ranged: 1 - X).
+    [JsonProperty] public int _experience; // A Unit's current XP. Needs X amount for a Promotion.
+    [JsonProperty] public bool _hasOrder; // Determines whether a Unit has already been given an order for this turn.
+    [JsonProperty] public bool _exhausted; // Determines if a Unit still has moves to make this turn.
+    [JsonProperty] public bool _camping; // Determines if a Unit was ordered to Fortify this turn.
+    [JsonProperty] public bool _passing;
+    [JsonProperty] public List<Promotion> _promotions; // Unlocked Promotions
+    [JsonProperty] public Point _position;
     
     // Private Variables
     public List<Point> possible_moves;
@@ -56,14 +44,38 @@ public abstract class Unit : ISerialization
 
     public void OnTurnEnd()
     {
-        if (_fortified)
+        if (_camping)
         {
             _health += 10;
+            _supplies += _currMP;
+        } else if (!IsInFriendlyTerritory())
+        {
+            if (_supplies > 0)
+            {
+                _supplies -= 1;
+            }
+            else 
+            {
+                Damage(20);
+            }
         }
         
         _exhausted = false;
         _hasOrder = false;
+        _passing = false;
         _currMP = _baseMP;
+    }
+
+    bool IsInFriendlyTerritory()
+    {
+        foreach (Settlement settlement in _civilization._settlements)
+        {
+            if (settlement._territory.Contains(_gameTile))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void UpdateUnit()
@@ -92,6 +104,11 @@ public abstract class Unit : ISerialization
     public void Damage(int damage)
     {
         _health -= damage;
+
+        if (_health <= 0)
+        {
+            Debug.Log("Unit died");
+        }
     }
 
     public void GetPossibleMoves(GameTile currTile, int movementPoints, bool isInitial)

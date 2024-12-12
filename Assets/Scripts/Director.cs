@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class Director : MonoBehaviour
 {
@@ -55,7 +56,6 @@ public class Director : MonoBehaviour
     public GameObject riversParent;
     public GameObject riverSegment;
     [Header("Settlements")] public Tile village;
-    [Header("Units")] public Tile warrior;
     [Header("UI Prefabs")] public GameObject settlementUI;
     public GameObject settlementWindow;
     public GameObject territoryParent;
@@ -68,6 +68,11 @@ public class Director : MonoBehaviour
     public TMP_Text selectedUnitMovementPoints;
     public GameObject unitPrefab;
     public GameObject unitsParent;
+    public Image moveButton;
+    public Image passButton;
+    public Image attackButton;
+    public Image campButton;
+    public Image fortifyButton;
 
     // Private Instance Attributes
     private bool _needsDirection;
@@ -117,8 +122,12 @@ public class Director : MonoBehaviour
 
         // Render the game (once)
         RenderGame();
-
-        UpdateEndTurnButton();
+        
+        // Position Camera over starting position (Units)
+        GameTile tile = civilization._units[0]._gameTile;
+        Vector3 startPos = baseTilemap.CellToWorld(new Vector3Int(tile.GetYPos(), tile.GetXPos(), -1));
+        mainCam.transform.position = startPos;
+        mainCam.orthographicSize = 4f;
     }
 
     // Update is called every frame
@@ -203,12 +212,50 @@ public class Director : MonoBehaviour
         // Activate the Unit Window Canvas
         unitWindowCanvas.SetActive(true);
 
-        // Update Window Values to Selected Unit Properties
+        // Manage Buttons
+        Color32 deactiveColor = new Color32(50, 50, 50, 200);
+        Color32 activeColor = new Color32(200, 200, 200, 255);
+        
+        if (selectedUnit._camping)
+        {
+            campButton.color = Color.white;
+        }
+        else
+        {
+            if (selectedUnit._currMP <= 0)
+            {
+                campButton.color = deactiveColor;
+            }
+            else
+            {
+                campButton.color = activeColor;
+            }
+        }
+        
+        if (selectedUnit._currMP <= 0 || selectedUnit._camping)
+        {
+            moveButton.color = deactiveColor;
+            passButton.color = deactiveColor;
+            attackButton.color = deactiveColor;
+            fortifyButton.color = deactiveColor;
+        }
+        else
+        {
+            moveButton.color = activeColor;
+            passButton.color = activeColor;
+            attackButton.color = activeColor;
+            fortifyButton.color = activeColor;
+        }
+        
         
         // Name
         selectedUnitName.text = selectedUnit._name;
         // Movement Points
-        selectedUnitMovementPoints.text = selectedUnit._currMP.ToString();
+        selectedUnitMovementPoints.text = 
+            "Movement Points: " + selectedUnit._currMP + "/" + selectedUnit._baseMP + "\n" +
+            "Combat Strength: " + selectedUnit._combatStrength + "\n" +
+            "Supplies: " + selectedUnit._supplies + "\n" + 
+            "Health: " + selectedUnit._health;
     }
     
     public void ToggleSettlementWindow(Settlement settlement)
@@ -317,7 +364,7 @@ public class Director : MonoBehaviour
         // Make sure Units have been moved
         foreach (Unit unit in civilization._units)
         {
-            if (unit._currMP > 0)
+            if (!unit._passing && unit._currMP > 0 && !unit._camping)
             {
                 // Change Button Text
                 UpdateEndTurnButton();
@@ -343,7 +390,7 @@ public class Director : MonoBehaviour
         }
 
         // Update Selected Unit
-        if (selectedUnit != null)
+        if (selectedUnit != null && !selectedUnit._camping)
         {
             DisplayPossibleMoves(selectedUnit);
             OpenUnitWindow();
@@ -353,6 +400,12 @@ public class Director : MonoBehaviour
         
         // Redirect player to new moves at the beginning of new turn
         UpdateEndTurnButton();
+
+        if (selectedUnit is not null)
+        {
+            // Update Selected Unit Window
+            OpenUnitWindow();
+        }
     }
     
     /* Selects the Unit in the parameter, open's the unit window. */
@@ -361,11 +414,24 @@ public class Director : MonoBehaviour
         // Assign Selected Unit
         selectedUnit = unit;
         
-        // Set UnitWindow Active and Update it's text
+        // Set UnitWindow Active and Update its text
         OpenUnitWindow();
 
-        // Display that Unit's possible moves through the Shading Tilemap (highlight tiles)
-        DisplayPossibleMoves(unit);
+        if (!selectedUnit._passing && !selectedUnit._camping)
+        {
+            // Display that Unit's possible moves through the Shading Tilemap (highlight tiles)
+            DisplayPossibleMoves(unit);
+        }
+    }
+
+    public void StageSelectedUnitForMovement()
+    {
+        if (selectedUnit._currMP > 0)
+        {
+            selectedUnit._passing = false;
+            selectedUnit._camping = false;
+            DisplayPossibleMoves(selectedUnit);
+        }
     }
 
     /* Resizes World Canvas to match Tilemap size (should work with different world sizes or grid/cell sizes) */
@@ -872,7 +938,7 @@ public class Director : MonoBehaviour
 
         foreach (Unit unit in civilization._units)
         {
-            if (unit._currMP > 0)
+            if (unit._currMP > 0 && !unit._camping && !unit._passing)
             {
                 endTurnText.text = "UNIT NEEDS ORDER";
                 endTurnText.fontSize = 18;
@@ -882,5 +948,35 @@ public class Director : MonoBehaviour
 
         endTurnText.text = "END TURN";
         endTurnText.fontSize = 24;
+    }
+
+    public void CampSelectedUnit()
+    {
+        gm.CampUnit(selectedUnit);
+        
+        OpenUnitWindow();
+
+        if (!selectedUnit._camping)
+        {
+            DisplayPossibleMoves(selectedUnit);
+        }
+        else
+        {
+            RemovePossibleMoves();
+        }
+        
+        UpdateEndTurnButton();
+    }
+
+    public void PassSelectedUnit()
+    {
+        gm.PassUnit(selectedUnit);
+        
+        // Rerender Unit Window
+        OpenUnitWindow();
+        
+        RemovePossibleMoves();
+        
+        UpdateEndTurnButton();
     }
 }

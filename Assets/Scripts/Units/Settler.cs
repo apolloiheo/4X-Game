@@ -15,7 +15,7 @@ namespace Units
             _experience = 0;
             _hasOrder = false;
             _exhausted = false;
-            _fortified = false;
+            _camping = false;
             _gameTile = tile;
             _position = new Point(_gameTile.GetYPos(), _gameTile.GetXPos());
             _civilization = civilization;

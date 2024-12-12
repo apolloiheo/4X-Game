@@ -11,11 +11,12 @@ namespace Units
             _currMP = _baseMP;
             _combatStrength = 20;
             _supplies = 10;
+            _health = 100;
             _attackRange = 0;
             _experience = 0;
             _hasOrder = false;
             _exhausted = false;
-            _fortified = false;
+            _camping = false;
             _gameTile = tile;
             _position = new Point(_gameTile.GetYPos(), _gameTile.GetXPos());
             _civilization = civilization;

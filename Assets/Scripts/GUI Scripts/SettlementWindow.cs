@@ -30,7 +30,6 @@ public class SettlementWindow : MonoBehaviour
     // Private Properties
     private HashSet<GameObject> citizenUIs = new HashSet<GameObject>();
     private Dictionary<CityProject, GameObject> projects = new Dictionary<CityProject, GameObject>();
-    private Dictionary<Building, GameObject> buildings = new Dictionary<Building, GameObject>();
 
     public void Start()
     {
@@ -166,7 +165,6 @@ public class SettlementWindow : MonoBehaviour
 
     public void FillBuildingTabs()
     {
-        Debug.Log(_settlement._buildings.Count);
         if (_settlement._buildings.Count > 0)
         {
             GameObject buildingPrefab = null;
@@ -180,9 +178,6 @@ public class SettlementWindow : MonoBehaviour
                 BuildingButton buttonScript = buildingPrefab.GetComponent<BuildingButton>();
                 buttonScript.building = building;
                 buttonScript.DisplayText();
-            
-                buildings.Add(building, buildingPrefab);
-                Debug.Log(buildings.Count);
             }
         }
     }

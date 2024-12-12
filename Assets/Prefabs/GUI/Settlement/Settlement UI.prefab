@@ -360,8 +360,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settlement:
+    _buildings: []
     _civilization:
       IsNPC: 0
+      _settlements: []
       _color:
         serializedVersion: 2
         rgba: 0
@@ -537,8 +539,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00001055, y: -0.0000033081}
-  m_SizeDelta: {x: 11.3296, y: 3.4828}
+  m_AnchoredPosition: {x: 0.093, y: -0.0000033081}
+  m_SizeDelta: {x: 17.931, y: 3.483}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9211667865762367939
 CanvasRenderer:
@@ -598,9 +600,9 @@ MonoBehaviour:
   m_fontSize: 3
   m_fontSizeBase: 3
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 1
+  m_fontSizeMax: 3
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256

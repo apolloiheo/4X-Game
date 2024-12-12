@@ -231,6 +231,21 @@ public class GameManager : MonoBehaviour
         settlement.UpdateYields();
     }
 
+    public void DestroyUnit(Unit unit)
+    {
+        Civilization owner = unit._civilization;
+        
+        // Remove its tracking by owner Civilization
+        owner._units.Remove(unit);
+        
+        // Remove it from the world map
+        unit._gameTile.SetUnit(null);
+        unit._gameTile = null;
+        
+        // Nullify it
+        unit = null;
+    }
+
     public void CampUnit(Unit unit)
     {
         unit._camping = !unit._camping;
@@ -239,5 +254,24 @@ public class GameManager : MonoBehaviour
     public void PassUnit(Unit unit)
     {
         unit._passing = true;
+    }
+
+    public void SettleUnit(Unit unit)
+    {
+        String settlmentName = "Jersey";
+
+        if (unit._civilization._settlements.Count > 0)
+        {
+            for (int i = 0; i < unit._civilization._settlements.Count; i++)
+            {
+                settlmentName = "New" + " " + settlmentName;
+            }
+        }
+        
+        Settlement settlement = new Settlement(settlmentName, unit._civilization, unit._gameTile);
+        
+        SpawnSettlement(settlement);
+        
+        DestroyUnit(unit);
     }
 }

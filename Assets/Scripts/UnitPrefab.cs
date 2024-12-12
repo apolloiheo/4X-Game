@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -5,14 +6,21 @@ using UnityEngine;
 
 public class UnitPrefab : MonoBehaviour
 {
+    public SpriteRenderer spriteRenderer;
+    public Sprite warrior;
+    public Sprite settler;
     public Unit unit;
     public Director director;
     
     public void UpdatePrefab()
     {
-        // Update its own values and visuals on the world    
-        
-        // To be implemented
+        if (unit._name == "Warrior")
+        {
+            spriteRenderer.sprite = warrior;
+        } else if (unit._name == "Settler")
+        {
+            spriteRenderer.sprite = settler;
+        }
     }
 
     public void OnClick()

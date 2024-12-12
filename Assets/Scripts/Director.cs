@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using City_Projects;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
@@ -72,7 +72,7 @@ public class Director : MonoBehaviour
     public Image passButton;
     public Image attackButton;
     public Image campButton;
-    public Image fortifyButton;
+    public Image settleButton;
 
     // Private Instance Attributes
     private bool _needsDirection;
@@ -231,22 +231,34 @@ public class Director : MonoBehaviour
                 campButton.color = activeColor;
             }
         }
-        
+
         if (selectedUnit._currMP <= 0 || selectedUnit._camping)
         {
             moveButton.color = deactiveColor;
             passButton.color = deactiveColor;
             attackButton.color = deactiveColor;
-            fortifyButton.color = deactiveColor;
+            settleButton.color = deactiveColor;
+
         }
         else
         {
             moveButton.color = activeColor;
             passButton.color = activeColor;
             attackButton.color = activeColor;
-            fortifyButton.color = activeColor;
+            settleButton.color = activeColor;
         }
         
+        // Unique Settler Button check
+        if (selectedUnit._name == "Settler")
+        {
+            // Activate Settle Button
+            settleButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            // Deactive Settle Button
+            settleButton.gameObject.SetActive(false);
+        }
         
         // Name
         selectedUnitName.text = selectedUnit._name;
@@ -836,19 +848,30 @@ public class Director : MonoBehaviour
 
                         // Place Game Obj Prefab on that Tile
                         unitOBJ.transform.position = worldPosition;
+                        
+                        UnitPrefab prefabScript = unitOBJ.GetComponent<UnitPrefab>();
 
                         // Give the Prefab reference to its own Unit
-                        unitOBJ.GetComponent<UnitPrefab>().unit = currTile.GetUnit();
-                        unitOBJ.GetComponent<UnitPrefab>().director = this;
+                        prefabScript.unit = currTile.GetUnit();
+                        prefabScript.director = this;
                     
                         // Update it's art and values
-                        unitOBJ.GetComponent<UnitPrefab>().UpdatePrefab();
+                        prefabScript.UpdatePrefab();
 
                         // Add it to our HashSet tracker
                         units.Add(currUnit, unitOBJ);
                     }
                 }
             }
+        }
+    }
+
+    void DeleteUnit(Unit unit)
+    {
+        if (units.Keys.Contains(unit))
+        {
+            units[unit].SetActive(false);
+            units.Remove(unit);
         }
     }
 
@@ -978,5 +1001,16 @@ public class Director : MonoBehaviour
         RemovePossibleMoves();
         
         UpdateEndTurnButton();
+    }
+
+    public void SettleSelectedUnit()
+    {
+        gm.SettleUnit(selectedUnit);
+        
+        DeleteUnit(selectedUnit);
+        
+        // Render Settlement
+        RenderTilemaps(gm.game.world);
+        RenderSettlementUI(gm.game.world);
     }
 }

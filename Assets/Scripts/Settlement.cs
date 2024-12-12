@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using City_Projects;
 using Newtonsoft.Json;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Tilemaps;
+
 
 [System.Serializable]
 public class Settlement : ISerialization
@@ -470,8 +469,20 @@ public class Settlement : ISerialization
     {
         if (_currentCityProject is not null)
         {
-            return Math.Ceiling((decimal)((_currentCityProject.projectCost - _currentCityProject.currentProductionProgress) / _yieldsPt[1])).ToString();
+            float remainingCost = _currentCityProject.projectCost - _currentCityProject.currentProductionProgress;
+
+            float productionPT = _yieldsPt[1];
+            
+            float turnToProduce = remainingCost / productionPT;
+
+            if (remainingCost <= 0)
+            {
+                return "-";
+            }
+            
+            return Math.Ceiling(turnToProduce).ToString();
         }
+        
 
         return "-";
     }

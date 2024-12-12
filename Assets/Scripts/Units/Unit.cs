@@ -33,6 +33,7 @@ public abstract class Unit : ISerialization
     private const int Zero = 0;
     private const int TotalPromotions = 5;
     private const int UnitMaxHealth = 100;
+    private const int UnitMaxSupply = 8;
     private const int HillAttackDebuf = 10;
     private const int RiverAttackDebuf = 10;
 
@@ -47,7 +48,19 @@ public abstract class Unit : ISerialization
         if (_camping)
         {
             _health += 10;
+
+            if (_health > UnitMaxHealth)
+            {
+                _health = UnitMaxHealth;
+            }
+            
             _supplies += _currMP;
+
+            if (_supplies > UnitMaxSupply)
+            {
+                _supplies = UnitMaxSupply;
+            }
+            
         } else if (!IsInFriendlyTerritory())
         {
             if (_supplies > 0)

@@ -11,6 +11,7 @@ namespace Units
             _currMP = _baseMP;
             _combatStrength = 5;
             _supplies = 15;
+            _health = 100;
             _attackRange = 0;
             _experience = 0;
             _hasOrder = false;

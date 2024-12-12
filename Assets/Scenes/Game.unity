@@ -2462,6 +2462,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1710827225}
   m_CullTransparentMesh: 1
+--- !u!1 &1737378264 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5713668963373654105, guid: 100567947f7d634459e496955b249d61, type: 3}
+  m_PrefabInstance: {fileID: 393516174211181365}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1765165676
 GameObject:
   m_ObjectHideFlags: 0
@@ -3073,10 +3078,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 5764131242118050114}
-    - target: {fileID: 3560047170960868791, guid: 100567947f7d634459e496955b249d61, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3651614950124184917, guid: 100567947f7d634459e496955b249d61, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -3165,6 +3166,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 5764131242118050114}
+    - target: {fileID: 6486885702457635509, guid: 100567947f7d634459e496955b249d61, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5764131242118050114}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3213,7 +3218,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6106872356674857923, guid: 100567947f7d634459e496955b249d61, type: 3}
   m_PrefabInstance: {fileID: 393516174211181365}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1737378264}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -3344,6 +3349,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1540924628}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: settleButton
+      value: 
+      objectReference: {fileID: 393516174211181370}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: fortifyButton
       value: 
       objectReference: {fileID: 393516174211181370}
@@ -3359,6 +3368,10 @@ PrefabInstance:
       propertyPath: mountainTilemap
       value: 
       objectReference: {fileID: 264568974}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: settleButtonOBJ
+      value: 
+      objectReference: {fileID: 1737378264}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: territoryParent
       value: 

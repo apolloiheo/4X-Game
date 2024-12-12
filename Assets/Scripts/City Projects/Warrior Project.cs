@@ -17,11 +17,8 @@ namespace City_Projects
         {
             // Spawn Warrior
             gameManager.SpawnUnit(new Warrior(settlement._gameTile, settlement._civilization));
-            
             currentProductionProgress = 0;
             settlement._currentCityProject = null;
         }
-    
-    
     }
 }

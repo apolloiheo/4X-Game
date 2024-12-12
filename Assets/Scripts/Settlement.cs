@@ -25,7 +25,7 @@ public class Settlement : ISerialization
     [JsonProperty]
     private List<CityProject> _projects;
     [JsonProperty]
-    private CityProject _currentCityProject;
+    public CityProject _currentCityProject;
     [JsonProperty]
     private int _tier; // Settlement tier. 1 = Village, 2 = Town, 3 = City
     [JsonProperty]

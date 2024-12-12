@@ -60,6 +60,7 @@ public class Director : MonoBehaviour
     public GameObject settlementWindow;
     public GameObject territoryParent;
     public GameObject territoryLines;
+    public TMP_Text endTurnText;
     [Header("Unit Selection")] 
     public Unit selectedUnit;
     public GameObject selectedUnitPrefab;
@@ -117,8 +118,7 @@ public class Director : MonoBehaviour
         // Render the game (once)
         RenderGame();
 
-        // Player needs to take action -> True
-        _needsDirection = true;
+        UpdateEndTurnButton();
     }
 
     // Update is called every frame
@@ -190,6 +190,9 @@ public class Director : MonoBehaviour
                     {
                         RemovePossibleMoves();
                     }
+                    
+                    // Update End Turn Button in case player can now end turn
+                    UpdateEndTurnButton();
                 }
             }
         }
@@ -286,6 +289,51 @@ public class Director : MonoBehaviour
 
     public void SendEndTurnToGM()
     {
+        // Make sure Settlements have a project
+        foreach (Settlement settlement in civilization.GetSettlements())
+        {
+            if (settlement._currentCityProject is null)
+            {
+                // Change Button Text
+                UpdateEndTurnButton();
+                
+                // Move Camera to Settlement
+                GameTile tile = settlement.GetTile();
+                Vector3 settlementPos = baseTilemap.CellToWorld(new Vector3Int(tile.GetYPos(), tile.GetXPos(), -1));
+
+                if (mainCam.transform.position == settlementPos)
+                {
+                    ToggleSettlementWindow(settlement);
+                }
+                else
+                {
+                    mainCam.transform.position = settlementPos;
+                    mainCam.orthographicSize = 5f;
+                    return;
+                }
+            }
+        }
+
+        // Make sure Units have been moved
+        foreach (Unit unit in civilization._units)
+        {
+            if (unit._currMP > 0)
+            {
+                // Change Button Text
+                UpdateEndTurnButton();
+                
+                // Move Camera to Unit
+                GameTile tile = unit._gameTile;
+                Vector3 unitPos = baseTilemap.CellToWorld(new Vector3Int(tile.GetYPos(), tile.GetXPos(), -1));
+                mainCam.transform.position = unitPos;
+                mainCam.orthographicSize = 5f;
+                
+                // Select the unit
+                SelectUnit(unit);
+                return;
+            }
+        }
+        
         gm.EndTurn();
 
         // Update Settlement UIs
@@ -302,6 +350,9 @@ public class Director : MonoBehaviour
         }
         
         RenderUnits();
+        
+        // Redirect player to new moves at the beginning of new turn
+        UpdateEndTurnButton();
     }
     
     /* Selects the Unit in the parameter, open's the unit window. */
@@ -804,5 +855,32 @@ public class Director : MonoBehaviour
             mainCam.orthographicSize -= scroll * zoomSpeed;
             mainCam.orthographicSize = Mathf.Clamp(mainCam.orthographicSize, minZoom, maxZoom);
         }
+    }
+
+    /* Checks if player has moves left to make. */
+    public void UpdateEndTurnButton()
+    {
+        foreach (Settlement settlement in civilization._settlements)
+        {
+            if (settlement._currentCityProject is null)
+            {
+                endTurnText.text = "SETTLEMENT NEEDS ORDER";
+                endTurnText.fontSize = 18;
+                return;
+            }
+        }
+
+        foreach (Unit unit in civilization._units)
+        {
+            if (unit._currMP > 0)
+            {
+                endTurnText.text = "UNIT NEEDS ORDER";
+                endTurnText.fontSize = 18;
+                return;
+            }
+        }
+
+        endTurnText.text = "END TURN";
+        endTurnText.fontSize = 24;
     }
 }

@@ -150,12 +150,15 @@ public class SettlementWindow : MonoBehaviour
                 
                 projectPrefab = Instantiate(cityProjectButton, buildingProjectsContent);
             }
+
+            ProjectButton projectButtonScript = projectPrefab.GetComponent<ProjectButton>();
                 
-            projectPrefab.GetComponent<ProjectButton>().name.text = project.projectName;
-            projectPrefab.GetComponent<ProjectButton>().turns.text = Math.Ceiling((((float) project.projectCost - (float) project.currentProductionProgress) / (float) _settlement.GetYieldsPt()[1])).ToString();
-            projectPrefab.GetComponent<ProjectButton>().cost.text = project.projectCost.ToString();
-            projectPrefab.GetComponent<ProjectButton>().settlement = _settlement;
-            projectPrefab.GetComponent<ProjectButton>().project = project;
+            projectButtonScript.name.text = project.projectName;
+            projectButtonScript.turns.text = Math.Ceiling((((float) project.projectCost - (float) project.currentProductionProgress) / (float) _settlement.GetYieldsPt()[1])).ToString();
+            projectButtonScript.cost.text = project.projectCost.ToString();
+            projectButtonScript.settlement = _settlement;
+            projectButtonScript.project = project;
+            projectButtonScript.director = director;
 
             projects.Add(project, projectPrefab);
         }

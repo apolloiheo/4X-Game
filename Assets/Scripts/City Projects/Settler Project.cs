@@ -12,6 +12,7 @@ namespace City_Projects
         new public void Complete()
         {
             // Spawn Settler
+            settlement._currentCityProject = null;
         }
     }
 }

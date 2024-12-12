@@ -3065,10 +3065,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player GUI Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 1079547127313388032, guid: 100567947f7d634459e496955b249d61, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3813106141626067390, guid: 100567947f7d634459e496955b249d61, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -3149,18 +3145,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4707909743012952635, guid: 100567947f7d634459e496955b249d61, type: 3}
+      propertyPath: m_text
+      value: END TURN
+      objectReference: {fileID: 0}
     - target: {fileID: 5953117433815938686, guid: 100567947f7d634459e496955b249d61, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 5764131242118050114}
-    - target: {fileID: 5953117433815938686, guid: 100567947f7d634459e496955b249d61, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SendEndTurnToGM
-      objectReference: {fileID: 0}
-    - target: {fileID: 5953117433815938686, guid: 100567947f7d634459e496955b249d61, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Director, Assembly-CSharp
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3193,6 +3185,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3560047170960868791, guid: 100567947f7d634459e496955b249d61, type: 3}
   m_PrefabInstance: {fileID: 393516174211181365}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &393516174211181369 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4707909743012952635, guid: 100567947f7d634459e496955b249d61, type: 3}
+  m_PrefabInstance: {fileID: 393516174211181365}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5764131242118050113
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3237,6 +3240,10 @@ PrefabInstance:
       propertyPath: baseTilemap
       value: 
       objectReference: {fileID: 407515335}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: endTurnText
+      value: 
+      objectReference: {fileID: 393516174211181369}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: unitsParent
       value: 

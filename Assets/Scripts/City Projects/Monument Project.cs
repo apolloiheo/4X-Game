@@ -20,6 +20,7 @@ namespace City_Projects
             gameManager.AddBuilding(settlement, monument);
             currentProductionProgress = 0;
             alreadyBuilt = true;
+            settlement._currentCityProject = null;
         }
     }
 }

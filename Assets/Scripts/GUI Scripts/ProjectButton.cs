@@ -8,6 +8,7 @@ using UnityEngine;
 public class ProjectButton : MonoBehaviour
 {
     public CityProject project;
+    public Director director;
     public TMP_Text name;
     public TMP_Text turns;
     public TMP_Text cost;
@@ -16,5 +17,6 @@ public class ProjectButton : MonoBehaviour
     public void OnClick()
     {
         settlement.SetCityProject(project);
+        director.UpdateEndTurnButton();
     }
 }

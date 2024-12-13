@@ -8,30 +8,23 @@ using UnityEngine.Serialization;
 public class Civilization : ISerialization
 {
     // NPC or Player
-    [JsonProperty]
-    public bool IsNPC;
+    [JsonProperty] public bool IsNPC;
     
     // Civilization Traits
-    [JsonProperty]
-    private TechnologyTree _technology; // ** WIP - Technology tree for each Civilization
+    [JsonProperty] private TechnologyTree _technology; // ** WIP - Technology tree for each Civilization
     
     // Yields
-    [JsonProperty]
-    private int _goldPt; // A Civilization's Gold income per turn.
-    [JsonProperty]
-    private int _gold; // A Civilization's current gold (accumulated across turns and spent to buy Units/Buildings).
-    [JsonProperty]
-    private int _culturePt; // A Civilization's culture generation per turn.
-    [JsonProperty]
-    private int _culture; // A Civilization's current culture (accumulated across turns and spent on culture skills).
-    [JsonProperty]
-    private int _sciencePt; // A Civilization's science generation per turn.
+    [JsonProperty] private int _goldPt; // A Civilization's Gold income per turn.
+    [JsonProperty] private int _gold; // A Civilization's current gold (accumulated across turns and spent to buy Units/Buildings).
+    [JsonProperty] private int _culturePt; // A Civilization's culture generation per turn.
+    [JsonProperty] private int _culture; // A Civilization's current culture (accumulated across turns and spent on culture skills).
+    [JsonProperty] private int _sciencePt; // A Civilization's science generation per turn.
+
+    [JsonProperty] public HashSet<Point> discoveredTiles;
     
     // Property
-    [JsonProperty]
-    public List<Settlement> _settlements; // A List of the Settlements this Civilization owns.
-    [JsonProperty]
-    public List<Unit> _units; // A List of the Units this Civilization owns.
+    [JsonProperty] public List<Settlement> _settlements; // A List of the Settlements this Civilization owns.
+    [JsonProperty] public List<Unit> _units; // A List of the Units this Civilization owns.
     
     public Color32 _color;
     //[JsonProperty]

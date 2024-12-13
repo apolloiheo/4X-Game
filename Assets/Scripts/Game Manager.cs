@@ -274,4 +274,9 @@ public class GameManager : MonoBehaviour
         
         DestroyUnit(unit);
     }
+
+    public void AddDiscoveredTiles(Civilization civilization, Point tile)
+    {
+        civilization.discoveredTiles.Add(tile);
+    }
 }

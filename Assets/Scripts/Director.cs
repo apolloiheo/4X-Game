@@ -4,7 +4,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
@@ -26,6 +25,7 @@ public class Director : MonoBehaviour
     public Tilemap mountainTilemap;
     public Tilemap featureTilemap;
     public Tilemap shadingTilemap;
+    public Tilemap visibilityTilemap;
     [Header("Flat Tiles")] public Tile tile;
     public Tile prairieTile;
     public Tile grassTile;
@@ -139,13 +139,7 @@ public class Director : MonoBehaviour
             // Toggle Unit Selected
             if (unitWindowCanvas.activeSelf)
             {
-                // Deactive it
-                unitWindowCanvas.SetActive(false);
-                // Unselect Unit
-                selectedUnit = null;
-                selectedUnitPrefab = null;
-                //Remove possibleMoves() highlighted tiles
-                RemovePossibleMoves();
+                CloseUnitWindow();
                 return;
             }
 
@@ -268,6 +262,17 @@ public class Director : MonoBehaviour
             "Combat Strength: " + selectedUnit._combatStrength + "\n" +
             "Supplies: " + selectedUnit._supplies + "\n" + 
             "Health: " + selectedUnit._health;
+    }
+
+    public void CloseUnitWindow()
+    {
+        // Deactive it
+        unitWindowCanvas.SetActive(false);
+        // Unselect Unit
+        selectedUnit = null;
+        selectedUnitPrefab = null;
+        //Remove possibleMoves() highlighted tiles
+        RemovePossibleMoves();
     }
     
     public void ToggleSettlementWindow(Settlement settlement)
@@ -816,6 +821,11 @@ public class Director : MonoBehaviour
         }
     }
 
+    void UpdateVision()
+    {
+         
+    }
+
     /* Render Units */
     void RenderUnits()
     {
@@ -1005,11 +1015,19 @@ public class Director : MonoBehaviour
 
     public void SettleSelectedUnit()
     {
-        gm.SettleUnit(selectedUnit);
-        
+        // Delete Object Prefab and remove it from units hashset tracking.
         DeleteUnit(selectedUnit);
         
-        // Render Settlement
+        // Tell GM to Delete it from Game
+        gm.SettleUnit(selectedUnit);
+        
+        // Close the Unit Window
+        CloseUnitWindow();
+        
+        // Remove the PossibleMoves highlight incase the unit has MP left.
+        RemovePossibleMoves();
+        
+        // Render Settlement and delete Unit
         RenderTilemaps(gm.game.world);
         RenderSettlementUI(gm.game.world);
     }

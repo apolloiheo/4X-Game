@@ -79,6 +79,7 @@ public class Director : MonoBehaviour
     private Dictionary<GameTile, GameObject> settlementUIs = new Dictionary<GameTile, GameObject>();
     private Dictionary<Unit, GameObject> units = new Dictionary<Unit, GameObject>();
     private HashSet<Point> highlightedTiles = new HashSet<Point>();
+    private HashSet<Point> visibleTiles = new HashSet<Point>();
 
     // Camera Values
     public bool _zoomedIn;
@@ -150,6 +151,12 @@ public class Director : MonoBehaviour
             return;
         }
 
+        // Toggle vision on/off for testing
+        if (Input.GetKeyDown(KeyCode.Period))
+        {
+            visibilityTilemap.gameObject.SetActive(!visibilityTilemap.gameObject.activeSelf);
+        }
+
         if (!_zoomedIn)
         {
             CameraControl();
@@ -196,6 +203,9 @@ public class Director : MonoBehaviour
                     
                     // Update End Turn Button in case player can now end turn
                     UpdateEndTurnButton();
+                    
+                    // Render new visible tiles
+                    RenderPlayerVision();
                 }
             }
         }
@@ -488,6 +498,7 @@ public class Director : MonoBehaviour
         RenderSettlementUI(gameWorld);
         RenderTerritoryLines();
         RenderUnits();
+        RenderPlayerVision();
     }
 
     /* Renders Settlement UI above Settlement Tiles */
@@ -821,9 +832,38 @@ public class Director : MonoBehaviour
         }
     }
 
-    void UpdateVision()
+    void RenderPlayerVision()
     {
-         
+        // Update player civilization's visibleTiles
+        CalculateVision();
+
+        for (int x = 0; x < gm.game.world.GetLength(); x++)
+        {
+            for (int y = 0; y < gm.game.world.GetHeight(); y++)
+            {
+                Point currentPoint = new Point(x, y);
+                Vector3Int cellLocation = new Vector3Int(y, x, 0);
+
+                // If the Tile hasn't been discovered
+                if (!civilization.discoveredTiles.Contains(currentPoint))
+                {
+                    // Place unexplored tile there
+                    visibilityTilemap.SetTile(cellLocation, unexplored);
+                }
+                else
+                {
+                    // If it is not visible
+                    if (!visibleTiles.Contains(currentPoint))
+                    {
+                        visibilityTilemap.SetTile(cellLocation, darkened);
+                    }
+                    else
+                    {
+                        visibilityTilemap.SetTile(cellLocation, null);
+                    }
+                }
+            }
+        }
     }
 
     /* Render Units */
@@ -1030,5 +1070,129 @@ public class Director : MonoBehaviour
         // Render Settlement and delete Unit
         RenderTilemaps(gm.game.world);
         RenderSettlementUI(gm.game.world);
+    }
+
+    void CalculateVision()
+    {
+        visibleTiles = new HashSet<Point>();
+        
+        foreach (Settlement settlement in civilization._settlements)
+        {
+            CalculcateSettlementVision(settlement);
+        }
+
+        foreach (Unit unit in civilization._units)
+        {
+            CalculateUnitVision(unit);
+        }
+        
+        // Adds all visible tile points to visibleTiles;
+        void CalculcateSettlementVision(Settlement settlement)
+        {
+            foreach (GameTile territoryTile in settlement._territory)
+            {
+                // Convert Tile to Point
+                Point territoryPoint = new Point(territoryTile.GetXPos(), territoryTile.GetYPos());
+                // Add it to visible tiles (all territory should be visible)
+                visibleTiles.Add(territoryPoint);
+                
+                // // If the tile hasn't been discovered yet (turn 1)
+                if (!civilization.discoveredTiles.Contains(territoryPoint))
+                {
+                    // Tell GM to add it to the Civilization's discovered tiles
+                    gm.AddDiscoveredTiles(civilization, territoryPoint);
+                }
+                
+                foreach (GameTile neighbor in territoryTile.GetNeighbors())
+                {
+                    if (neighbor is null)
+                    {
+                        continue;
+                    }
+                    
+                    // If it is adjacent to territory
+                    if (!settlement._territory.Contains(neighbor))
+                    {
+                        // Convert Tile to Point
+                        Point neighborPoint = new Point(neighbor.GetXPos(), neighbor.GetYPos());
+                        // Add it to visible tiles if it's not already there (Hashsets don't store duplicates)
+                        visibleTiles.Add(neighborPoint);
+
+                        // // If the tile hasn't been discovered yet (turn 1)
+                        if (!civilization.discoveredTiles.Contains(neighborPoint))
+                        {
+                            // Tell GM to add it to the Civilization's discovered tiles
+                            gm.AddDiscoveredTiles(civilization, neighborPoint);
+                        }
+                    }
+                }
+            }
+        }
+
+        /* Calculates the Vision for each unit (assumes all units can only see 2 tiles away). */
+        void CalculateUnitVision(Unit unit)
+        {
+            foreach (GameTile neighbor in unit._gameTile.GetNeighbors())
+            {
+                if (neighbor is not null)
+                {
+                    // Convert Tile to Point
+                    Point neighborPoint = new Point(neighbor.GetXPos(), neighbor.GetYPos());
+                    // Add it to visible tiles if it's not already there (Hashsets don't store duplicates)
+                    visibleTiles.Add(neighborPoint);
+                    
+                    // If the tile hasn't been discovered yet (turn 1)
+                    if (!civilization.discoveredTiles.Contains(neighborPoint))
+                    {
+                        // Tell GM to add it to the Civilization's discovered tiles
+                        gm.AddDiscoveredTiles(civilization, neighborPoint);
+                    }
+
+                    // If it obstructs vision don't do this
+                    if (!neighbor.ObstructsVision())
+                    {
+                        // Track current neighbor's edge (GetNeighbors starts at index 0 ends in 5)
+                        foreach (GameTile neighbor2 in neighbor.GetNeighbors())
+                        {
+                            // If the neighbor's neighbor isn't already part of visible tiles
+                            if (neighbor2 is not null && !visibleTiles.Contains(new Point(neighbor2.GetXPos(), neighbor2.GetYPos())))
+                            {
+                                Point neighbor2Point = new Point(neighbor2.GetXPos(), neighbor2.GetYPos());
+                                visibleTiles.Add(neighbor2Point);
+
+                                // If the tile hasn't been discovered yet 
+                                if (!civilization.discoveredTiles.Contains(neighbor2Point))
+                                {
+                                    // Tell GM to add it to the Civilization's discovered tiles
+                                    gm.AddDiscoveredTiles(civilization, neighbor2Point);
+                                }
+
+                                // If Unit is on hill, get an additional vision
+                                if (unit._gameTile.GetTerrain() == 1)
+                                {
+                                    foreach (GameTile neighbor3 in neighbor2.GetNeighbors())
+                                    {
+                                        // If the next neighbor isn't null, isn't already visible, and the previous neighbor doesn't obstruct vision
+                                        if (neighbor3 is not null && !visibleTiles.Contains(new Point(neighbor3.GetXPos(), neighbor3.GetYPos())) && !neighbor2.ObstructsVision())
+                                        {
+                                            Point neighbor3Point = new Point(neighbor3.GetXPos(), neighbor3.GetYPos());
+                                            // Add it to visible tiles
+                                            visibleTiles.Add(neighbor3Point);
+                                            
+                                            // If the tile hasn't been discovered yet 
+                                            if (!civilization.discoveredTiles.Contains(neighbor3Point))
+                                            {
+                                                // Tell GM to add it to the Civilization's discovered tiles
+                                                gm.AddDiscoveredTiles(civilization, neighbor3Point);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

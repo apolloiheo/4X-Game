@@ -551,4 +551,15 @@ public class GameTile : ISerialization
         // Doesn't need to be Restored
         // Settlements and Units will give this Tile it's reference back
     }
+
+    public bool ObstructsVision()
+    {
+        // Woods, Rainforest, Hills, and Mountain, obstruct vision
+        if (_feature is 1 or 4 || _terrain is 1 or 2)
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

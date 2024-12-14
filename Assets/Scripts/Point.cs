@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using System;
 
 public class Point 
 {
@@ -11,6 +9,21 @@ public class Point
     {
         this.x = x;
         this.y = y;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is Point other)
+        {
+            return other.x == x && other.y == y;
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(x, y);
     }
 
     public string ToString()

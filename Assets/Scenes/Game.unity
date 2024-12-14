@@ -3454,6 +3454,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1297460425}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: darkened
+      value: 
+      objectReference: {fileID: 11400000, guid: 5958a7ed5b1a6fe44a445bb9f8047df9, type: 2}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: guiCanvas
       value: 
       objectReference: {fileID: 414876454}
@@ -3481,6 +3485,10 @@ PrefabInstance:
       propertyPath: saveCanvas
       value: 
       objectReference: {fileID: 1772910759}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: unexplored
+      value: 
+      objectReference: {fileID: 11400000, guid: 95fdda3a93fc03744936c9bf9eeb2661, type: 2}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: baseTilemap
       value: 
@@ -3545,6 +3553,10 @@ PrefabInstance:
       propertyPath: unitWindowCanvas
       value: 
       objectReference: {fileID: 393516174211181368}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: visibilityTilemap
+      value: 
+      objectReference: {fileID: 1546733200}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: selectedUnitMovementPoints
       value: 

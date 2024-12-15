@@ -711,7 +711,7 @@ GameObject:
   - component: {fileID: 407515335}
   - component: {fileID: 407515334}
   m_Layer: 0
-  m_Name: Base Tilemap
+  m_Name: Biome Tilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

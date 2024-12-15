@@ -1073,6 +1073,9 @@ public class Director : MonoBehaviour
         RenderTilemaps(gm.game.world);
         RenderSettlementUI(gm.game.world);
         RenderTerritoryLines();
+        
+        // Update Player vision with new territory tiles
+        RenderPlayerVision();
     }
 
     void CalculateVision()

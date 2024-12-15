@@ -375,6 +375,7 @@ public class Director : MonoBehaviour
                 GameTile tile = settlement.GetTile();
                 Vector3 settlementPos = baseTilemap.CellToWorld(new Vector3Int(tile.GetYPos(), tile.GetXPos(), -1));
 
+                // Move camera to Settlement position, if it's already there, open Settlement Window
                 if (mainCam.transform.position == settlementPos)
                 {
                     ToggleSettlementWindow(settlement);

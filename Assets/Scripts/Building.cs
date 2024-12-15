@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using UnityEngine;
-using UnityEngine.Serialization;
 
 [System.Serializable]
 public class Building 
@@ -12,7 +8,7 @@ public class Building
     
     public Building(string nameString, int[] yieldArray)
     {
-        this.name = nameString;
+        name = nameString;
         yields = yieldArray;
     }
 }

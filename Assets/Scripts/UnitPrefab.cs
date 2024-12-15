@@ -9,6 +9,7 @@ public class UnitPrefab : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public Sprite warrior;
     public Sprite settler;
+    public Sprite scout;
     public Unit unit;
     public Director director;
     
@@ -20,6 +21,9 @@ public class UnitPrefab : MonoBehaviour
         } else if (unit._name == "Settler")
         {
             spriteRenderer.sprite = settler;
+        } else if (unit._name == "Scout")
+        {
+            spriteRenderer.sprite = scout;
         }
     }
 

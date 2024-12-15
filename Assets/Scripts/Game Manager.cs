@@ -44,18 +44,20 @@ public class GameManager : MonoBehaviour
     {
         List<Point> spawnPoints = game.world.GetSpawnPoints();
         
-        GameTile currTile = game.world.GetTile(spawnPoints[0]);
-        
-        // Put a Settlement at each start point
-        SpawnSettlement(new Settlement("Jersey", game.civilizations[0], currTile));
+        GameTile spawnPointTile = game.world.GetTile(spawnPoints[0]);
 
-        // Spawn a Unit around each Settlement
-        foreach (GameTile tile in currTile.GetNeighbors())
+        SpawnUnit(new Settler(spawnPointTile, game.civilizations[0]));
+
+        // Spawn a Warrior around the Spawn Point
+        foreach (GameTile neighbor in spawnPointTile.GetNeighbors())
         {
-            if (tile.IsWalkable())
+            if (neighbor.IsWalkable())
             {
-                SpawnUnit(new Warrior(tile, game.civilizations[0]));
-                break;
+                if (neighbor.GetUnit() is null)
+                {
+                    SpawnUnit(new Warrior(neighbor, game.civilizations[0]));
+                    break;
+                }
             }
         }
     }    

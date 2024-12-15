@@ -2,15 +2,15 @@ using System.Collections.Generic;
 
 namespace Units
 {
-    public class Warrior : Unit
+    public class Scout : Unit
     {
-        public Warrior(GameTile tile, Civilization civilization) : base(tile, civilization)
+        public Scout(GameTile tile, Civilization civilization) : base(tile, civilization)
         {
-            _name = "Warrior";
-            _baseMP = 2;
+            _name = "Scout";
+            _baseMP = 3;
             _currMP = _baseMP;
-            _combatStrength = 20;
-            _supplies = 5;
+            _combatStrength = 10;
+            _supplies = 8;
             _health = 100;
             _attackRange = 0;
             _experience = 0;

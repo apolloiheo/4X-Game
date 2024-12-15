@@ -1597,7 +1597,7 @@ public class WorldGenerator : MonoBehaviour
             for (int y = _world.GetHeight()/4; y < _world.GetHeight() * 3/4; y++)
             {
                 GameTile currTile = _world.GetTile(x, y);
-                if (currTile.GetRiverAdjacency() && currTile.IsLand() && currTile.GetTerrain() != 2)
+                if (currTile.GetRiverAdjacency() && currTile.IsWalkable())
                 {
                     possiblePoints.Add(new Point(x, y)); //adds tile if 1. next to river 2. is land 3.is not mountain
                 }

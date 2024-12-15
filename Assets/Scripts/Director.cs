@@ -425,6 +425,8 @@ public class Director : MonoBehaviour
         
         RenderUnits();
         
+        RenderTerritoryLines();
+        
         // Redirect player to new moves at the beginning of new turn
         UpdateEndTurnButton();
 
@@ -1070,6 +1072,7 @@ public class Director : MonoBehaviour
         // Render Settlement and delete Unit
         RenderTilemaps(gm.game.world);
         RenderSettlementUI(gm.game.world);
+        RenderTerritoryLines();
     }
 
     void CalculateVision()

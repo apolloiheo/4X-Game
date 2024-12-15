@@ -64,7 +64,8 @@ MonoBehaviour:
   mountainTilemap: {fileID: 0}
   featureTilemap: {fileID: 0}
   shadingTilemap: {fileID: 0}
-  tile: {fileID: 11400000, guid: 6dc6f9350229dc44fba6e7e57417cb10, type: 2}
+  visibilityTilemap: {fileID: 0}
+  tile: {fileID: 11400000, guid: cbca67c175c26c849ba45fb338fd9f35, type: 2}
   prairieTile: {fileID: 11400000, guid: 27b1ce3b55e8ee448ba52b1f59f01dac, type: 2}
   grassTile: {fileID: 11400000, guid: 199f0a7142903de44bb71ce1edda0ebf, type: 2}
   tundraTile: {fileID: 11400000, guid: 25b740eec3e06434c89d432169b8ec84, type: 2}
@@ -85,20 +86,25 @@ MonoBehaviour:
   rainforestTile: {fileID: 11400000, guid: d808d8c5d6ffc224d82969bdf11c041d, type: 2}
   oasisTile: {fileID: 11400000, guid: 052447c804702a6458d014fcc7e9bb86, type: 2}
   mountain: {fileID: 11400000, guid: 45ff8b2c159ce8241a5df6055779047d, type: 2}
-  highlight: {fileID: 11400000, guid: b67d49639f3c06f40a847baeb4853375, type: 2}
-  unexplored: {fileID: 0}
-  darkened: {fileID: 0}
+  highlight: {fileID: 11400000, guid: cbca67c175c26c849ba45fb338fd9f35, type: 2}
+  unexplored: {fileID: 11400000, guid: 95fdda3a93fc03744936c9bf9eeb2661, type: 2}
+  darkened: {fileID: 11400000, guid: 5958a7ed5b1a6fe44a445bb9f8047df9, type: 2}
   riversParent: {fileID: 0}
   riverSegment: {fileID: 7700684974192715068, guid: 5ee1d19087010834ea13908e3fde1750, type: 3}
   village: {fileID: 11400000, guid: b2abd4511315fbe4a8fceb093144c256, type: 2}
-  warrior: {fileID: 11400000, guid: d1800a3c292ef2b459ce77d97399bc54, type: 2}
   settlementUI: {fileID: 5723561007570470701, guid: cdff5139bdaca52478ec641965bd9b7d, type: 3}
   settlementWindow: {fileID: 7039692974896898312, guid: 129e43855a4bb1945a603f0cee2f5701, type: 3}
   territoryParent: {fileID: 0}
   territoryLines: {fileID: 5212823977036206406, guid: dbe8bb619cb8e1449b9fae5787478918, type: 3}
+  endTurnText: {fileID: 0}
   selectedUnitPrefab: {fileID: 0}
   selectedUnitName: {fileID: 0}
   selectedUnitMovementPoints: {fileID: 0}
   unitPrefab: {fileID: 152829552671779283, guid: d8f718e0d3eab6243bfcbe0d6ae74977, type: 3}
   unitsParent: {fileID: 0}
+  moveButton: {fileID: 0}
+  passButton: {fileID: 0}
+  attackButton: {fileID: 0}
+  campButton: {fileID: 0}
+  settleButton: {fileID: 0}
   _zoomedIn: 0

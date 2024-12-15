@@ -130,6 +130,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 5470342288920254347}
   warrior: {fileID: 21300000, guid: 3f59b29eaff417644a15d31236426e93, type: 3}
   settler: {fileID: 21300000, guid: 99e726293c142bc4ca74735892aa5854, type: 3}
+  scout: {fileID: 21300000, guid: 5bdf65ab493764642872e369eff8eb0f, type: 3}
   director: {fileID: 0}
 --- !u!114 &5307256639627128551
 MonoBehaviour:

@@ -378,6 +378,7 @@ public class Director : MonoBehaviour
                 if (mainCam.transform.position == settlementPos)
                 {
                     ToggleSettlementWindow(settlement);
+                    return;
                 }
                 else
                 {
@@ -1138,6 +1139,11 @@ public class Director : MonoBehaviour
         /* Calculates the Vision for each unit (assumes all units can only see 2 tiles away). */
         void CalculateUnitVision(Unit unit)
         {
+            // Add the Unit's own Tile Point
+            Point unitTilePoint = new Point(unit._gameTile.GetXPos(), unit._gameTile.GetYPos());
+            visibleTiles.Add(unitTilePoint);
+            
+            // Then check neighbors
             foreach (GameTile neighbor in unit._gameTile.GetNeighbors())
             {
                 if (neighbor is not null)

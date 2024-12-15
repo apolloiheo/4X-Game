@@ -105,8 +105,11 @@ public class Settlement : ISerialization
         
         void ProgressCityProject()
         {
-            // Add current Production per turn to the City Project's progress
-            _currentCityProject.AddToProgress(_yieldsPt[Production]);
+            if (_currentCityProject is not null)
+            {
+                // Add current Production per turn to the City Project's progress
+                _currentCityProject.AddToProgress(_yieldsPt[Production]);
+            }
         }
 
         void ProgressFoodSurplus()

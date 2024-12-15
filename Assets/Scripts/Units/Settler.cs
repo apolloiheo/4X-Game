@@ -10,7 +10,7 @@ namespace Units
             _baseMP = 2;
             _currMP = _baseMP;
             _combatStrength = 5;
-            _supplies = 15;
+            _supplies = 8;
             _health = 100;
             _attackRange = 0;
             _experience = 0;

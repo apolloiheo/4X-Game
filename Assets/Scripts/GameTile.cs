@@ -12,7 +12,6 @@ public class GameTile : ISerialization
             5. Snow
             6. Coast
             7. Ocean
-            8. Lake
 
         Terrain ID:
             0. Flat
@@ -26,6 +25,7 @@ public class GameTile : ISerialization
             3. Marsh
             4. Rainforest
             5. Oasis
+            6. Lake
 
         Resources ID:
              0. (No resource)

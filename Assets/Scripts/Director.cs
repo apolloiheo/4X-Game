@@ -34,7 +34,6 @@ public class Director : MonoBehaviour
     public Tile oceanTile;
     public Tile coastTile;
     public Tile snowTile;
-    public Tile lakeTile;
     [Header("Hills Tiles")] public Tile prairieHillsTile;
     public Tile grassHillsTile;
     public Tile tundraHillsTile;
@@ -46,6 +45,7 @@ public class Director : MonoBehaviour
     public Tile marshTile;
     public Tile rainforestTile;
     public Tile oasisTile;
+    public Tile lakeTile;
     [Header("Terrain")] 
     public Tile mountain;
     [Header("Shading Tiles")] 
@@ -731,11 +731,6 @@ public class Director : MonoBehaviour
                     baseTilemap.SetTile(new Vector3Int(y, x, 0), oceanTile);
                     //tile.color = new Color32(20, 102, 184, 255);
                 }
-                // Lake
-                else if (currTile.GetBiome() == 8)
-                {
-                    baseTilemap.SetTile(new Vector3Int(y, x, 0), lakeTile);
-                }
 
                 // Mountains
                 if (currTile.GetTerrain() == 2)
@@ -825,6 +820,11 @@ public class Director : MonoBehaviour
                 else if (currTile.GetFeature() == 5)
                 {
                     featureTilemap.SetTile(new Vector3Int(y, x, 0), oasisTile);
+                }
+                // Lake
+                else if (currTile.GetFeature() == 6)
+                {
+                    featureTilemap.SetTile(new Vector3Int(y, x, 0), lakeTile);
                 }
 
                 /* Render Settlements */

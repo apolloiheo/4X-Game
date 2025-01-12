@@ -3704,6 +3704,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1297460425}
     - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
+      propertyPath: lakeTile
+      value: 
+      objectReference: {fileID: 11400000, guid: 35499b975f2bfaf408dbec9f6bb07922, type: 2}
+    - target: {fileID: 6275797788386788270, guid: a9fdfc5520249fe4eb27c5dc2344259d, type: 3}
       propertyPath: guiCanvas
       value: 
       objectReference: {fileID: 414876454}

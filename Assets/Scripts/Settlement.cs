@@ -406,6 +406,9 @@ public class Settlement : ISerialization
             }
             return tiles;
         }
+
+        // use _gameTileUID to set GameTile._settlement field
+        GameTile.GetTileByUID(_gameTileUID).SetSettlement(this);
     }
 
     public int GetProduction()

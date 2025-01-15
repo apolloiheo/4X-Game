@@ -67,6 +67,25 @@ public class Settlement : ISerialization
     private const int Science = 4;
 
     /* New Settlement Constructor - for Gameplay */
+    [JsonConstructor]
+    public Settlement()
+    {
+        _yieldsPt = new int[5];
+        _population = 1;
+        _foodSurplus = 0;
+        _combatStrength = 10;
+        _buildings = new List<Building>();
+        _projects = new List<CityProject>();
+        _currentCityProject = null;
+        _territory = new List<GameTile>();
+        _workedTiles = new List<GameTile>();
+        _lockedTiles = new List<GameTile>();
+        _territoryUIDs = new List<int>();
+        _workedTileUIDs = new List<int>();
+        _lockedTileUIDs = new List<int>();
+        _tier = 1;
+    }
+
     public Settlement(string name, Civilization civilization, GameTile gameTile)
     {
         _name = name;
@@ -353,60 +372,6 @@ public class Settlement : ISerialization
         _territoryUIDs = ConvertTilesToUIDs(_territory);
         _workedTileUIDs = ConvertTilesToUIDs(_workedTiles);
         _lockedTileUIDs = ConvertTilesToUIDs(_lockedTiles);
-        
-        StageSettlementTile();
-        StageTerritoryTiles();
-        StageWorkedTiles();
-        StageLockedTiles();
-        
-        // Store the Settlement's Tile
-        void StageSettlementTile()
-        {
-            _settlementPoint = new Point(_gameTile.GetXPos(), _gameTile.GetYPos());
-            _gameTile = null;
-        }
-        // Transfer all _territory Tiles into an array of Points for serialization
-        void StageTerritoryTiles()
-        {
-            if (_territory is not null)
-            {
-                _territoryPoints = new Point[_territory.Count];
-                int index = 0;
-                foreach (GameTile t in _territory)
-                {
-                    _territoryPoints[index] = new Point(t.GetXPos(), t.GetYPos());
-                    index++;
-                }
-                _territory = null;
-            }    
-        }
-        // Transfer _workedTiles List into an array of Points for serialization
-        void StageWorkedTiles()
-        {
-            if (_workedTiles is not null)
-            {
-                _workedTilesPoints = new Point[_workedTiles.Count];
-                int index = 0;
-                foreach (GameTile t in _workedTiles)
-                {
-                    _workedTilesPoints[index] = new Point(t.GetXPos(), t.GetYPos());
-                    index++;
-                }
-                _workedTiles = null;
-            }
-        }
-        // Transfer all _lockedTiles List into an array of Points for serialization
-        void StageLockedTiles()
-        {
-            _lockedTilesPoints = new Point[_lockedTiles.Count];
-            int index = 0;
-            foreach (GameTile t in _lockedTiles)
-            {
-                _lockedTilesPoints[index] = new Point(t.GetXPos(), t.GetYPos());
-                index++;
-            }
-            _lockedTiles = null;
-        }
 
         List<int> ConvertTilesToUIDs(List<GameTile> tiles)
         {
@@ -429,57 +394,12 @@ public class Settlement : ISerialization
         _workedTiles = ConvertUIDsToTiles(_workedTileUIDs);
         _lockedTiles = ConvertUIDsToTiles(_lockedTileUIDs);
 
-        RestoreSettlementTile();
-        RestoreTerritory();
-        RestoreWorkedTiles();
-        RestoreLockedTiles();
-
-        // Restore GameTile Reference to Settlement (Settlement Location)
-        void RestoreSettlementTile()
-        {
-            _gameTile = game.world.GetTile(_settlementPoint);
-            _gameTile.SetSettlement(this);
-        }
-        // Restore Territory Tile References to Settlement
-        void RestoreTerritory()
-        {
-            // Reinitialize
-            _territory = new List<GameTile>();
-            
-            foreach (Point point in _territoryPoints)
-            {
-                _territory.Add(game.world.GetTile(point));
-            }
-        }
-        // Restore Worked Tile References to Settlement
-        void RestoreWorkedTiles()
-        {
-            // Reinitialize
-            _workedTiles = new List<GameTile>();
-            
-            foreach (Point point in _workedTilesPoints)
-            {
-                _workedTiles.Add(game.world.GetTile(point));
-            }
-        }
-        // Restore Locked Tiles references to Settlement
-        void RestoreLockedTiles()
-        {
-            // Reinitialize
-            _lockedTiles = new List<GameTile>();
-
-            foreach (Point point in _lockedTilesPoints)
-            {
-                _lockedTiles.Add(game.world.GetTile(point));
-            }
-        }
-
         List<GameTile> ConvertUIDsToTiles(List<int> uids)
         {
             var tiles = new List<GameTile>();
             foreach (var uid in uids)
             {
-                if (uid != 0 && GameTile.GetTileByUID(uid) != null)
+                if (uid != null && GameTile.GetTileByUID(uid) != null)
                 {
                     tiles.Add(GameTile.GetTileByUID(uid));
                 }

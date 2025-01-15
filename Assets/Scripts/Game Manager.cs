@@ -78,6 +78,8 @@ public class GameManager : MonoBehaviour
             game = JsonConvert.DeserializeObject<Game>(json);
             game.RestoreAfterDeserialization(game);
             Debug.Log("Game loaded from: " + path);
+
+            SceneManager.LoadScene(1);
         } catch (Exception ex) {
             Debug.Log("An error occurred while loading the game: " + ex.Message);
             Debug.Log("Stack Trace: " + ex.StackTrace);

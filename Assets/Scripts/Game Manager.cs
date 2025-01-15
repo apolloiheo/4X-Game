@@ -60,9 +60,31 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-    }    
+    } 
+
+    public void SaveGame(string filename) {
+        game.StageForSerialization();
+        string json = JsonConvert.SerializeObject(game, Formatting.Indented);
+        string path = Path.Combine(Application.persistentDataPath, filename + ".json");
+        Debug.Log("Save file path: " + path);
+        File.WriteAllText(path, json);
+    }
+
+    public void LoadGame(string filenamePlusJson) {
+        try {
+            string path = Path.Combine(Application.persistentDataPath, filenamePlusJson);
+            Debug.Log("Game loading from: " + path);
+            string json = File.ReadAllText(path);
+            game = JsonConvert.DeserializeObject<Game>(json);
+            game.RestoreAfterDeserialization(game);
+            Debug.Log("Game loaded from: " + path);
+        } catch (Exception ex) {
+            Debug.Log("An error occurred while loading the game: " + ex.Message);
+            Debug.Log("Stack Trace: " + ex.StackTrace);
+        }
+    }
     
-    public void SaveGame(string filename) 
+    public void SaveGame2(string filename) 
     {
         if (!savedGame)
         {
@@ -80,6 +102,8 @@ public class GameManager : MonoBehaviour
         {
             // File Path
             string path = Path.Combine(Application.persistentDataPath, relativePath);
+            Debug.Log("Save file path: " + path);
+
 
             // If it exists, delete it (in order to replace it)
             if (File.Exists(path))
@@ -119,7 +143,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game successfully saved as: " + filename);
     }
 
-    public void LoadGame(string filePath)
+    public void LoadGame2(string filePath)
     {
         string path = Path.Combine(Application.persistentDataPath, filePath);
 
@@ -281,4 +305,5 @@ public class GameManager : MonoBehaviour
     {
         civilization.discoveredTiles.Add(tile);
     }
+
 }

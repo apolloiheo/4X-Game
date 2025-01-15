@@ -31,15 +31,15 @@ public class Game : ISerialization
         }
     }
 
-    public void RestoreAfterDeserialization(Game game)
+    public void RestoreAfterDeserialization(GameManager gameManager)
     {
-        world.RestoreAfterDeserialization(game);
+        world.RestoreAfterDeserialization(gameManager);
 
         if (civilizations is not null)
         {
             foreach (Civilization civilization in civilizations)
             {
-                civilization.RestoreAfterDeserialization(game);
+                civilization.RestoreAfterDeserialization(gameManager);
             }
         }
     }

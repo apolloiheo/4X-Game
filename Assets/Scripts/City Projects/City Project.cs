@@ -14,7 +14,7 @@ namespace City_Projects
         [JsonProperty] public int currentProductionProgress = 0;
         [JsonProperty] public string projectType;
         [JsonProperty] public bool alreadyBuilt;
-        [JsonIgnore] public GameManager gameManager; // ?
+        [JsonIgnore] public GameManager gameManager;
         [JsonIgnore] public Settlement settlement;
         
         public virtual void AddToProgress(int production)

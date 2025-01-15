@@ -185,7 +185,7 @@ public class Unit : ISerialization
         _gameTileUID = (_gameTile is null) ? null : _gameTile.UID;
     }
 
-    public void RestoreAfterDeserialization(Game game)
+    public void RestoreAfterDeserialization(GameManager gameManager)
     {
         _gameTile = (_gameTileUID is null) ? null : GameTile.GetTileByUID((int)_gameTileUID);
         _gameTile.SetUnit(this);

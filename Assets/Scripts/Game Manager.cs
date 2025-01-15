@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Game loading from: " + path);
             string json = File.ReadAllText(path);
             game = JsonConvert.DeserializeObject<Game>(json);
-            game.RestoreAfterDeserialization(game);
+            game.RestoreAfterDeserialization(this);
             Debug.Log("Game loaded from: " + path);
 
             SceneManager.LoadScene(1);
@@ -152,7 +152,7 @@ public class GameManager : MonoBehaviour
         if (File.Exists(path))
         {
             game = LoadData<Game>(path, false);
-            game.RestoreAfterDeserialization(game);
+            game.RestoreAfterDeserialization(this);
             SceneManager.LoadScene(1);
         }
         else

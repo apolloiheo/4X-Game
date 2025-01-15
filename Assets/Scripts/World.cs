@@ -16,7 +16,7 @@ public class World : ISerialization
     [JsonProperty]
     private int _height;
     [JsonProperty]
-    private GameTile[,] _world; // 2D Array of Tiles
+    private GameTile[,] _world;
     [JsonProperty]
     public List<Point> spawnPoints;
     
@@ -153,10 +153,10 @@ public class World : ISerialization
         }
     }
 
-    public void RestoreAfterDeserialization(Game game)
+    public void RestoreAfterDeserialization(GameManager gameManager)
     {
         // Set GameTile neighbor properties back to normal.
-        game.world.SetTileAdjacency();
+        gameManager.game.world.SetTileAdjacency();
     }
 
     /* Print the world to console. (Bad way to test but will do for now) */

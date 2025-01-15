@@ -26,7 +26,8 @@ public class Settlement : ISerialization
     [JsonIgnore]
     public CityProject _currentCityProject;
     [JsonProperty("CityProjectID")]
-    private int? _cityProjectId;
+    public int? _currentCityProjectIndex;
+    public int? currentCityProjectIndex;
     [JsonProperty]
     private int _tier; // Settlement tier. 1 = Village, 2 = Town, 3 = City
     [JsonProperty]
@@ -79,7 +80,7 @@ public class Settlement : ISerialization
         _buildings = new List<Building>();
         _projects = new List<CityProject>();
         _currentCityProject = null;
-        _cityProjectId = null;
+        _currentCityProjectIndex = null;
         _territory = new List<GameTile>();
         _workedTiles = new List<GameTile>();
         _lockedTiles = new List<GameTile>();
@@ -99,7 +100,7 @@ public class Settlement : ISerialization
         _buildings = new List<Building>();
         _projects = GetBaseProjects();
         _currentCityProject = null;
-        _cityProjectId = null;
+        _currentCityProject = null;
         _gameTile = gameTile;
         _civilization = civilization;
         _territory = StartingTerritory(gameTile);
@@ -221,7 +222,8 @@ public class Settlement : ISerialization
     public void SwitchProject(int index)
     {
         _currentCityProject = _projects[index];
-        _cityProjectId = index;
+        _currentCityProjectIndex = index;
+        currentCityProjectIndex = index;
     }
 
     /* Gives every Settlement the base projects. */
@@ -393,7 +395,7 @@ public class Settlement : ISerialization
 
     }
 
-    public void RestoreAfterDeserialization(Game game)
+    public void RestoreAfterDeserialization(GameManager gameManager)
     {
         _gameTile = GameTile.GetTileByUID(_gameTileUID);
         _territory = ConvertUIDsToTiles(_territoryUIDs);
@@ -418,8 +420,13 @@ public class Settlement : ISerialization
 
         foreach (var p in _projects) {
             p.settlement = this;
+            p.gameManager = gameManager;
         }
-        _currentCityProject = (_cityProjectId == null) ? null : _projects[(int)_cityProjectId];
+        if (_currentCityProjectIndex == null) {
+            _currentCityProject = null;
+        } else {
+            _currentCityProject = _projects[(int)_currentCityProjectIndex];
+        }
     }
 
     public int GetProduction()

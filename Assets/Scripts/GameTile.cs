@@ -95,11 +95,15 @@ public class GameTile : ISerialization
     private static Dictionary<int, GameTile> _gameTileRegistry = new Dictionary<int, GameTile>();
 
     // Class Methods
-
     public GameTile() {
         UID = _nextUID++;
         _neighborUIDs = new List<int?>();
         _gameTileRegistry[UID] = this;
+    }
+
+    public void ResetGameTileRegistry() {
+        _nextUID = 1;
+        _gameTileRegistry = new Dictionary<int, GameTile>();
     }
 
     /* Natural Tile Constructor - Only Biome, Terrain, Feature, and Resource. (Good for world gen) */
@@ -569,7 +573,7 @@ public class GameTile : ISerialization
         _unit = null;
     }
 
-    public void RestoreAfterDeserialization(Game game)
+    public void RestoreAfterDeserialization(GameManager gameManager)
     {
         // Doesn't need to be Restored
         // Settlements and Units will give this Tile it's reference back

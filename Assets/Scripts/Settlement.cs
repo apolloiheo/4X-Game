@@ -21,10 +21,12 @@ public class Settlement : ISerialization
     private int _combatStrength;
     [JsonProperty]
     public List<Building> _buildings;
-    [JsonIgnore]
+    [JsonProperty]
     private List<CityProject> _projects;
     [JsonIgnore]
     public CityProject _currentCityProject;
+    [JsonProperty("CityProjectID")]
+    private int? _cityProjectId;
     [JsonProperty]
     private int _tier; // Settlement tier. 1 = Village, 2 = Town, 3 = City
     [JsonProperty]
@@ -77,6 +79,7 @@ public class Settlement : ISerialization
         _buildings = new List<Building>();
         _projects = new List<CityProject>();
         _currentCityProject = null;
+        _cityProjectId = null;
         _territory = new List<GameTile>();
         _workedTiles = new List<GameTile>();
         _lockedTiles = new List<GameTile>();
@@ -96,6 +99,7 @@ public class Settlement : ISerialization
         _buildings = new List<Building>();
         _projects = GetBaseProjects();
         _currentCityProject = null;
+        _cityProjectId = null;
         _gameTile = gameTile;
         _civilization = civilization;
         _territory = StartingTerritory(gameTile);
@@ -217,6 +221,7 @@ public class Settlement : ISerialization
     public void SwitchProject(int index)
     {
         _currentCityProject = _projects[index];
+        _cityProjectId = index;
     }
 
     /* Gives every Settlement the base projects. */
@@ -385,6 +390,7 @@ public class Settlement : ISerialization
             }
             return uids;
         }
+
     }
 
     public void RestoreAfterDeserialization(Game game)
@@ -409,6 +415,11 @@ public class Settlement : ISerialization
 
         // use _gameTileUID to set GameTile._settlement field
         GameTile.GetTileByUID(_gameTileUID).SetSettlement(this);
+
+        foreach (var p in _projects) {
+            p.settlement = this;
+        }
+        _currentCityProject = (_cityProjectId == null) ? null : _projects[(int)_cityProjectId];
     }
 
     public int GetProduction()

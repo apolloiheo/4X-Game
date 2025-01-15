@@ -16,7 +16,7 @@ public class Civilization : ISerialization
     [JsonProperty] private int _culture; // A Civilization's current culture (accumulated across turns and spent on culture skills).
     [JsonProperty] private int _sciencePt; // A Civilization's science generation per turn.
     [JsonProperty] public HashSet<Point> discoveredTiles;
-    [JsonIgnore] public List<Settlement> _settlements; // A List of the Settlements this Civilization owns.
+    [JsonProperty] public List<Settlement> _settlements; // A List of the Settlements this Civilization owns.
     [JsonProperty] public List<Unit> _units; // A List of the Units this Civilization owns.
     
     public Color32 _color;

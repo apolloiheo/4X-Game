@@ -7,7 +7,7 @@ using Unity.VisualScripting;
 namespace City_Projects
 {
     [System.Serializable]
-    public abstract class CityProject
+    public class CityProject
     {
         [JsonProperty] public string projectName;
         [JsonProperty] public int projectCost;

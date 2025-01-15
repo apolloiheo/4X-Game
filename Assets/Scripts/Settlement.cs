@@ -21,9 +21,9 @@ public class Settlement : ISerialization
     private int _combatStrength;
     [JsonProperty]
     public List<Building> _buildings;
-    [JsonProperty]
+    [JsonIgnore]
     private List<CityProject> _projects;
-    [JsonProperty]
+    [JsonIgnore]
     public CityProject _currentCityProject;
     [JsonProperty]
     private int _tier; // Settlement tier. 1 = Village, 2 = Town, 3 = City
@@ -35,11 +35,25 @@ public class Settlement : ISerialization
     [JsonProperty] public Point _settlementPoint;
     
     // Circular Instance References
+    [JsonIgnore]
     public Civilization _civilization; // Owner
+    [JsonIgnore]
     public GameTile _gameTile;
+    [JsonIgnore]
     public List<GameTile> _territory; // Tiles a Settlement controls.
-    public List<GameTile> _workedTiles; // Tiles in Territory that are being worked by a Population
-    public List<GameTile> _lockedTiles;
+    [JsonIgnore]
+    public List<GameTile> _workedTiles; // Tiles in Territory that are being worked by a Population.
+    [JsonIgnore]
+    public List<GameTile> _lockedTiles; // Tiles locked for specific use.
+
+    [JsonProperty("GameTileUIDs")]
+    private int _gameTileUID;
+    [JsonProperty("TerritoryUIDs")]
+    private List<int> _territoryUIDs;
+    [JsonProperty("WorkedTileUIDs")]
+    private List<int> _workedTileUIDs;
+    [JsonProperty("LockedTileUIDs")]
+    private List<int> _lockedTileUIDs;
     
     // Private properties
     private GameManager _gm;
@@ -335,8 +349,10 @@ public class Settlement : ISerialization
 
     public void StageForSerialization()
     {
-        // Civilization will restore this for each settlement.
-        _civilization = null;
+        _gameTileUID = _gameTile.UID;
+        _territoryUIDs = ConvertTilesToUIDs(_territory);
+        _workedTileUIDs = ConvertTilesToUIDs(_workedTiles);
+        _lockedTileUIDs = ConvertTilesToUIDs(_lockedTiles);
         
         StageSettlementTile();
         StageTerritoryTiles();
@@ -391,11 +407,28 @@ public class Settlement : ISerialization
             }
             _lockedTiles = null;
         }
-        
+
+        List<int> ConvertTilesToUIDs(List<GameTile> tiles)
+        {
+            var uids = new List<int>();
+            foreach (var tile in tiles)
+            {
+                if (tile != null)
+                {
+                    uids.Add(tile.UID);
+                }
+            }
+            return uids;
+        }
     }
 
     public void RestoreAfterDeserialization(Game game)
     {
+        _gameTile = GameTile.GetTileByUID(_gameTileUID);
+        _territory = ConvertUIDsToTiles(_territoryUIDs);
+        _workedTiles = ConvertUIDsToTiles(_workedTileUIDs);
+        _lockedTiles = ConvertUIDsToTiles(_lockedTileUIDs);
+
         RestoreSettlementTile();
         RestoreTerritory();
         RestoreWorkedTiles();
@@ -439,6 +472,19 @@ public class Settlement : ISerialization
             {
                 _lockedTiles.Add(game.world.GetTile(point));
             }
+        }
+
+        List<GameTile> ConvertUIDsToTiles(List<int> uids)
+        {
+            var tiles = new List<GameTile>();
+            foreach (var uid in uids)
+            {
+                if (uid != 0 && GameTile.GetTileByUID(uid) != null)
+                {
+                    tiles.Add(GameTile.GetTileByUID(uid));
+                }
+            }
+            return tiles;
         }
     }
 

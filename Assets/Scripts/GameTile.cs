@@ -93,22 +93,19 @@ public class GameTile : ISerialization
 
     // Static map for UID-to-GameTile lookup
     private static Dictionary<int, GameTile> _gameTileRegistry = new Dictionary<int, GameTile>();
+    public static void SetGameTileRegistry(int uid, GameTile gameTile) { _gameTileRegistry[uid] = gameTile; }
 
     // Class Methods
     public GameTile() {
-        UID = _nextUID++;
-        _neighborUIDs = new List<int?>();
-        _gameTileRegistry[UID] = this;
-    }
-
-    public void ResetGameTileRegistry() {
-        _nextUID = 1;
-        _gameTileRegistry = new Dictionary<int, GameTile>();
     }
 
     /* Natural Tile Constructor - Only Biome, Terrain, Feature, and Resource. (Good for world gen) */
-    public GameTile(int biome, int terrain, int feature, int resource): this()
+    public GameTile(int biome, int terrain, int feature, int resource)
     {
+        UID = _nextUID++;
+        _neighborUIDs = new List<int?>();
+        _gameTileRegistry[UID] = this;
+
         _biome = biome;
         _terrain = terrain;
         _feature = feature;
@@ -125,8 +122,12 @@ public class GameTile : ISerialization
 
     /* Full Tile Constructor (Good for testing) */
     public GameTile(int biome, int terrain, int feature, int resource, int tileImprovement, Unit unit,
-        Settlement settlement): this()
+        Settlement settlement)
     {
+        UID = _nextUID++;
+        _neighborUIDs = new List<int?>();
+        _gameTileRegistry[UID] = this;
+
         _biome = biome;
         _terrain = terrain;
         _feature = feature;

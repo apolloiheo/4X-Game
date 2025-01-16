@@ -25,9 +25,8 @@ public class Settlement : ISerialization
     private List<CityProject> _projects;
     [JsonIgnore]
     public CityProject _currentCityProject;
-    [JsonProperty("CityProjectID")]
-    public int? _currentCityProjectIndex;
-    public int? currentCityProjectIndex;
+    [JsonProperty("CityProjectName")]
+    private string? _currentCityProjectName;
     [JsonProperty]
     private int _tier; // Settlement tier. 1 = Village, 2 = Town, 3 = City
     [JsonProperty]
@@ -80,7 +79,6 @@ public class Settlement : ISerialization
         _buildings = new List<Building>();
         _projects = new List<CityProject>();
         _currentCityProject = null;
-        _currentCityProjectIndex = null;
         _territory = new List<GameTile>();
         _workedTiles = new List<GameTile>();
         _lockedTiles = new List<GameTile>();
@@ -99,7 +97,6 @@ public class Settlement : ISerialization
         _combatStrength = 10;
         _buildings = new List<Building>();
         _projects = GetBaseProjects();
-        _currentCityProject = null;
         _currentCityProject = null;
         _gameTile = gameTile;
         _civilization = civilization;
@@ -222,8 +219,6 @@ public class Settlement : ISerialization
     public void SwitchProject(int index)
     {
         _currentCityProject = _projects[index];
-        _currentCityProjectIndex = index;
-        currentCityProjectIndex = index;
     }
 
     /* Gives every Settlement the base projects. */
@@ -393,6 +388,7 @@ public class Settlement : ISerialization
             return uids;
         }
 
+        _currentCityProjectName = _currentCityProject.projectName;
     }
 
     public void RestoreAfterDeserialization(GameManager gameManager)
@@ -422,10 +418,14 @@ public class Settlement : ISerialization
             p.settlement = this;
             p.gameManager = gameManager;
         }
-        if (_currentCityProjectIndex == null) {
-            _currentCityProject = null;
+        if (_currentCityProjectName == null) {
+            _currentCityProjectName = null;
         } else {
-            _currentCityProject = _projects[(int)_currentCityProjectIndex];
+            foreach (var p in _projects) {
+                if (p.projectName == _currentCityProjectName) {
+                    _currentCityProject = p; break;
+                }
+            }
         }
     }
 
@@ -479,7 +479,7 @@ public class Settlement : ISerialization
 
     public void SetCityProject(CityProject project)
     {
-        _currentCityProject = project;   
+        _currentCityProject = project;
     }
 
     /* Calls on GM to Spawn Unit but only called from City Projects. */

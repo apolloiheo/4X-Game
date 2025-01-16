@@ -156,7 +156,18 @@ public class World : ISerialization
     public void RestoreAfterDeserialization(GameManager gameManager)
     {
         // Set GameTile neighbor properties back to normal.
-        gameManager.game.world.SetTileAdjacency();
+        // gameManager.game.world.SetTileAdjacency();
+
+        for (int x = 0; x < _length; x++) {
+            for (int y = 0; y < _height; y++) {
+                GameTile.SetGameTileRegistry(_world[x,y].UID, _world[x, y]);
+            }
+        }
+        for (int x = 0; x < _length; x++) {
+            for (int y = 0; y < _height; y++) {
+                _world[x, y].RestoreAfterDeserialization(gameManager);
+            }
+        }
     }
 
     /* Print the world to console. (Bad way to test but will do for now) */

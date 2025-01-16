@@ -26,6 +26,7 @@ public class World : ISerialization
     // Class Methods
     
     /* World Constructor */
+    public World() {}
     public World(int length, int height)
     {
         // Length must be odd in order to connect world horizontally.

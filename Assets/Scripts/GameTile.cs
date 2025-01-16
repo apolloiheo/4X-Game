@@ -94,6 +94,7 @@ public class GameTile : ISerialization
     // Static map for UID-to-GameTile lookup
     private static Dictionary<int, GameTile> _gameTileRegistry = new Dictionary<int, GameTile>();
     public static void SetGameTileRegistry(int uid, GameTile gameTile) { _gameTileRegistry[uid] = gameTile; }
+    public static void ClearGameTileRegistry() { _gameTileRegistry = new Dictionary<int, GameTile>(); }
 
     // Class Methods
     public GameTile() {

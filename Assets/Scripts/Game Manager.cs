@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
         game.civilizations.Add(player1);
         game.world = new WorldGenerator().GenerateWorld(100, 50, 2, worldSeed, game.civilizations.Count);
         Test();
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(1, LoadSceneMode.Single);
     }
     
     // Places some settlements down for testing
@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
             game.RestoreAfterDeserialization(this);
             Debug.Log("Game loaded from: " + path);
 
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(1, LoadSceneMode.Single);
         } catch (Exception ex) {
             Debug.Log("An error occurred while loading the game: " + ex.Message);
             Debug.Log("Stack Trace: " + ex.StackTrace);
@@ -153,7 +153,7 @@ public class GameManager : MonoBehaviour
         {
             game = LoadData<Game>(path, false);
             game.RestoreAfterDeserialization(this);
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(1, LoadSceneMode.Single);
         }
         else
         {
